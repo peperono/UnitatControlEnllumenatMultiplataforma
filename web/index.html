@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Control Enllumenat</title>
+  <style>
+    :root {
+      --bg-main:  #0d1117;
+      --bg-card:  #161b22;
+      --border:   #30363d;
+      --primary:  #58a6ff;
+      --accent:   #00d4ff;
+      --success:  #3fb950;
+      --danger:   #f85149;
+    }
+
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #484f58; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg-main); color: #c9d1d9; display: flex; height: 100vh; overflow: hidden; }
+
+    /* ── Barra lateral ── */
+    nav {
+      width: 220px; flex-shrink: 0;
+      background: linear-gradient(180deg, #010409, #02070e);
+      border-right: 1px solid #21262d;
+      display: flex; flex-direction: column;
+    }
+    .nav-brand {
+      padding: 20px 16px 16px;
+      border-bottom: 1px solid #21262d;
+    }
+    .nav-brand-title {
+      font-size: 13px; font-weight: 800; color: #e02020;
+      letter-spacing: -0.2px; white-space: nowrap; display: block;
+    }
+    .nav-section-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.5px; color: #484f58;
+      padding: 14px 16px 6px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 16px; cursor: pointer;
+      font-size: 13px; color: #8b949e;
+      border-left: 3px solid transparent;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      user-select: none;
+    }
+    .nav-item:hover { background: rgba(88,166,255,0.08); color: #c9d1d9; }
+    .nav-item.active { background: var(--bg-card); color: var(--primary); border-left-color: var(--primary); }
+    .nav-item .nav-icon { font-size: 14px; width: 16px; text-align: center; }
+    .ok  { color: var(--success); }
+    .err { color: var(--danger); }
+
+    /* ── Àrea principal ── */
+    main { flex: 1; overflow-y: auto; padding: 16px 24px; display: flex; flex-direction: column; }
+
+    /* ── Capçalera de subsistema ── */
+    .subsystem-header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 12px; }
+    .subsystem-header h1 { color: var(--primary); font-size: 20px; }
+
+    /* ── Seccions de monitor ── */
+    .monitor-row { display: flex; gap: 32px; align-items: flex-start; margin-bottom: 14px; flex-wrap: wrap; }
+    .section-title {
+      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;
+      color: #8b949e; margin-bottom: 8px; border-bottom: 1px solid #21262d; padding-bottom: 4px;
+    }
+
+    /* ── IO cards ── */
+    .io-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+    .io-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      padding: 6px 10px; min-width: 72px; text-align: center;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .io-card.on  { border-color: var(--success); box-shadow: 0 0 6px rgba(63,185,80,0.25); }
+    .io-card.off { border-color: var(--border); }
+    .io-card .io-id { font-size: 11px; font-weight: 700; color: var(--primary); font-family: 'Courier New', monospace; margin-bottom: 3px; }
+    .io-card .io-icon { margin: 2px 0; }
+    .io-card .io-icon svg { width: 34px; height: 22px; }
+    .io-card .io-label { font-size: 10px; font-weight: 600; margin-top: 2px; letter-spacing: 0.5px; }
+    .io-card .io-label.on  { color: var(--success); }
+    .io-card .io-label.off { color: #6e7681; }
+    .io-card .io-edges { font-size: 9px; color: #8b949e; margin-top: 2px; }
+
+    /* ── Flancs log ── */
+    #edges-log {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px;
+      padding: 8px 12px; max-height: 120px; overflow-y: auto;
+      font-size: 11px; list-style: none; font-family: 'Courier New', monospace;
+      display: inline-block; min-width: 180px;
+    }
+    #edges-log li { padding: 2px 0; border-bottom: 1px solid #21262d; color: #d2a679; }
+    #edges-log li:last-child { border-bottom: none; }
+    #edges-log:empty::before { content: 'Cap flanc'; color: #484f58; font-style: italic; }
+
+    /* ── Divisor ── */
+    hr { border: none; border-top: 1px solid #21262d; margin: 12px 0; }
+
+    /* ── Fila inferior ── */
+    .bottom-row { display: flex; gap: 32px; align-items: flex-start; flex-wrap: wrap; }
+
+    /* ── Control remot ── */
+    #ctrl-section { display: none; }
+    .ctrl-group { margin-bottom: 10px; }
+    .toggle {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 20px; cursor: pointer;
+      border: 2px solid var(--border); border-radius: 8px;
+      background: var(--bg-card); font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 13px; font-weight: 600; margin: 3px; color: #6e7681;
+      transition: all 0.15s; box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .toggle .toggle-id { font-family: 'Courier New', monospace; font-size: 14px; font-weight: 700; color: var(--primary); }
+    .toggle .toggle-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); flex-shrink: 0; transition: background 0.15s; }
+    .toggle:hover { transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.4); border-color: #484f58; }
+    .toggle:active { transform: translateY(0); }
+    .toggle.on  { background: #0d2318; color: var(--success); border-color: var(--success); box-shadow: 0 2px 8px rgba(63,185,80,0.3); }
+    .toggle.on .toggle-dot { background: var(--success); box-shadow: 0 0 6px rgba(63,185,80,0.6); }
+    .toggle.off { background: var(--bg-card); color: #6e7681; border-color: var(--border); }
+
+    /* ── Config editor ── */
+    #cfg-editor { width: 520px; height: 280px; background: var(--bg-card); color: #c9d1d9;
+                  border: 1px solid var(--border); border-radius: 6px;
+                  font-family: 'Courier New', monospace; font-size: 12px;
+                  padding: 8px; resize: vertical; display: block; margin-bottom: 8px; }
+    .cfg-btn { padding: 6px 18px; cursor: pointer; border: 1px solid var(--border);
+               background: var(--bg-card); font-family: 'Segoe UI', system-ui, sans-serif;
+               font-size: 13px; margin-right: 8px; color: #c9d1d9; border-radius: 6px;
+               transition: all 0.15s; }
+    .cfg-btn:hover { border-color: var(--primary); color: var(--primary); }
+    #cfg-status { font-size: 12px; }
+
+    /* ── Visibilitat subsistemes ── */
+    .subsystem { display: none; flex-direction: column; flex: 1; }
+    .subsystem.active { display: flex; }
+
+</style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-brand">
+      <span class="nav-brand-title">CONTROL ENLLUMENAT</span>
+      <span id="status" class="err" style="font-size:10px;margin-top:5px;display:block">&#9679; Desconnectat</span>
+    </div>
+    <div class="nav-section-label">Subsistemes</div>
+    <div class="nav-item active" data-target="sub-control-entrades">
+      <span class="nav-icon">&#9632;</span> Control Entrades
+    </div>
+    <div class="nav-item" data-target="sub-control-sortides">
+      <span class="nav-icon">&#9632;</span> Control Sortides
+    </div>
+  </nav>
+
+<main>
+    <!-- Subsistema: Control Entrades -->
+    <div id="sub-control-entrades" class="subsystem active">
+      <div class="subsystem-header">
+        <h1>Control Entrades</h1>
+      </div>
+      <div class="monitor-row">
+        <div class="io-section">
+          <div class="io-grid" id="grid-inputs"></div>
+        </div>
+<div class="io-section">
+          <div class="section-title">Flancs detectats</div>
+          <ul id="edges-log"></ul>
+        </div>
+      </div>
+      <hr>
+      <div class="bottom-row">
+        <div id="ctrl-section">
+          <div class="section-title">Control remot</div>
+          <div class="ctrl-group"><div id="ctrl-inputs"></div></div>
+        </div>
+        <div>
+          <div class="section-title">Configuraci&oacute; d'entrades</div>
+          <textarea id="cfg-editor" spellcheck="false"></textarea>
+          <div>
+            <button id="btn-cargar"  class="cfg-btn" onclick="loadConfig()">Carregar</button>
+            <button id="btn-aplicar" class="cfg-btn" onclick="applyConfig()">Aplicar</button>
+            <span id="cfg-status"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      // ── SVG switch icons ──
+      const SVG_CLOSED = `<svg viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="8" cy="24" r="4" fill="none" stroke="#3fb950" stroke-width="2"/>
+        <circle cx="40" cy="24" r="4" fill="none" stroke="#3fb950" stroke-width="2"/>
+        <line x1="12" y1="24" x2="36" y2="24" stroke="#3fb950" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>`;
+      const SVG_OPEN = `<svg viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="8" cy="24" r="4" fill="none" stroke="#484f58" stroke-width="2"/>
+        <circle cx="40" cy="24" r="4" fill="none" stroke="#484f58" stroke-width="2"/>
+        <line x1="12" y1="24" x2="34" y2="8" stroke="#484f58" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>`;
+
+      let controlsReady = false;
+      let expectedInputIds = null;
+      const controlState = { inputs: {} };
+
+      const gridInputs  = document.getElementById('grid-inputs');
+      const edgesLog    = document.getElementById('edges-log');
+      const ctrlSection = document.getElementById('ctrl-section');
+      const ctrlInputs  = document.getElementById('ctrl-inputs');
+      const cfgEditor   = document.getElementById('cfg-editor');
+      const cfgStatus   = document.getElementById('cfg-status');
+      const btnCargar   = document.getElementById('btn-cargar');
+      const btnAplicar  = document.getElementById('btn-aplicar');
+
+      function renderIOCards(container, items, counts) {
+        const sorted = Object.entries(items).sort(([a],[b]) => Number(a)-Number(b));
+        const isInput = counts !== undefined;
+        if (container.children.length !== sorted.length) {
+          container.innerHTML = '';
+          sorted.forEach(([id, state]) => {
+            const card = document.createElement('div');
+            card.className = 'io-card ' + (state ? 'on' : 'off');
+            card.dataset.ioId = id;
+            card.innerHTML =
+              '<div class="io-id">' + (isInput ? 'E' : 'S') + id + '</div>' +
+              '<div class="io-icon">' + (state ? SVG_CLOSED : SVG_OPEN) + '</div>' +
+              '<div class="io-label ' + (state ? 'on' : 'off') + '">' + (state ? 'TANCAT' : 'OBERT') + '</div>' +
+              (isInput ? '<div class="io-edges">▲ ' + (counts[id] ?? 0) + '</div>' : '');
+            container.appendChild(card);
+          });
+        } else {
+          sorted.forEach(([id, state], i) => {
+            const card = container.children[i];
+            card.className = 'io-card ' + (state ? 'on' : 'off');
+            card.querySelector('.io-icon').innerHTML = state ? SVG_CLOSED : SVG_OPEN;
+            const lbl = card.querySelector('.io-label');
+            lbl.textContent = state ? 'TANCAT' : 'OBERT';
+            lbl.className = 'io-label ' + (state ? 'on' : 'off');
+            const edgesEl = card.querySelector('.io-edges');
+            if (edgesEl && counts) edgesEl.textContent = '▲ ' + (counts[id] ?? 0);
+          });
+        }
+      }
+
+      function addEdgeEntry(edges) {
+        const ts = new Date().toLocaleTimeString();
+        const li = document.createElement('li');
+        li.textContent = ts + '  E' + edges.join(', E');
+        edgesLog.insertBefore(li, edgesLog.firstChild);
+      }
+
+      function sendControl() { wsSend({ inputs: controlState.inputs }); }
+
+      function makeToggle(container, prefix, id, stateMap) {
+        const btn = document.createElement('button');
+        btn.className = 'toggle off';
+        btn.innerHTML =
+          '<span class="toggle-id">' + prefix + id + '</span>' +
+          '<span class="toggle-state">OBERT</span>' +
+          '<span class="toggle-dot"></span>';
+        stateMap[id] = false;
+        btn.onclick = () => {
+          stateMap[id] = !stateMap[id];
+          const s = stateMap[id];
+          btn.querySelector('.toggle-state').textContent = s ? 'TANCAT' : 'OBERT';
+          btn.className = 'toggle ' + (s ? 'on' : 'off');
+          sendControl();
+        };
+        container.appendChild(btn);
+      }
+
+      function initControls(inputs) {
+        ctrlInputs.innerHTML = '';
+        controlState.inputs  = {};
+        Object.keys(inputs).sort((a,b) => Number(a)-Number(b))
+          .forEach(id => makeToggle(ctrlInputs, 'E', Number(id), controlState.inputs));
+        ctrlSection.style.display = 'block';
+        sendControl();
+      }
+
+      function setBusy(btn, label) {
+        if (!btn) return;
+        btn.textContent = label; btn.style.borderColor = '#d2a679';
+        btn.style.color = '#d2a679'; btn.disabled = true;
+      }
+      function setIdle(btn, label) {
+        if (!btn) return;
+        btn.textContent = label; btn.style.borderColor = '';
+        btn.style.color = ''; btn.disabled = false;
+      }
+      function fetchWithTimeout(url, opts, ms) {
+        const ctrl = new AbortController();
+        const tid  = setTimeout(() => ctrl.abort(), ms);
+        return fetch(url, { ...opts, signal: ctrl.signal }).finally(() => clearTimeout(tid));
+      }
+
+      function loadConfig() {
+        setBusy(btnCargar, 'Carregant...');
+        fetchWithTimeout('/config_inputs', {}, 5000)
+          .then(r => r.json())
+          .then(d => { cfgEditor.value = JSON.stringify(d, null, 2); cfgStatus.textContent = 'Carregat'; cfgStatus.className = 'ok'; })
+          .catch(() => { cfgStatus.textContent = 'Error en carregar'; cfgStatus.className = 'err'; })
+          .finally(() => setIdle(btnCargar, 'Carregar'));
+      }
+
+      function applyConfig() {
+        let parsed;
+        try { parsed = JSON.parse(cfgEditor.value); } catch(e) {
+          cfgStatus.textContent = 'JSON no vàlid'; cfgStatus.className = 'err'; return;
+        }
+        if (!Array.isArray(parsed) || parsed.length > 16) {
+          cfgStatus.textContent = 'Màxim 16 entrades'; cfgStatus.className = 'err'; return;
+        }
+        setBusy(btnAplicar, 'Aplicant...');
+        fetchWithTimeout('/config_inputs', { method: 'PUT', headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify(parsed) }, 5000)
+          .then(r => {
+            cfgStatus.textContent = r.ok ? 'Aplicat' : 'Error ' + r.status;
+            cfgStatus.className = r.ok ? 'ok' : 'err';
+            if (r.ok) {
+              const ni = {}, no = {};
+              parsed.forEach(c => { ni[c.id] = false; (c.linked_outputs || []).forEach(o => { no[o] = false; }); });
+              expectedInputIds = Object.keys(ni).sort().join(',');
+              initControls(ni, no); controlsReady = true;
+            }
+          })
+          .catch(() => { cfgStatus.textContent = 'Error de xarxa'; cfgStatus.className = 'err'; })
+          .finally(() => setIdle(btnAplicar, 'Aplicar'));
+      }
+
+      // ── Escolta events del WebSocket ──
+      window.addEventListener('ws-connected', () => loadConfig());
+
+      window.addEventListener('ws-io-update', (e) => {
+        const d = e.detail;
+        if (d.inputs && Object.keys(d.inputs).length > 0) {
+          const newIds = Object.keys(d.inputs).sort().join(',');
+          const curIds = Object.keys(controlState.inputs).sort().join(',');
+          const wsMatchesExpected = (expectedInputIds === null || newIds === expectedInputIds);
+          if (!controlsReady || (newIds !== curIds && wsMatchesExpected)) {
+            initControls(d.inputs);
+            controlsReady = true;
+            if (expectedInputIds !== null && newIds === expectedInputIds)
+              expectedInputIds = null;
+          }
+        }
+        if (d.inputs) renderIOCards(gridInputs, d.inputs, d.edge_counts || {});
+        if (d.last_edges && d.last_edges.length > 0) addEdgeEntry(d.last_edges);
+      });
+    </script>
+    <!-- Subsistema: Control Sortides -->
+    <div id="sub-control-sortides" class="subsystem">
+      <div class="subsystem-header">
+        <h1>Control Sortides</h1>
+      </div>
+
+      <style>
+#sub-control-sortides .outputs{display:flex;flex-wrap:wrap;gap:10px}
+        .output-card{background:#161b22;border-radius:8px;padding:10px;min-width:150px;text-align:center;border:2px solid #30363d;transition:border-color .2s,box-shadow .2s}
+        .output-card.active{border-color:#00d4ff;box-shadow:0 0 10px rgba(0,212,255,.3)}
+        .output-id{font-size:11px;color:#8b949e;margin-bottom:4px;font-family:'Courier New',monospace;font-weight:700}
+        .output-state{font-size:20px;font-weight:bold;margin-bottom:4px}
+        .output-state.on{color:#3fb950}.output-state.off{color:#6e7681}
+        .output-detail{display:grid;grid-template-columns:1fr 1fr;gap:2px 8px;font-size:10px;margin-bottom:8px;text-align:left;padding:0 4px}
+        .output-detail .label{color:#8b949e}
+        .output-detail .val{text-align:right;font-weight:600}
+        .output-detail .val.on{color:#3fb950}.output-detail .val.off{color:#6e7681}
+        .output-detail .val.remote{color:#ff9800}.output-detail .val.auto{color:#58a6ff}
+
+        #sub-control-sortides .controls{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+        .cs-btn{border:none;border-radius:4px;padding:5px 9px;cursor:pointer;font-size:11px;font-weight:600;
+                transition:all .15s;background:#00d4ff;color:#000;box-shadow:0 3px 0 #0077aa}
+        .cs-btn:hover{transform:scale(1.05)}
+        .cs-btn.flash{animation:cs-press .18s ease-out}
+        @keyframes cs-press{
+          0%{transform:translateY(0);box-shadow:0 3px 0 #0077aa}
+          40%{transform:translateY(3px);box-shadow:none;filter:brightness(.85)}
+          100%{transform:translateY(0);box-shadow:0 3px 0 #0077aa}
+        }
+
+        #sub-control-sortides .cs-section{background:#161b22;border-radius:10px;padding:16px;margin-bottom:14px}
+        #sub-control-sortides .cs-section h2{font-size:13px;font-weight:700;text-transform:uppercase;
+          letter-spacing:1.5px;color:#8b949e;margin-bottom:10px;
+          border-bottom:1px solid #21262d;padding-bottom:4px}
+
+        #rellotge-time{font-size:32px;color:#00d4ff;font-weight:bold;font-family:'Courier New',monospace;letter-spacing:2px}
+        #rellotge-day{font-size:13px;color:#8b949e;margin-top:4px;text-transform:capitalize}
+
+        #horari-json{width:100%;height:240px;background:#0d1117;color:#c9d1d9;
+          border:1px solid #30363d;border-radius:6px;padding:8px;
+          font-family:'Courier New',monospace;font-size:12px;resize:vertical}
+
+        .cs-log{background:#010409;border-radius:6px;padding:10px;max-height:180px;
+          overflow-y:auto;font-family:'Courier New',monospace;font-size:12px;line-height:1.6}
+        .cs-log-entry{border-bottom:1px solid #21262d;padding:2px 0;white-space:nowrap}
+        .cs-log-entry .time{color:#484f58}
+      </style>
+
+      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
+
+        <div class="cs-section" style="flex:0 0 auto;min-width:160px;text-align:center">
+          <h2>Rellotge</h2>
+          <div id="rellotge-time">--:--</div>
+          <div id="rellotge-day">---</div>
+        </div>
+
+        <div class="cs-section" style="flex:1 1 360px">
+          <h2>Control Horari</h2>
+          <textarea id="horari-json" spellcheck="false"></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="cs-btn" onclick="loadHorari()">Carregar</button>
+            <button class="cs-btn" onclick="applyHorari()">Aplicar</button>
+          </div>
+        </div>
+
+        <div class="cs-section" style="flex:2 1 420px">
+          <h2>Control Remot</h2>
+          <div class="outputs" id="cs-outputs"></div>
+        </div>
+
+      </div>
+
+      <div class="cs-section">
+        <h2>Log</h2>
+        <div class="cs-log" id="cs-log"></div>
+      </div>
+
+    </div>
+    <script>
+      document.getElementById('sub-control-sortides').addEventListener('click', e => {
+        const b = e.target.closest('.cs-btn');
+        if (!b) return;
+        b.classList.remove('flash');
+        void b.offsetWidth;
+        b.classList.add('flash');
+      });
+
+      const csOutputsEl = document.getElementById('cs-outputs');
+      const csLogEl     = document.getElementById('cs-log');
+      let csLastRenderKey = '';
+
+      // ── Horari (HTTP al mateix servidor) ──
+      function loadHorari() {
+        fetch('/programacio_horaria').then(r => r.text()).then(txt => {
+          try { document.getElementById('horari-json').value = JSON.stringify(JSON.parse(txt), null, 2); }
+          catch { document.getElementById('horari-json').value = txt; }
+        }).catch(() => {});
+      }
+
+      function applyHorari() {
+        const body = document.getElementById('horari-json').value;
+        try { JSON.parse(body); } catch(e) { alert('JSON invàlid: ' + e.message); return; }
+        fetch('/programacio_horaria', { method:'POST', headers:{'Content-Type':'application/json'}, body });
+      }
+
+      // ── Accions de control ──
+      function csAction(id, action) {
+        fetch('/control_outputs', { method:'POST', headers:{'Content-Type':'application/json'},
+                            body: JSON.stringify([{id, action}]) });
+      }
+      function csDeleteOutput(id) {
+        fetch('/control_outputs', { method:'POST', headers:{'Content-Type':'application/json'},
+                            body: JSON.stringify([{id, action:'delete'}]) });
+      }
+
+      // ── Render sortides ──
+      function csRenderOutputs(csOutputs) {
+        const ids = Object.keys(csOutputs).map(Number).sort((a,b) => a-b);
+        if (ids.length === 0) {
+          csOutputsEl.innerHTML = '<p style="color:#484f58;font-size:13px">Cap sortida registrada</p>';
+          return;
+        }
+        const key = JSON.stringify(csOutputs);
+        if (key === csLastRenderKey) return;
+        csLastRenderKey = key;
+        csOutputsEl.innerHTML = ids.map(id => {
+          const o = csOutputs[id];
+          const on = o.result;
+          const isRemote = o.mode === 'REMOTE';
+          return `
+            <div class="output-card ${on ? 'active' : ''}">
+              <div class="output-id">Sortida ${id}</div>
+              <div class="output-state ${on ? 'on' : 'off'}">${on ? 'ON' : 'OFF'}</div>
+              <div class="output-detail">
+                <span class="label">Estat entrada:</span><span class="val ${o.state?'on':'off'}">${o.state?'ON':'OFF'}</span>
+                <span class="label">Última comanda:</span><span class="val ${o.commanded?'on':'off'}">${o.commanded?'ON':'OFF'}</span>
+                <span class="label">Mode:</span><span class="val ${isRemote?'remote':'auto'}">${o.mode}</span>
+              </div>
+              <div class="controls">
+                <button class="cs-btn" onclick="csAction(${id},'activate')">ON</button>
+                <button class="cs-btn" onclick="csAction(${id},'deactivate')">OFF</button>
+                <button class="cs-btn" onclick="csAction(${id},${isRemote?"'set_auto'":"'set_remote'"})">
+                  ${isRemote ? 'Set Auto' : 'Set Remot'}
+                </button>
+                <button class="cs-btn" onclick="csDeleteOutput(${id})">Eliminar</button>
+              </div>
+            </div>`;
+        }).join('');
+      }
+
+      // ── Log ──
+      function csAddLog(entries) {
+        const colors = {ControlRemot:'#00d4ff', ControlHorari:'#3fb950', HttpServer:'#ff9800'};
+        for (const e of entries) {
+          const color = colors[e.src] || '#8b949e';
+          csLogEl.innerHTML =
+            `<div class="cs-log-entry"><span class="time">${e.t}</span> ` +
+            `<span style="color:${color};font-weight:600">[${e.src}]</span> ` +
+            `<span style="color:#8b949e">${e.sig}</span> ${e.d}</div>` +
+            csLogEl.innerHTML;
+        }
+      }
+
+      // ── Escolta CustomEvents del WS unificat ──
+      window.addEventListener('ws-connected', () => loadHorari());
+      window.addEventListener('ws-io-update', (e) => {
+        const d = e.detail;
+        if (d.time) document.getElementById('rellotge-time').textContent = d.time;
+        if (d.day)  document.getElementById('rellotge-day').textContent  = d.day;
+        if (d.cs_outputs) csRenderOutputs(d.cs_outputs);
+        if (d.log && d.log.length > 0) csAddLog(d.log);
+      });
+    </script>
+  </main>
+
+  <script>
+    // ── Navegació entre subsistemes ──
+    document.querySelectorAll('.nav-item[data-target]').forEach(item => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        document.querySelectorAll('.subsystem').forEach(s => s.classList.remove('active'));
+        item.classList.add('active');
+        document.getElementById(item.dataset.target).classList.add('active');
+      });
+    });
+
+    // ── WebSocket: només transport, emet CustomEvents ──
+    let ws = null;
+    const statusEl = document.getElementById('status');
+
+    function wsSend(data) {
+      if (ws && ws.readyState === WebSocket.OPEN)
+        ws.send(JSON.stringify(data));
+    }
+
+    function connect() {
+      ws = new WebSocket('ws://' + location.host + '/ws');
+      ws.onopen = () => {
+        statusEl.textContent = '● Connectat';
+        statusEl.className   = 'ok';
+        window.dispatchEvent(new CustomEvent('ws-connected'));
+      };
+      ws.onclose = () => {
+        ws = null;
+        statusEl.textContent = '● Desconnectat — reintentant...';
+        statusEl.className   = 'err';
+        window.dispatchEvent(new CustomEvent('ws-disconnected'));
+        setTimeout(connect, 2000);
+      };
+      ws.onerror = () => ws.close();
+      ws.onmessage = ({ data }) => {
+        window.dispatchEvent(new CustomEvent('ws-io-update', {
+          detail: JSON.parse(data)
+        }));
+      };
+    }
+
+    connect();
+  </script>
+</body>
+</html>

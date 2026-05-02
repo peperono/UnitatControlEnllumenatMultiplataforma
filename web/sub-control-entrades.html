@@ -1,0 +1,193 @@
+    <!-- Subsistema: Control Entrades -->
+    <div id="sub-control-entrades" class="subsystem active">
+      <div class="subsystem-header">
+        <h1>Control Entrades</h1>
+      </div>
+      <div class="monitor-row">
+        <div class="io-section">
+          <div class="io-grid" id="grid-inputs"></div>
+        </div>
+<div class="io-section">
+          <div class="section-title">Flancs detectats</div>
+          <ul id="edges-log"></ul>
+        </div>
+      </div>
+      <hr>
+      <div class="bottom-row">
+        <div id="ctrl-section">
+          <div class="section-title">Control remot</div>
+          <div class="ctrl-group"><div id="ctrl-inputs"></div></div>
+        </div>
+        <div>
+          <div class="section-title">Configuraci&oacute; d'entrades</div>
+          <textarea id="cfg-editor" spellcheck="false"></textarea>
+          <div>
+            <button id="btn-cargar"  class="cfg-btn" onclick="loadConfig()">Carregar</button>
+            <button id="btn-aplicar" class="cfg-btn" onclick="applyConfig()">Aplicar</button>
+            <span id="cfg-status"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      // ── SVG switch icons ──
+      const SVG_CLOSED = `<svg viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="8" cy="24" r="4" fill="none" stroke="#3fb950" stroke-width="2"/>
+        <circle cx="40" cy="24" r="4" fill="none" stroke="#3fb950" stroke-width="2"/>
+        <line x1="12" y1="24" x2="36" y2="24" stroke="#3fb950" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>`;
+      const SVG_OPEN = `<svg viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="8" cy="24" r="4" fill="none" stroke="#484f58" stroke-width="2"/>
+        <circle cx="40" cy="24" r="4" fill="none" stroke="#484f58" stroke-width="2"/>
+        <line x1="12" y1="24" x2="34" y2="8" stroke="#484f58" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>`;
+
+      let controlsReady = false;
+      let expectedInputIds = null;
+      const controlState = { inputs: {} };
+
+      const gridInputs  = document.getElementById('grid-inputs');
+      const edgesLog    = document.getElementById('edges-log');
+      const ctrlSection = document.getElementById('ctrl-section');
+      const ctrlInputs  = document.getElementById('ctrl-inputs');
+      const cfgEditor   = document.getElementById('cfg-editor');
+      const cfgStatus   = document.getElementById('cfg-status');
+      const btnCargar   = document.getElementById('btn-cargar');
+      const btnAplicar  = document.getElementById('btn-aplicar');
+
+      function renderIOCards(container, items, counts) {
+        const sorted = Object.entries(items).sort(([a],[b]) => Number(a)-Number(b));
+        const isInput = counts !== undefined;
+        if (container.children.length !== sorted.length) {
+          container.innerHTML = '';
+          sorted.forEach(([id, state]) => {
+            const card = document.createElement('div');
+            card.className = 'io-card ' + (state ? 'on' : 'off');
+            card.dataset.ioId = id;
+            card.innerHTML =
+              '<div class="io-id">' + (isInput ? 'E' : 'S') + id + '</div>' +
+              '<div class="io-icon">' + (state ? SVG_CLOSED : SVG_OPEN) + '</div>' +
+              '<div class="io-label ' + (state ? 'on' : 'off') + '">' + (state ? 'TANCAT' : 'OBERT') + '</div>' +
+              (isInput ? '<div class="io-edges">▲ ' + (counts[id] ?? 0) + '</div>' : '');
+            container.appendChild(card);
+          });
+        } else {
+          sorted.forEach(([id, state], i) => {
+            const card = container.children[i];
+            card.className = 'io-card ' + (state ? 'on' : 'off');
+            card.querySelector('.io-icon').innerHTML = state ? SVG_CLOSED : SVG_OPEN;
+            const lbl = card.querySelector('.io-label');
+            lbl.textContent = state ? 'TANCAT' : 'OBERT';
+            lbl.className = 'io-label ' + (state ? 'on' : 'off');
+            const edgesEl = card.querySelector('.io-edges');
+            if (edgesEl && counts) edgesEl.textContent = '▲ ' + (counts[id] ?? 0);
+          });
+        }
+      }
+
+      function addEdgeEntry(edges) {
+        const ts = new Date().toLocaleTimeString();
+        const li = document.createElement('li');
+        li.textContent = ts + '  E' + edges.join(', E');
+        edgesLog.insertBefore(li, edgesLog.firstChild);
+      }
+
+      function sendControl() { wsSend({ inputs: controlState.inputs }); }
+
+      function makeToggle(container, prefix, id, stateMap) {
+        const btn = document.createElement('button');
+        btn.className = 'toggle off';
+        btn.innerHTML =
+          '<span class="toggle-id">' + prefix + id + '</span>' +
+          '<span class="toggle-state">OBERT</span>' +
+          '<span class="toggle-dot"></span>';
+        stateMap[id] = false;
+        btn.onclick = () => {
+          stateMap[id] = !stateMap[id];
+          const s = stateMap[id];
+          btn.querySelector('.toggle-state').textContent = s ? 'TANCAT' : 'OBERT';
+          btn.className = 'toggle ' + (s ? 'on' : 'off');
+          sendControl();
+        };
+        container.appendChild(btn);
+      }
+
+      function initControls(inputs) {
+        ctrlInputs.innerHTML = '';
+        controlState.inputs  = {};
+        Object.keys(inputs).sort((a,b) => Number(a)-Number(b))
+          .forEach(id => makeToggle(ctrlInputs, 'E', Number(id), controlState.inputs));
+        ctrlSection.style.display = 'block';
+        sendControl();
+      }
+
+      function setBusy(btn, label) {
+        if (!btn) return;
+        btn.textContent = label; btn.style.borderColor = '#d2a679';
+        btn.style.color = '#d2a679'; btn.disabled = true;
+      }
+      function setIdle(btn, label) {
+        if (!btn) return;
+        btn.textContent = label; btn.style.borderColor = '';
+        btn.style.color = ''; btn.disabled = false;
+      }
+      function fetchWithTimeout(url, opts, ms) {
+        const ctrl = new AbortController();
+        const tid  = setTimeout(() => ctrl.abort(), ms);
+        return fetch(url, { ...opts, signal: ctrl.signal }).finally(() => clearTimeout(tid));
+      }
+
+      function loadConfig() {
+        setBusy(btnCargar, 'Carregant...');
+        fetchWithTimeout('/config_inputs', {}, 5000)
+          .then(r => r.json())
+          .then(d => { cfgEditor.value = JSON.stringify(d, null, 2); cfgStatus.textContent = 'Carregat'; cfgStatus.className = 'ok'; })
+          .catch(() => { cfgStatus.textContent = 'Error en carregar'; cfgStatus.className = 'err'; })
+          .finally(() => setIdle(btnCargar, 'Carregar'));
+      }
+
+      function applyConfig() {
+        let parsed;
+        try { parsed = JSON.parse(cfgEditor.value); } catch(e) {
+          cfgStatus.textContent = 'JSON no vàlid'; cfgStatus.className = 'err'; return;
+        }
+        if (!Array.isArray(parsed) || parsed.length > 16) {
+          cfgStatus.textContent = 'Màxim 16 entrades'; cfgStatus.className = 'err'; return;
+        }
+        setBusy(btnAplicar, 'Aplicant...');
+        fetchWithTimeout('/config_inputs', { method: 'PUT', headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify(parsed) }, 5000)
+          .then(r => {
+            cfgStatus.textContent = r.ok ? 'Aplicat' : 'Error ' + r.status;
+            cfgStatus.className = r.ok ? 'ok' : 'err';
+            if (r.ok) {
+              const ni = {}, no = {};
+              parsed.forEach(c => { ni[c.id] = false; (c.linked_outputs || []).forEach(o => { no[o] = false; }); });
+              expectedInputIds = Object.keys(ni).sort().join(',');
+              initControls(ni, no); controlsReady = true;
+            }
+          })
+          .catch(() => { cfgStatus.textContent = 'Error de xarxa'; cfgStatus.className = 'err'; })
+          .finally(() => setIdle(btnAplicar, 'Aplicar'));
+      }
+
+      // ── Escolta events del WebSocket ──
+      window.addEventListener('ws-connected', () => loadConfig());
+
+      window.addEventListener('ws-io-update', (e) => {
+        const d = e.detail;
+        if (d.inputs && Object.keys(d.inputs).length > 0) {
+          const newIds = Object.keys(d.inputs).sort().join(',');
+          const curIds = Object.keys(controlState.inputs).sort().join(',');
+          const wsMatchesExpected = (expectedInputIds === null || newIds === expectedInputIds);
+          if (!controlsReady || (newIds !== curIds && wsMatchesExpected)) {
+            initControls(d.inputs);
+            controlsReady = true;
+            if (expectedInputIds !== null && newIds === expectedInputIds)
+              expectedInputIds = null;
+          }
+        }
+        if (d.inputs) renderIOCards(gridInputs, d.inputs, d.edge_counts || {});
+        if (d.last_edges && d.last_edges.length > 0) addEdgeEntry(d.last_edges);
+      });
+    </script>

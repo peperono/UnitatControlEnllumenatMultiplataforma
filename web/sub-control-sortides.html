@@ -1,0 +1,173 @@
+    <!-- Subsistema: Control Sortides -->
+    <div id="sub-control-sortides" class="subsystem">
+      <div class="subsystem-header">
+        <h1>Control Sortides</h1>
+      </div>
+
+      <style>
+#sub-control-sortides .outputs{display:flex;flex-wrap:wrap;gap:10px}
+        .output-card{background:#161b22;border-radius:8px;padding:10px;min-width:150px;text-align:center;border:2px solid #30363d;transition:border-color .2s,box-shadow .2s}
+        .output-card.active{border-color:#00d4ff;box-shadow:0 0 10px rgba(0,212,255,.3)}
+        .output-id{font-size:11px;color:#8b949e;margin-bottom:4px;font-family:'Courier New',monospace;font-weight:700}
+        .output-state{font-size:20px;font-weight:bold;margin-bottom:4px}
+        .output-state.on{color:#3fb950}.output-state.off{color:#6e7681}
+        .output-detail{display:grid;grid-template-columns:1fr 1fr;gap:2px 8px;font-size:10px;margin-bottom:8px;text-align:left;padding:0 4px}
+        .output-detail .label{color:#8b949e}
+        .output-detail .val{text-align:right;font-weight:600}
+        .output-detail .val.on{color:#3fb950}.output-detail .val.off{color:#6e7681}
+        .output-detail .val.remote{color:#ff9800}.output-detail .val.auto{color:#58a6ff}
+
+        #sub-control-sortides .controls{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+        .cs-btn{border:none;border-radius:4px;padding:5px 9px;cursor:pointer;font-size:11px;font-weight:600;
+                transition:all .15s;background:#00d4ff;color:#000;box-shadow:0 3px 0 #0077aa}
+        .cs-btn:hover{transform:scale(1.05)}
+        .cs-btn.flash{animation:cs-press .18s ease-out}
+        @keyframes cs-press{
+          0%{transform:translateY(0);box-shadow:0 3px 0 #0077aa}
+          40%{transform:translateY(3px);box-shadow:none;filter:brightness(.85)}
+          100%{transform:translateY(0);box-shadow:0 3px 0 #0077aa}
+        }
+
+        #sub-control-sortides .cs-section{background:#161b22;border-radius:10px;padding:16px;margin-bottom:14px}
+        #sub-control-sortides .cs-section h2{font-size:13px;font-weight:700;text-transform:uppercase;
+          letter-spacing:1.5px;color:#8b949e;margin-bottom:10px;
+          border-bottom:1px solid #21262d;padding-bottom:4px}
+
+        #rellotge-time{font-size:32px;color:#00d4ff;font-weight:bold;font-family:'Courier New',monospace;letter-spacing:2px}
+        #rellotge-day{font-size:13px;color:#8b949e;margin-top:4px;text-transform:capitalize}
+
+        #horari-json{width:100%;height:240px;background:#0d1117;color:#c9d1d9;
+          border:1px solid #30363d;border-radius:6px;padding:8px;
+          font-family:'Courier New',monospace;font-size:12px;resize:vertical}
+
+        .cs-log{background:#010409;border-radius:6px;padding:10px;max-height:180px;
+          overflow-y:auto;font-family:'Courier New',monospace;font-size:12px;line-height:1.6}
+        .cs-log-entry{border-bottom:1px solid #21262d;padding:2px 0;white-space:nowrap}
+        .cs-log-entry .time{color:#484f58}
+      </style>
+
+      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
+
+        <div class="cs-section" style="flex:0 0 auto;min-width:160px;text-align:center">
+          <h2>Rellotge</h2>
+          <div id="rellotge-time">--:--</div>
+          <div id="rellotge-day">---</div>
+        </div>
+
+        <div class="cs-section" style="flex:1 1 360px">
+          <h2>Control Horari</h2>
+          <textarea id="horari-json" spellcheck="false"></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="cs-btn" onclick="loadHorari()">Carregar</button>
+            <button class="cs-btn" onclick="applyHorari()">Aplicar</button>
+          </div>
+        </div>
+
+        <div class="cs-section" style="flex:2 1 420px">
+          <h2>Control Remot</h2>
+          <div class="outputs" id="cs-outputs"></div>
+        </div>
+
+      </div>
+
+      <div class="cs-section">
+        <h2>Log</h2>
+        <div class="cs-log" id="cs-log"></div>
+      </div>
+
+    </div>
+    <script>
+      document.getElementById('sub-control-sortides').addEventListener('click', e => {
+        const b = e.target.closest('.cs-btn');
+        if (!b) return;
+        b.classList.remove('flash');
+        void b.offsetWidth;
+        b.classList.add('flash');
+      });
+
+      const csOutputsEl = document.getElementById('cs-outputs');
+      const csLogEl     = document.getElementById('cs-log');
+      let csLastRenderKey = '';
+
+      // ── Horari (HTTP al mateix servidor) ──
+      function loadHorari() {
+        fetch('/programacio_horaria').then(r => r.text()).then(txt => {
+          try { document.getElementById('horari-json').value = JSON.stringify(JSON.parse(txt), null, 2); }
+          catch { document.getElementById('horari-json').value = txt; }
+        }).catch(() => {});
+      }
+
+      function applyHorari() {
+        const body = document.getElementById('horari-json').value;
+        try { JSON.parse(body); } catch(e) { alert('JSON invàlid: ' + e.message); return; }
+        fetch('/programacio_horaria', { method:'POST', headers:{'Content-Type':'application/json'}, body });
+      }
+
+      // ── Accions de control ──
+      function csAction(id, action) {
+        fetch('/control_outputs', { method:'POST', headers:{'Content-Type':'application/json'},
+                            body: JSON.stringify([{id, action}]) });
+      }
+      function csDeleteOutput(id) {
+        fetch('/control_outputs', { method:'POST', headers:{'Content-Type':'application/json'},
+                            body: JSON.stringify([{id, action:'delete'}]) });
+      }
+
+      // ── Render sortides ──
+      function csRenderOutputs(csOutputs) {
+        const ids = Object.keys(csOutputs).map(Number).sort((a,b) => a-b);
+        if (ids.length === 0) {
+          csOutputsEl.innerHTML = '<p style="color:#484f58;font-size:13px">Cap sortida registrada</p>';
+          return;
+        }
+        const key = JSON.stringify(csOutputs);
+        if (key === csLastRenderKey) return;
+        csLastRenderKey = key;
+        csOutputsEl.innerHTML = ids.map(id => {
+          const o = csOutputs[id];
+          const on = o.result;
+          const isRemote = o.mode === 'REMOTE';
+          return `
+            <div class="output-card ${on ? 'active' : ''}">
+              <div class="output-id">Sortida ${id}</div>
+              <div class="output-state ${on ? 'on' : 'off'}">${on ? 'ON' : 'OFF'}</div>
+              <div class="output-detail">
+                <span class="label">Estat entrada:</span><span class="val ${o.state?'on':'off'}">${o.state?'ON':'OFF'}</span>
+                <span class="label">Última comanda:</span><span class="val ${o.commanded?'on':'off'}">${o.commanded?'ON':'OFF'}</span>
+                <span class="label">Mode:</span><span class="val ${isRemote?'remote':'auto'}">${o.mode}</span>
+              </div>
+              <div class="controls">
+                <button class="cs-btn" onclick="csAction(${id},'activate')">ON</button>
+                <button class="cs-btn" onclick="csAction(${id},'deactivate')">OFF</button>
+                <button class="cs-btn" onclick="csAction(${id},${isRemote?"'set_auto'":"'set_remote'"})">
+                  ${isRemote ? 'Set Auto' : 'Set Remot'}
+                </button>
+                <button class="cs-btn" onclick="csDeleteOutput(${id})">Eliminar</button>
+              </div>
+            </div>`;
+        }).join('');
+      }
+
+      // ── Log ──
+      function csAddLog(entries) {
+        const colors = {ControlRemot:'#00d4ff', ControlHorari:'#3fb950', HttpServer:'#ff9800'};
+        for (const e of entries) {
+          const color = colors[e.src] || '#8b949e';
+          csLogEl.innerHTML =
+            `<div class="cs-log-entry"><span class="time">${e.t}</span> ` +
+            `<span style="color:${color};font-weight:600">[${e.src}]</span> ` +
+            `<span style="color:#8b949e">${e.sig}</span> ${e.d}</div>` +
+            csLogEl.innerHTML;
+        }
+      }
+
+      // ── Escolta CustomEvents del WS unificat ──
+      window.addEventListener('ws-connected', () => loadHorari());
+      window.addEventListener('ws-io-update', (e) => {
+        const d = e.detail;
+        if (d.time) document.getElementById('rellotge-time').textContent = d.time;
+        if (d.day)  document.getElementById('rellotge-day').textContent  = d.day;
+        if (d.cs_outputs) csRenderOutputs(d.cs_outputs);
+        if (d.log && d.log.length > 0) csAddLog(d.log);
+      });
+    </script>

@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "Devcontainer",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/usr/x86_64-w64-mingw32/include",
+                "/usr/lib/gcc/x86_64-w64-mingw32/*/include",
+                "/usr/lib/gcc/x86_64-w64-mingw32/*/include/c++"
+            ],
+            "defines": [
+                "_WIN32",
+                "__MINGW64__"
+            ],
+            "compilerPath": "/usr/bin/x86_64-w64-mingw32-g++",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-gcc-x64"
+        }
+    ],
+    "version": 4
+}
