@@ -1,0 +1,16 @@
+# ── QP/C++ FreeRTOS port ──────────────────────────────────────────────────────
+# El port requereix configMAX_PRIORITIES >= QF_MAX_ACTIVE (32).
+# ESP-IDF per defecte usa 25; el pugem a 33.
+CONFIG_FREERTOS_MAX_PRIORITIES=33
+
+# ── Mongoose (thread via std::thread → pthread) ───────────────────────────────
+# Stack per defecte de pthread insuficient per al bucle de Mongoose.
+CONFIG_PTHREAD_TASK_STACK_SIZE_DEFAULT=8192
+
+# ── C++ ───────────────────────────────────────────────────────────────────────
+# Necessari per std::mutex, STL, etc.
+CONFIG_COMPILER_CXX_EXCEPTIONS=y
+
+# ── lwIP ─────────────────────────────────────────────────────────────────────
+# Noms POSIX de sockets (read/write/close) per a compatibilitat amb Mongoose.
+CONFIG_LWIP_POSIX_SOCKETS_IO_NAMES=y

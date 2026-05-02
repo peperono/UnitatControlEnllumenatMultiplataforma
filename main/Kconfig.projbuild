@@ -1,0 +1,15 @@
+menu "UnitatControlEnllumenat"
+
+    config WIFI_SSID
+        string "WiFi SSID"
+        default "MySSID"
+        help
+            SSID de la xarxa WiFi a la qual es connectarà l'ESP32.
+
+    config WIFI_PASSWORD
+        string "WiFi Password"
+        default "MyPassword"
+        help
+            Contrasenya de la xarxa WiFi.
+
+endmenu
