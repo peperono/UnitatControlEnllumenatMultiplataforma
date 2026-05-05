@@ -22,7 +22,8 @@ idf_component_register(
         "${QPCPP}/src/qf/qep_hsm.cpp"
         "${QPCPP}/src/qf/qep_msm.cpp"
         "${QPCPP}/src/qf/qf_act.cpp"
-        "${QPCPP}/src/qf/qf_actq.cpp"
+        # qf_actq.cpp NO s'inclou: qf_port.cpp ja reimplementa postx_, postLIFO,
+        # get_, getQueueUse/Free/Min per a FreeRTOS (usa QueueHandle_t, no QEQueue).
         "${QPCPP}/src/qf/qf_defer.cpp"
         "${QPCPP}/src/qf/qf_dyn.cpp"
         "${QPCPP}/src/qf/qf_mem.cpp"
@@ -38,6 +39,9 @@ idf_component_register(
         "${QPCPP}/include"
         "${QPCPP}/src"
         "${QPCPP}/ports/freertos"
+        "$ENV{IDF_PATH}/components/freertos/FreeRTOS-Kernel/include/freertos"
+        "$ENV{IDF_PATH}/components/freertos/FreeRTOS-Kernel/portable/xtensa/include"
+        "$ENV{IDF_PATH}/components/freertos/esp_additions/include"
     REQUIRES
         esp_wifi
         esp_timer
@@ -46,6 +50,7 @@ idf_component_register(
         esp_netif
         app_update
         pthread
+        freertos
 )
 
 # MG_ARCH_ESP32 = 3 (veure mongoose.h)

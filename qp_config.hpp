@@ -86,7 +86,9 @@
 // <o>Maximum # Active Objects (QF_MAX_ACTIVE) <1-64>
 // <i>Maximum # Active Objects in the system <1..64>
 // <i>Default: 32
-#define QF_MAX_ACTIVE  32U
+// Reduït a 10: el projecte usa prioritats 1..6 (5 AOs).
+// ESP-IDF FreeRTOS fixa configMAX_PRIORITIES=25; QF_MAX_ACTIVE ha de ser ≤25.
+#define QF_MAX_ACTIVE  10U
 
 // <o>Maximum # event pools (QF_MAX_EPOOL)
 // <0=>0 no event pools

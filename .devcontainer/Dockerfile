@@ -3,6 +3,13 @@ FROM mcr.microsoft.com/devcontainers/base:ubuntu-22.04
 RUN apt-get update && apt-get install -y \
         mingw-w64 \
         curl \
+        cmake \
+        git \
+        python3 \
+        python3-venv \
+        python3-pip \
+        libusb-1.0-0-dev \
+        ninja-build \
     && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/* \

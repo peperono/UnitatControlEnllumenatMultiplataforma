@@ -1,0 +1,117 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.2.8 Chrome/140.0.7339.240 Electron/38.4.0 Safari/537.36" version="28.2.8">
+  <diagram name="Página-1" id="6846HTlSMw2SuwWb1Yr6">
+    <mxGraphModel dx="5954" dy="3429" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="6JtkgCOUWTSHZ0La05B9-22" value="Windows" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="-1549" y="-1037" width="572" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="6JtkgCOUWTSHZ0La05B9-23" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="-1549" y="-1010.5" width="572" height="762.5" as="geometry" />
+        </mxCell>
+        <mxCell id="6JtkgCOUWTSHZ0La05B9-24" value="" style="group" parent="1" vertex="1" connectable="0">
+          <mxGeometry x="-1479" y="-986" width="432" height="619" as="geometry" />
+        </mxCell>
+        <mxCell id="6JtkgCOUWTSHZ0La05B9-17" value="WSL2 / Màquina Virtual Lleugera" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="6JtkgCOUWTSHZ0La05B9-24" vertex="1">
+          <mxGeometry width="432" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="6JtkgCOUWTSHZ0La05B9-18" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="6JtkgCOUWTSHZ0La05B9-24" vertex="1">
+          <mxGeometry y="27" width="432" height="592" as="geometry" />
+        </mxCell>
+        <mxCell id="6JtkgCOUWTSHZ0La05B9-19" value="" style="group" parent="6JtkgCOUWTSHZ0La05B9-24" vertex="1" connectable="0">
+          <mxGeometry x="41" y="62" width="360.8" height="497" as="geometry" />
+        </mxCell>
+        <mxCell id="6JtkgCOUWTSHZ0La05B9-9" value="Kernel Linux Host / Compartit per Alpine i Ubuntu" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="6JtkgCOUWTSHZ0La05B9-19" vertex="1">
+          <mxGeometry width="350" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="6JtkgCOUWTSHZ0La05B9-10" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="6JtkgCOUWTSHZ0La05B9-19" vertex="1">
+          <mxGeometry y="27" width="350" height="470" as="geometry" />
+        </mxCell>
+        <mxCell id="6JtkgCOUWTSHZ0La05B9-3" value="docker-desktop / Distribució Host Alpine" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="6JtkgCOUWTSHZ0La05B9-19" vertex="1">
+          <mxGeometry x="51.5" y="68" width="264.5" height="27" as="geometry" />
+        </mxCell>
+        <mxCell id="6JtkgCOUWTSHZ0La05B9-4" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="6JtkgCOUWTSHZ0La05B9-19" vertex="1">
+          <mxGeometry x="51.5" y="95" width="264.5" height="276" as="geometry" />
+        </mxCell>
+        <mxCell id="6JtkgCOUWTSHZ0La05B9-8" value="" style="group" parent="6JtkgCOUWTSHZ0La05B9-19" vertex="1" connectable="0">
+          <mxGeometry x="102" y="144" width="136" height="188" as="geometry" />
+        </mxCell>
+        <mxCell id="6JtkgCOUWTSHZ0La05B9-6" value="Contenidor / Procès Linux" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="6JtkgCOUWTSHZ0La05B9-8" vertex="1">
+          <mxGeometry y="-9" width="136" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="6JtkgCOUWTSHZ0La05B9-7" value="- Ubuntu 22.04&lt;div&gt;- Compilador Windows&lt;/div&gt;&lt;div&gt;- Compilador ESP32&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="6JtkgCOUWTSHZ0La05B9-8" vertex="1">
+          <mxGeometry y="27" width="136" height="161" as="geometry" />
+        </mxCell>
+        <mxCell id="UU6tTepPwgvEvhT8yv_2-15" value="projecte" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#232F3D;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.folder;" vertex="1" parent="6JtkgCOUWTSHZ0La05B9-8">
+          <mxGeometry x="46.02999999999997" y="127" width="43.94" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="6JtkgCOUWTSHZ0La05B9-11" value="/dev/ttyUSBx" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="6JtkgCOUWTSHZ0La05B9-19" vertex="1">
+          <mxGeometry x="30" y="420" width="98" height="21" as="geometry" />
+        </mxCell>
+        <mxCell id="6JtkgCOUWTSHZ0La05B9-14" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;endArrow=none;endFill=0;" parent="6JtkgCOUWTSHZ0La05B9-19" source="6JtkgCOUWTSHZ0La05B9-7" target="6JtkgCOUWTSHZ0La05B9-11" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UU6tTepPwgvEvhT8yv_2-1" value="Accedeix" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" vertex="1" connectable="0" parent="6JtkgCOUWTSHZ0La05B9-14">
+          <mxGeometry x="0.3655" y="1" relative="1" as="geometry">
+            <mxPoint x="-15" y="12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UU6tTepPwgvEvhT8yv_2-2" value="&lt;pre style=&quot;overflow-x: auto; white-space: pre; box-sizing: border-box; border-radius: 4px; max-width: 100%; margin: 0px; padding: 8px; color: rgb(191, 191, 191); font-size: 13px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(18, 19, 20); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;&quot;&gt;&lt;code class=&quot;language-sh&quot; style=&quot;font-family: monospace; color: rgb(140, 140, 140); background-color: rgb(38, 38, 38); padding: 0px; border-radius: 3px; word-break: break-word; font-size: 0.9em;&quot;&gt;modprobe ftdi_sio&lt;/code&gt;&lt;/pre&gt;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="6JtkgCOUWTSHZ0La05B9-19">
+          <mxGeometry x="202" y="410.5" width="129.8" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="UU6tTepPwgvEvhT8yv_2-4" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;" edge="1" parent="6JtkgCOUWTSHZ0La05B9-19" source="UU6tTepPwgvEvhT8yv_2-2" target="6JtkgCOUWTSHZ0La05B9-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UU6tTepPwgvEvhT8yv_2-5" value="Crea" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" vertex="1" connectable="0" parent="UU6tTepPwgvEvhT8yv_2-4">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="6JtkgCOUWTSHZ0La05B9-25" value="COMx" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="-1503" y="-318" width="98" height="21" as="geometry" />
+        </mxCell>
+        <mxCell id="6JtkgCOUWTSHZ0La05B9-29" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;endArrow=none;endFill=0;dashed=1;" parent="1" source="6JtkgCOUWTSHZ0La05B9-28" target="6JtkgCOUWTSHZ0La05B9-25" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="6JtkgCOUWTSHZ0La05B9-30" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;endArrow=none;endFill=0;dashed=1;" parent="1" source="6JtkgCOUWTSHZ0La05B9-28" target="6JtkgCOUWTSHZ0La05B9-11" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="6JtkgCOUWTSHZ0La05B9-28" value="USB&lt;div&gt;(dispositiu físic)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="-1423" y="-182" width="125" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="UU6tTepPwgvEvhT8yv_2-7" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-1356" y="-305" as="targetPoint" />
+            <mxPoint x="-1237" y="-304" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UU6tTepPwgvEvhT8yv_2-12" value="&amp;nbsp;Attach&amp;nbsp;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" vertex="1" connectable="0" parent="UU6tTepPwgvEvhT8yv_2-7">
+          <mxGeometry x="-0.0371" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UU6tTepPwgvEvhT8yv_2-11" value="" style="group" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="-1230" y="-343" width="221.8" height="76.79999999999995" as="geometry" />
+        </mxCell>
+        <mxCell id="UU6tTepPwgvEvhT8yv_2-9" value="&lt;pre style=&quot;overflow-x: auto; white-space: pre; box-sizing: border-box; border-radius: 4px; max-width: 100%; margin: 0px; padding: 8px; color: rgb(191, 191, 191); font-size: 13px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(18, 19, 20); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;&quot;&gt;&lt;code style=&quot;font-family: monospace; color: rgb(140, 140, 140); background-color: rgb(38, 38, 38); padding: 0px; border-radius: 3px; word-break: break-word; font-size: 0.9em;&quot;&gt;usbipd bind --busid 1-3&lt;/code&gt;&lt;/pre&gt;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="UU6tTepPwgvEvhT8yv_2-11">
+          <mxGeometry width="164.8" height="41.4" as="geometry" />
+        </mxCell>
+        <mxCell id="UU6tTepPwgvEvhT8yv_2-10" value="&lt;pre style=&quot;overflow-x: auto; white-space: pre; box-sizing: border-box; border-radius: 4px; max-width: 100%; margin: 0px; padding: 8px; color: rgb(191, 191, 191); font-size: 13px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(18, 19, 20); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;&quot;&gt;&lt;code style=&quot;font-family: monospace; color: rgb(140, 140, 140); background-color: rgb(38, 38, 38); padding: 0px; border-radius: 3px; word-break: break-word; font-size: 0.9em;&quot;&gt;usbipd attach --wsl --busid 1-3&lt;/code&gt;&lt;/pre&gt;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="UU6tTepPwgvEvhT8yv_2-11">
+          <mxGeometry y="34.39999999999998" width="221.8" height="42.4" as="geometry" />
+        </mxCell>
+        <mxCell id="UU6tTepPwgvEvhT8yv_2-13" value="" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#232F3D;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.folder;" vertex="1" parent="1">
+          <mxGeometry x="-1032" y="-653" width="43.94" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="UU6tTepPwgvEvhT8yv_2-16" value="&amp;nbsp;bind mount&amp;nbsp;" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="UU6tTepPwgvEvhT8yv_2-15" target="UU6tTepPwgvEvhT8yv_2-13">
+          <mxGeometry x="-0.2522" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UU6tTepPwgvEvhT8yv_2-17" value="&lt;p&gt;&lt;span style=&quot;font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: pre-wrap; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;&lt;font face=&quot;Helvetica&quot; style=&quot;font-size: 17px; color: rgb(0, 0, 0);&quot;&gt;Un contenidor és un procés aïllat dins d&#39;un sistema host (kernel + distribució Linux). El contenidor inclou la seva pròpia distribució Linux, però comparteix el kernel amb el host. En aquest cas, el host és un Linux Alpine que s&#39;executa dins d&#39;una màquina virtual lleugera (WSL2) gestionada per Windows. Diversos contenidors poden tenir distribucions Linux diferents, però tots comparteixen el mateix kernel del host.&lt;/font&gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: pre-wrap; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;&lt;font face=&quot;Helvetica&quot; style=&quot;font-size: 17px; color: rgb(0, 0, 0);&quot;&gt;Des del contenidor es pot accedir a: &lt;/font&gt;&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;white-space-collapse: preserve; margin-top: 0.1em; margin-bottom: 0.2em;&quot;&gt;&lt;strong style=&quot;background-color: light-dark(#ffffff, var(--ge-dark-color, #121212));&quot;&gt;&lt;font style=&quot;font-size: 17px; color: rgb(0, 0, 0);&quot; face=&quot;Helvetica&quot;&gt;Windows&lt;/font&gt;&lt;/strong&gt;&lt;/p&gt;&lt;ul style=&quot;padding-inline-start: 2em;&quot;&gt;&lt;li&gt;&lt;span style=&quot;background-color: light-dark(#ffffff, var(--ge-dark-color, #121212));&quot;&gt;&lt;font style=&quot;font-size: 17px; color: rgb(0, 0, 0);&quot; face=&quot;Helvetica&quot;&gt;Sistema de fitxers — via bind mount (el directori del projecte, per exemple)&lt;/font&gt;&lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p style=&quot;white-space-collapse: preserve; margin-top: 0.1em; margin-bottom: 0.2em;&quot;&gt;&lt;strong style=&quot;background-color: light-dark(#ffffff, var(--ge-dark-color, #121212));&quot;&gt;&lt;font style=&quot;font-size: 17px; color: rgb(0, 0, 0);&quot; face=&quot;Helvetica&quot;&gt;Linux Host (Alpine/WSL2)&lt;/font&gt;&lt;/strong&gt;&lt;/p&gt;&lt;ul style=&quot;padding-inline-start: 2em;&quot;&gt;&lt;li style=&quot;&quot;&gt;&lt;span style=&quot;background-color: light-dark(#ffffff, var(--ge-dark-color, #121212));&quot;&gt;&lt;font style=&quot;font-size: 17px; color: rgb(0, 0, 0);&quot; face=&quot;Helvetica&quot;&gt;Dispositius del kernel —&amp;nbsp;&lt;code style=&quot;padding: 2px 4px; border-radius: 3px; word-break: break-word;&quot;&gt;/dev/ttyUSBx&lt;/code&gt;,&amp;nbsp;&lt;code style=&quot;padding: 2px 4px; border-radius: 3px; word-break: break-word;&quot;&gt;/dev/bus/usb&lt;/code&gt;, etc.&lt;/font&gt;&lt;/span&gt;&lt;/li&gt;&lt;li style=&quot;&quot;&gt;&lt;span style=&quot;background-color: light-dark(#ffffff, var(--ge-dark-color, #121212));&quot;&gt;&lt;font style=&quot;font-size: 17px; color: rgb(0, 0, 0);&quot; face=&quot;Helvetica&quot;&gt;Sockets Unix.&lt;/font&gt;&lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;&lt;div&gt;&lt;strong style=&quot;white-space-collapse: preserve; background-color: rgb(255, 255, 255);&quot;&gt;&lt;font style=&quot;font-size: 17px; color: rgb(0, 0, 0);&quot; face=&quot;Helvetica&quot;&gt;Xarxa&lt;/font&gt;&lt;/strong&gt;&lt;span style=&quot;font-size: 17px;&quot;&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;ul style=&quot;padding-inline-start: 2em;&quot;&gt;&lt;li style=&quot;&quot;&gt;&lt;p style=&quot;white-space-collapse: preserve; margin-top: 0.1em; margin-bottom: 0.2em;&quot;&gt;&lt;span style=&quot;background-color: light-dark(#ffffff, var(--ge-dark-color, #121212));&quot;&gt;&lt;font style=&quot;font-size: 15px; color: rgb(0, 0, 0);&quot; face=&quot;Helvetica&quot;&gt;&lt;strong&gt;Bridge (per defecte)&lt;/strong&gt; — el contenidor té la seva pròpia IP virtual i accedeix a l&#39;exterior via NAT a través del host.&lt;/font&gt;&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;&lt;li style=&quot;&quot;&gt;&lt;p style=&quot;white-space-collapse: preserve; margin-top: 0.1em; margin-bottom: 0.2em;&quot;&gt;&lt;span style=&quot;background-color: light-dark(#ffffff, var(--ge-dark-color, #121212));&quot;&gt;&lt;font style=&quot;font-size: 15px; color: rgb(0, 0, 0);&quot; face=&quot;Helvetica&quot;&gt;&lt;strong style=&quot;&quot;&gt;Host&lt;/strong&gt; — el contenidor comparteix directament la interfície de xarxa del host, sense NAT ni IP pròpia.&lt;/font&gt;&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-2375" y="-1016" width="621" height="474" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

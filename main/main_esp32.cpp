@@ -27,6 +27,7 @@
 #include <mutex>
 
 // ── Globals compartits entre threads ─────────────────────────────────────────
+portMUX_TYPE  g_qp_mux = portMUX_INITIALIZER_UNLOCKED; // secció crítica QP
 SharedState   se;
 RemoteIOState remoteIO;
 
