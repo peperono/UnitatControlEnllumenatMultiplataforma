@@ -1,4 +1,4 @@
-# Connecta un dispositiu USB (FTDI/CP210x/CH340) a WSL2 via usbipd.
+﻿# Connecta un dispositiu USB (FTDI/CP210x/CH340) a WSL2 via usbipd.
 # Executa des de PowerShell (no cal admin si el bind ja s'ha fet).
 #
 # Ús:
