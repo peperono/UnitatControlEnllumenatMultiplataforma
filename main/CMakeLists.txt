@@ -51,6 +51,7 @@ idf_component_register(
         app_update
         pthread
         freertos
+        esp_driver_gpio
 )
 
 # MG_ARCH_ESP32 = 3 (veure mongoose.h)

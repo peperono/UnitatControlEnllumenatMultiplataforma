@@ -7,11 +7,13 @@
         "vscode": {
             "extensions": [
                 "ms-vscode.cpptools",
-                "anthropic.claude-code"
+                "anthropic.claude-code",
+                "espressif.esp-idf-extension"
             ]
         }
     },
     "postCreateCommand": "echo 'export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH' >> ~/.bashrc && bash .devcontainer/install-esp-idf.sh",
+    "runArgs": ["--privileged"],
     "mounts": [
         "source=${localEnv:USERPROFILE}/.claude,target=/home/vscode/.claude,type=bind,consistency=cached"
     ]

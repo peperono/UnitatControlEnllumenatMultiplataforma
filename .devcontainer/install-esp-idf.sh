@@ -16,4 +16,24 @@ else
     echo "ESP-IDF instal·lat correctament."
 fi
 
+# udevadm fals per a contenidors sense udev (necessari per l'extensió ESP-IDF de VS Code)
+if [ ! -f /usr/local/bin/udevadm ]; then
+    sudo tee /usr/local/bin/udevadm > /dev/null << 'UDEVADM'
+#!/bin/bash
+if [[ "$*" == *"info"* && "$*" == *"-e"* ]]; then
+    for dev in /dev/ttyUSB* /dev/ttyACM*; do
+        [ -e "$dev" ] || continue
+        name=$(basename "$dev")
+        echo "P: /devices/virtual/$name"
+        echo "N: $name"
+        echo "E: DEVNAME=$dev"
+        echo "E: SUBSYSTEM=tty"
+        echo "E: ID_BUS=usb"
+        echo ""
+    done
+fi
+UDEVADM
+    sudo chmod +x /usr/local/bin/udevadm
+fi
+
 echo "Dev container llest. Usa: bash build.sh  o  idf.py build"

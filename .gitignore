@@ -1,2 +1,6 @@
 build/
+build-win/
 web/index_html.h
+sdkconfig
+sdkconfig.old
+docs/.*

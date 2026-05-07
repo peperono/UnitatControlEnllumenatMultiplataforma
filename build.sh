@@ -9,7 +9,7 @@ export TMPDIR=/tmp
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 QPCPP="$ROOT/qpcpp"
-OUT="$ROOT/build"
+OUT="$ROOT/build-win"
 
 mkdir -p "$OUT"
 
@@ -87,7 +87,7 @@ $GPP -std=c++17 -Wall -O1 -static \
     -lwinmm -lws2_32 ${EXTRA_LIBS:-}
 
 if [ $? -eq 0 ]; then
-    echo "OK — build/app.exe"
+    echo "OK — build-win/app.exe"
 else
     echo "ERROR — revisa los mensajes de arriba"
     exit 1

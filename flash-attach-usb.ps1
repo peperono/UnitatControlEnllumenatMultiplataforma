@@ -1,4 +1,4 @@
-﻿# Connecta un dispositiu USB (FTDI/CP210x/CH340) a WSL2 via usbipd.
+# Connecta un dispositiu USB (FTDI/CP210x/CH340) a WSL2 via usbipd.
 # Executa des de PowerShell (no cal admin si el bind ja s'ha fet).
 #
 # Ús:
@@ -14,11 +14,13 @@ $knownChips = @("FT2232", "CP210", "CH340", "CH341", "UART", "Serial")
 function Find-EspDevice {
     $lines = usbipd list 2>&1
     foreach ($line in $lines) {
-        foreach ($chip in $knownChips) {
-            if ($line -match $chip) {
-                # Extreu el BUSID (format X-Y al principi de la línia)
-                if ($line -match "^(\d+-\d+)") {
-                    return $matches[1]
+        $lineStr = $line.ToString().Trim()
+        # El BUSID té format X-Y al principi de la línia
+        if ($lineStr -match "^(\d+-\d+)\s") {
+            $busid = $matches[1]
+            foreach ($chip in $knownChips) {
+                if ($lineStr -match $chip) {
+                    return $busid
                 }
             }
         }
@@ -29,20 +31,21 @@ function Find-EspDevice {
 # --- Troba o valida el BUSID ---
 if ($BusId -eq "") {
     Write-Host "Cercant dispositiu ESP32/FTDI/CP210x..." -ForegroundColor Cyan
+    Write-Host "Dispositius detectats per usbipd:" -ForegroundColor Gray
+    usbipd list
+    Write-Host ""
     $BusId = Find-EspDevice
-    if ($null -eq $BusId) {
+    if ([string]::IsNullOrEmpty($BusId)) {
         Write-Host "No s'ha trobat cap dispositiu compatible." -ForegroundColor Red
-        Write-Host ""
-        Write-Host "Dispositius disponibles:"
-        usbipd list
+        Write-Host "Usa:  .\flash-attach-usb.ps1 -BusId X-Y" -ForegroundColor Yellow
         exit 1
     }
     Write-Host "Trobat: BUSID $BusId" -ForegroundColor Green
 }
 
 # --- Bind (si encara no s'ha fet) ---
-$state = (usbipd list 2>&1 | Select-String $BusId)
-if ($state -match "Not shared") {
+$listOut = usbipd list 2>&1 | Out-String
+if ($listOut -match "$BusId\s.*Not shared") {
     Write-Host "Fent bind de $BusId (cal admin la primera vegada)..." -ForegroundColor Yellow
     usbipd bind --busid $BusId
     if ($LASTEXITCODE -ne 0) {
@@ -51,14 +54,30 @@ if ($state -match "Not shared") {
     }
 }
 
-# --- Attach a WSL2 ---
-Write-Host "Connectant $BusId a WSL2..." -ForegroundColor Cyan
-usbipd attach --wsl --busid $BusId
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "Error al attach." -ForegroundColor Red
-    exit 1
+# --- Detach previ si ja estava attached ---
+$listOut2 = usbipd list 2>&1 | Out-String
+if ($listOut2 -match "$BusId\s.*Attached") {
+    Write-Host "Desconnectant $BusId per re-enganxar..." -ForegroundColor Yellow
+    usbipd detach --busid $BusId 2>&1 | Out-Null
+    Start-Sleep -Milliseconds 500
 }
 
+# --- Carrega el driver FTDI ABANS de l'attach ---
+Write-Host "Carregant driver ftdi_sio a docker-desktop..." -ForegroundColor Cyan
+wsl -d docker-desktop modprobe ftdi_sio 2>&1 | Out-Null
+
+# --- Attach a docker-desktop ---
+Write-Host "Connectant $BusId a docker-desktop..." -ForegroundColor Cyan
+$attachOut = usbipd attach --wsl docker-desktop --busid $BusId 2>&1
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "Error al attach: $attachOut" -ForegroundColor Red
+    exit 1
+}
+Start-Sleep -Seconds 1
+
+# --- Crea els nodes de dispositiu al contenidor Docker ---
+Write-Host "Creant nodes /dev/ttyUSB* al contenidor..." -ForegroundColor Cyan
+docker exec -u root (docker ps -q) sh -c "mknod /dev/ttyUSB0 c 188 0 2>/dev/null; mknod /dev/ttyUSB1 c 188 1 2>/dev/null; chmod 666 /dev/ttyUSB0 /dev/ttyUSB1" 2>&1 | Out-Null
+
 Write-Host ""
-Write-Host "Fet! El dispositiu ja és accessible des de WSL2." -ForegroundColor Green
-Write-Host "Comprova amb:  wsl -- ls /dev/ttyUSB*" -ForegroundColor Gray
+Write-Host "Fet! /dev/ttyUSB0 i /dev/ttyUSB1 accessibles al contenidor." -ForegroundColor Green

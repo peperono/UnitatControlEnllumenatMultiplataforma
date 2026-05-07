@@ -5,7 +5,15 @@ CONFIG_FREERTOS_MAX_PRIORITIES=33
 
 # ── Mongoose (thread via std::thread → pthread) ───────────────────────────────
 # Stack per defecte de pthread insuficient per al bucle de Mongoose.
-CONFIG_PTHREAD_TASK_STACK_SIZE_DEFAULT=8192
+CONFIG_PTHREAD_TASK_STACK_SIZE_DEFAULT=16384
+
+# ── esp_timer task ────────────────────────────────────────────────────────────
+# qp_tick_cb crida TICK_X que pot disparar events a tots els AOs via xTaskNotify.
+CONFIG_ESP_TIMER_TASK_STACK_SIZE=8192
+
+# ── FreeRTOS stack overflow detection ─────────────────────────────────────────
+# Mode 2: verifica canary al final del stack per detectar desbordaments.
+CONFIG_FREERTOS_CHECK_STACKOVERFLOW=2
 
 # ── C++ ───────────────────────────────────────────────────────────────────────
 # Necessari per std::mutex, STL, etc.

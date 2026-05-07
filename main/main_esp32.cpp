@@ -13,14 +13,32 @@
 #include "ControlHorari/json_horari.h"
 #include "Rellotge/Rellotge.h"
 
+#include "esp_log.h"
 #include "esp_wifi.h"
 #include "esp_event.h"
 #include "esp_netif.h"
 #include "nvs_flash.h"
 #include "esp_timer.h"
+#include "driver/gpio.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
+
+static constexpr gpio_num_t LED_VERD = GPIO_NUM_2;
+
+static void blink_task(void*) {
+    gpio_config_t cfg = {};
+    cfg.pin_bit_mask = 1ULL << LED_VERD;
+    cfg.mode         = GPIO_MODE_OUTPUT;
+    gpio_config(&cfg);
+
+    for (;;) {
+        gpio_set_level(LED_VERD, 1);
+        vTaskDelay(pdMS_TO_TICKS(500));
+        gpio_set_level(LED_VERD, 0);
+        vTaskDelay(pdMS_TO_TICKS(500));
+    }
+}
 
 #include <cstdio>
 #include <cstring>
@@ -48,11 +66,12 @@ static QP::QEvtPtr monitorQSto       [10];
 
 // ── Stacks estàtics per a cada tasca FreeRTOS ────────────────────────────────
 // El port FreeRTOS de QP/C++ requereix configSUPPORT_STATIC_ALLOCATION=1
-static StackType_t rellotgeStk      [2 * 1024];
-static StackType_t edgeDetectorStk  [4 * 1024];
-static StackType_t controlRemotStk  [4 * 1024];
-static StackType_t controlHorariStk [4 * 1024];
-static StackType_t monitorStk       [2 * 1024];
+// NOTA: StackType_t = uint8_t en Xtensa → mides en bytes, no en paraules de 4B
+static StackType_t rellotgeStk      [ 4 * 1024];  //  4 KB
+static StackType_t edgeDetectorStk  [ 8 * 1024];  //  8 KB
+static StackType_t controlRemotStk  [ 8 * 1024];  //  8 KB
+static StackType_t controlHorariStk [16 * 1024];  // 16 KB (JSON parsing)
+static StackType_t monitorStk       [ 4 * 1024];  //  4 KB
 
 // ── Tick de QP via esp_timer (10 ms = 100 Hz, igual que Win32) ───────────────
 static void qp_tick_cb(void*) {
@@ -81,10 +100,12 @@ void onCleanup() {}
 static EventGroupHandle_t s_wifi_eg;
 static constexpr int WIFI_CONNECTED_BIT = BIT0;
 
-static void wifi_event_handler(void*, esp_event_base_t base, int32_t id, void*) {
+static void wifi_event_handler(void*, esp_event_base_t base, int32_t id, void* data) {
     if (base == WIFI_EVENT && id == WIFI_EVENT_STA_DISCONNECTED) {
         esp_wifi_connect();
     } else if (base == IP_EVENT && id == IP_EVENT_STA_GOT_IP) {
+        auto* event = static_cast<ip_event_got_ip_t*>(data);
+        std::printf("[WiFi] IP: " IPSTR "\n", IP2STR(&event->ip_info.ip));
         xEventGroupSetBits(s_wifi_eg, WIFI_CONNECTED_BIT);
     }
 }
@@ -113,6 +134,7 @@ static void wifi_init_sta() {
     xEventGroupWaitBits(s_wifi_eg, WIFI_CONNECTED_BIT,
                         pdFALSE, pdTRUE, portMAX_DELAY);
     std::printf("[WiFi] connectat a %s\n", CONFIG_WIFI_SSID);
+    std::printf("[WiFi] Obre el navegador a http://<IP>:8080\n");
 }
 
 // ── app_main ──────────────────────────────────────────────────────────────────
@@ -122,9 +144,12 @@ extern "C" void app_main() {
     // NVS: requerit per WiFi
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
-        nvs_flash_erase();
-        nvs_flash_init();
+        ESP_ERROR_CHECK(nvs_flash_erase());
+        ret = nvs_flash_init();
     }
+    ESP_ERROR_CHECK(ret);
+
+    xTaskCreatePinnedToCore(blink_task, "blink", 2048, nullptr, 1, nullptr, APP_CPU_NUM);
 
     esp_netif_init();
     esp_event_loop_create_default();

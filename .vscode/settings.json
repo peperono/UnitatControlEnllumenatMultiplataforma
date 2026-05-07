@@ -1,0 +1,9 @@
+{
+    "idf.espIdfPath": "/home/vscode/esp/esp-idf",
+    "idf.toolsPath": "/home/vscode/.espressif",
+    "idf.pythonBinPath": "/home/vscode/.espressif/python_env/idf5.4_py3.10_env/bin/python3",
+    "idf.customExtraPaths": "",
+    "idf.currentSetup": "/home/vscode/esp/esp-idf",
+    "idf.flashType": "UART",
+    "idf.port": "/dev/ttyUSB0"
+}
