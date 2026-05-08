@@ -13,6 +13,7 @@
 #include "ControlHorari/ControlHorariState.h"
 #include "ControlHorari/json_horari.h"
 #include "Rellotge/Rellotge.h"
+#include "ActuadorSortides/ActuadorSortides.hpp"
 #include "mongoose/mongoose.h"
 #include <cstdio>
 #include <cstdlib>
@@ -34,6 +35,7 @@ static QP::QEvtPtr testObserverQSto[10];
 static QP::QEvtPtr controlRemotQSto[64];
 static QP::QEvtPtr controlHorariQSto[32];
 static QP::QEvtPtr rellotgeQSto[16];
+static QP::QEvtPtr actuadorSortidesQSto[8];
 
 // ── Callbacks del port win32-qv ───────────────────────────────────────────────
 namespace QP {
@@ -91,6 +93,7 @@ int main() {
     static ControlRemot        controlRemot;
     static ControlHorari       controlHorari;
     static Rellotge            rellotge;
+    static ActuadorSortides    actuadorSortides;
 
     edgeDetector.configure(configs);
 
@@ -122,7 +125,9 @@ int main() {
     controlHorari.start(3U,controlHorariQSto, Q_DIM(controlHorariQSto), nullptr, 0U);
     monitor.start(     2U, monitorQSto,       Q_DIM(monitorQSto),       nullptr, 0U);
     if (choice != 2) {
-        testObserver.start(1U, testObserverQSto, Q_DIM(testObserverQSto), nullptr, 0U);
+        testObserver.start(   1U, testObserverQSto,      Q_DIM(testObserverQSto),      nullptr, 0U);
+    } else {
+        actuadorSortides.start(1U, actuadorSortidesQSto, Q_DIM(actuadorSortidesQSto), nullptr, 0U);
     }
 
     // Carrega l'horari per defecte

@@ -12,6 +12,8 @@
 #include "ControlHorari/ControlHorariState.h"
 #include "ControlHorari/json_horari.h"
 #include "Rellotge/Rellotge.h"
+#include "ActuadorSortides/ActuadorSortides.hpp"
+#include "mongoose/mongoose.h"
 
 #include "esp_log.h"
 #include "esp_wifi.h"
@@ -23,22 +25,6 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
-
-static constexpr gpio_num_t LED_VERD = GPIO_NUM_2;
-
-static void blink_task(void*) {
-    gpio_config_t cfg = {};
-    cfg.pin_bit_mask = 1ULL << LED_VERD;
-    cfg.mode         = GPIO_MODE_OUTPUT;
-    gpio_config(&cfg);
-
-    for (;;) {
-        gpio_set_level(LED_VERD, 1);
-        vTaskDelay(pdMS_TO_TICKS(500));
-        gpio_set_level(LED_VERD, 0);
-        vTaskDelay(pdMS_TO_TICKS(500));
-    }
-}
 
 #include <cstdio>
 #include <cstring>
@@ -62,7 +48,8 @@ static QP::QEvtPtr rellotgeQSto      [16];
 static QP::QEvtPtr edgeDetectorQSto  [10];
 static QP::QEvtPtr controlRemotQSto  [64];
 static QP::QEvtPtr controlHorariQSto [32];
-static QP::QEvtPtr monitorQSto       [10];
+static QP::QEvtPtr monitorQSto          [10];
+static QP::QEvtPtr actuadorSortidesQSto [ 8];
 
 // ── Stacks estàtics per a cada tasca FreeRTOS ────────────────────────────────
 // El port FreeRTOS de QP/C++ requereix configSUPPORT_STATIC_ALLOCATION=1
@@ -71,7 +58,8 @@ static StackType_t rellotgeStk      [ 4 * 1024];  //  4 KB
 static StackType_t edgeDetectorStk  [ 8 * 1024];  //  8 KB
 static StackType_t controlRemotStk  [ 8 * 1024];  //  8 KB
 static StackType_t controlHorariStk [16 * 1024];  // 16 KB (JSON parsing)
-static StackType_t monitorStk       [ 4 * 1024];  //  4 KB
+static StackType_t monitorStk            [ 4 * 1024];  //  4 KB
+static StackType_t actuadorSortidesStk   [ 4 * 1024];  //  4 KB
 
 // ── Tick de QP via esp_timer (10 ms = 100 Hz, igual que Win32) ───────────────
 static void qp_tick_cb(void*) {
@@ -128,6 +116,7 @@ static void wifi_init_sta() {
 
     esp_wifi_set_mode(WIFI_MODE_STA);
     esp_wifi_set_config(WIFI_IF_STA, &wcfg);
+    std::printf("[WiFi] SSID: %s | PASSWORD: %s\n", CONFIG_WIFI_SSID, CONFIG_WIFI_PASSWORD);
     esp_wifi_start();
     esp_wifi_connect();
 
@@ -140,6 +129,7 @@ static void wifi_init_sta() {
 // ── app_main ──────────────────────────────────────────────────────────────────
 extern "C" void app_main() {
     std::printf("=== UnitatControlEnllumenat (ESP32) ===\n");
+    mg_log_set(MG_LL_NONE);
 
     // NVS: requerit per WiFi
     esp_err_t ret = nvs_flash_init();
@@ -148,8 +138,6 @@ extern "C" void app_main() {
         ret = nvs_flash_init();
     }
     ESP_ERROR_CHECK(ret);
-
-    xTaskCreatePinnedToCore(blink_task, "blink", 2048, nullptr, 1, nullptr, APP_CPU_NUM);
 
     esp_netif_init();
     esp_event_loop_create_default();
@@ -193,6 +181,7 @@ extern "C" void app_main() {
     static ControlRemot        controlRemot;
     static ControlHorari       controlHorari;
     static Rellotge            rellotge;
+    static ActuadorSortides    actuadorSortides;
 
     edgeDetector.configure(configs);
 
@@ -214,8 +203,10 @@ extern "C" void app_main() {
                        controlRemotStk,  sizeof(controlRemotStk));
     controlHorari.start(3U,controlHorariQSto, Q_DIM(controlHorariQSto),
                        controlHorariStk, sizeof(controlHorariStk));
-    monitor.start     (2U, monitorQSto,       Q_DIM(monitorQSto),
-                       monitorStk,       sizeof(monitorStk));
+    monitor.start     (2U, monitorQSto,          Q_DIM(monitorQSto),
+                       monitorStk,          sizeof(monitorStk));
+    actuadorSortides.start(1U, actuadorSortidesQSto, Q_DIM(actuadorSortidesQSto),
+                       actuadorSortidesStk, sizeof(actuadorSortidesStk));
 
     {
         std::lock_guard<std::mutex> lk(ch_state.mtx);

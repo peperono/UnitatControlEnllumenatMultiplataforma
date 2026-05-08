@@ -14,6 +14,7 @@ idf_component_register(
         "main_esp32.cpp"
         "${ROOT}/DigitalEdgeDetector/DigitalEdgeDetector.cpp"
         "${ROOT}/Monitor/Monitor.cpp"
+        "${ROOT}/ActuadorSortides/ActuadorSortides.cpp"
         "${ROOT}/HttpServer/HttpServer.cpp"
         "${ROOT}/ControlRemot/ControlRemot.cpp"
         "${ROOT}/ControlHorari/ControlHorari.cpp"
