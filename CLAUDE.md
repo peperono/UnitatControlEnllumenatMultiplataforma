@@ -2,6 +2,16 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Índex
+
+- [Windows](#windows)
+- [ESP32](#esp32)
+- [Architecture](#architecture)
+- [Active Objects — endpoints, WebSocket i events](#active-objects--endpoints-websocket-i-events)
+- [HTTP endpoints](#http-endpoints)
+- [Key files](#key-files)
+- [Convencions](#convencions)
+
 ## Windows
 
 ### Build
