@@ -30,13 +30,6 @@ Uses `x86_64-w64-mingw32-g++` (devcontainer cross-compiler) if available, otherw
 
 ## ESP32
 
-### Compilar
-
-```bash
-source ~/esp/esp-idf/export.sh
-idf.py build
-```
-
 ### Connectar USB (des de PowerShell a Windows, com a administrador)
 
 ```powershell
