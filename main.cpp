@@ -13,7 +13,7 @@
 #include "ControlHorari/ControlHorariState.h"
 #include "ControlHorari/json_horari.h"
 #include "Rellotge/Rellotge.h"
-#include "ActuadorSortides/ActuadorSortides.hpp"
+#include "ActuadorSortides/OutputWriter_Console.hpp"
 #include "mongoose/mongoose.h"
 #include <cstdio>
 #include <cstdlib>
@@ -93,7 +93,7 @@ int main() {
     static ControlRemot        controlRemot;
     static ControlHorari       controlHorari;
     static Rellotge            rellotge;
-    static ActuadorSortides    actuadorSortides;
+    static ActuadorSortides    actuadorSortides{makeConsoleWriter()};
 
     edgeDetector.configure(configs);
 

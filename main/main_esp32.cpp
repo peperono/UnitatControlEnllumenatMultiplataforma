@@ -13,7 +13,7 @@
 #include "ControlHorari/ControlHorariState.h"
 #include "ControlHorari/json_horari.h"
 #include "Rellotge/Rellotge.h"
-#include "ActuadorSortides/ActuadorSortides.hpp"
+#include "ActuadorSortides/OutputWriter_HW.hpp"
 #include "mongoose/mongoose.h"
 
 #include "esp_log.h"
@@ -182,7 +182,7 @@ extern "C" void app_main() {
     static ControlRemot        controlRemot;
     static ControlHorari       controlHorari;
     static Rellotge            rellotge;
-    static ActuadorSortides    actuadorSortides;
+    static ActuadorSortides    actuadorSortides{makeGPIOWriter()};
 
     edgeDetector.configure(configs);
 
