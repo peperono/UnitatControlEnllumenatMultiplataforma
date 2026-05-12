@@ -154,7 +154,7 @@ A ESP32, la prioritat 1 correspon a `ActuadorSortides` (en lloc de `TestObserver
 
 ## Active Objects — endpoints, WebSocket i events
 
-### `DigitalEdgeDetector` (prioritat 3)
+### `DigitalEdgeDetector` (prioritat 5)
 
 | Direcció | Endpoint / WS | Format | Efecte |
 |----------|--------------|--------|--------|
@@ -163,16 +163,9 @@ A ESP32, la prioritat 1 correspon a `ActuadorSortides` (en lloc de `TestObserver
 | AO → | `WS /ws` push (`se.push_pending`) | `"inputs":{"1":true},"last_edges":[2],"edge_counts":{"2":3}` | Escriu `se.inputs`, `se.last_edges`, `se.edge_counts` |
 | AO → | `GET /config_inputs` | `[{"id":2,"logic_positive":true,"detection_always":false,"linked_outputs":[10]}]` | Lectura de `se.configs[]` |
 
-| Event | Rol |
-|-------|-----|
-| `RECONFIGURE_SIG` (`ReconfigureEvt`) | subscrit — recarrega configuració d'entrades |
-| `OUTPUT_RESULT_SIG` (`OutputResultEvt`) | subscrit — actualitza `m_commandedOutputs`; estat efectiu de sortides per a `detection_enabled()` |
-| `IO_STATE_CHANGED_SIG` (`IOStateEvt`) | publica — inputs/outputs actuals |
-| `EDGE_DETECTED_SIG` (`EdgeDetectedEvt`) | publica — IDs d'entrades amb flanc detectat |
-
 ---
 
-### `ControlRemot`
+### `ControlRemot` (prioritat 4)
 
 | Direcció | Endpoint / WS | Format | Efecte |
 |----------|--------------|--------|--------|
@@ -181,32 +174,18 @@ A ESP32, la prioritat 1 correspon a `ActuadorSortides` (en lloc de `TestObserver
 
 Valors vàlids de `action`: `activate`, `deactivate`, `set_remote`, `set_auto`, `return_auto` (`id:-1` = totes les sortides), `delete`.
 
-| Event | Rol |
-|-------|-----|
-| `OUTPUT_STATE_SIG` (`OutputStateEvt`) | subscrit — rep l'estat real de sortides (des de `ControlHorari`) |
-| `CTRL_OUTPUT_CMD_SIG` (`OutputCmdEvt`) | subscrit — ordre activate/deactivate |
-| `CTRL_OUTPUT_MODE_SIG` (`OutputModeEvt`) | subscrit — canvi mode AUTO/REMOTE |
-| `CTRL_OUTPUT_RETURN_AUTO_SIG` (`OutputReturnAutoEvt`) | subscrit — torna a AUTO (una o totes) |
-| `CTRL_OUTPUT_DELETE_SIG` (`OutputDeleteEvt`) | subscrit — elimina una sortida |
-| `OUTPUT_RESULT_SIG` (`OutputResultEvt`) | publica — resultat consolidat de totes les sortides |
-
 ---
 
-### `ControlHorari`
+### `ControlHorari` (prioritat 3)
 
 | Direcció | Endpoint / WS | Format | Efecte |
 |----------|--------------|--------|--------|
 | → AO | `POST /programacio_horaria` | `{"dilluns":[{"id":1,"act":"on","time":"08:00"}],...}` | Escriu `ch_state.programacioHoraria` + `load_pending=true`; l'AO recarrega al pròxim `RELLOTGE_TICK_SIG` |
 | AO → | `GET /programacio_horaria` | `{"dilluns":[{"id":1,"act":"on","time":"08:00"}],...}` | Lectura de `ch_state.programacioHoraria` (no involucra l'AO directament) |
 
-| Event | Rol |
-|-------|-----|
-| `RELLOTGE_TICK_SIG` (`RellotgeTickEvt`) | subscrit — cada minut: comprova `load_pending` i executa maniobres |
-| `OUTPUT_STATE_SIG` (`OutputStateEvt`) | publica — quan hi ha maniobres que coincideixen amb l'hora actual |
-
 ---
 
-### `Rellotge`
+### `Rellotge` (prioritat 6)
 
 | Direcció | Endpoint / WS | Format | Efecte |
 |----------|--------------|--------|--------|
@@ -214,21 +193,41 @@ Valors vàlids de `action`: `activate`, `deactivate`, `set_remote`, `set_auto`, 
 
 Cap endpoint HTTP envia dades al Rellotge.
 
-| Event | Rol |
-|-------|-----|
-| `RELLOTGE_TICK_INTERNAL_SIG` | intern (time event armat en `initial`) — cada 50 ms (= 1 minut simulat) |
-| `RELLOTGE_TICK_SIG` (`RellotgeTickEvt`) | publica — hora/minut/dia actuals |
-
 ---
 
 ### `Monitor` (prioritat 2)
 
 Cap endpoint ni WS interactua directament amb aquest AO. Només consumeix events QP.
 
-| Event | Rol |
-|-------|-----|
-| `IO_STATE_CHANGED_SIG` (`IOStateEvt`) | subscrit |
-| `EDGE_DETECTED_SIG` (`EdgeDetectedEvt`) | subscrit |
+---
+
+### `ActuadorSortides` (prioritat 1)
+
+Cap endpoint ni WS. Només consumeix events QP i actua sobre hardware o consola.
+
+---
+
+### Events QP
+
+| Event | AO | Rol |
+|-------|----|-----|
+| `RELLOTGE_TICK_INTERNAL_SIG` | `Rellotge` | intern — time event armat en `initial`, cada 50 ms (= 1 minut simulat) |
+| `RELLOTGE_TICK_SIG` (`RellotgeTickEvt`) | `Rellotge` | publica — hora/minut/dia actuals |
+| `RELLOTGE_TICK_SIG` (`RellotgeTickEvt`) | `ControlHorari` | subscrit — cada minut: comprova `load_pending` i executa maniobres |
+| `RECONFIGURE_SIG` (`ReconfigureEvt`) | `DigitalEdgeDetector` | subscrit — recarrega configuració d'entrades |
+| `OUTPUT_RESULT_SIG` (`OutputResultEvt`) | `DigitalEdgeDetector` | subscrit — actualitza `m_commandedOutputs` per a `detection_enabled()` |
+| `IO_STATE_CHANGED_SIG` (`IOStateEvt`) | `DigitalEdgeDetector` | publica — inputs/outputs actuals |
+| `EDGE_DETECTED_SIG` (`EdgeDetectedEvt`) | `DigitalEdgeDetector` | publica — IDs d'entrades amb flanc detectat |
+| `IO_STATE_CHANGED_SIG` (`IOStateEvt`) | `Monitor` | subscrit |
+| `EDGE_DETECTED_SIG` (`EdgeDetectedEvt`) | `Monitor` | subscrit |
+| `OUTPUT_STATE_SIG` (`OutputStateEvt`) | `ControlRemot` | subscrit — rep l'estat real de sortides (des de `ControlHorari`) |
+| `CTRL_OUTPUT_CMD_SIG` (`OutputCmdEvt`) | `ControlRemot` | subscrit — ordre activate/deactivate |
+| `CTRL_OUTPUT_MODE_SIG` (`OutputModeEvt`) | `ControlRemot` | subscrit — canvi mode AUTO/REMOTE |
+| `CTRL_OUTPUT_RETURN_AUTO_SIG` (`OutputReturnAutoEvt`) | `ControlRemot` | subscrit — torna a AUTO (una o totes) |
+| `CTRL_OUTPUT_DELETE_SIG` (`OutputDeleteEvt`) | `ControlRemot` | subscrit — elimina una sortida |
+| `OUTPUT_RESULT_SIG` (`OutputResultEvt`) | `ControlRemot` | publica — resultat consolidat de totes les sortides |
+| `OUTPUT_STATE_SIG` (`OutputStateEvt`) | `ControlHorari` | publica — quan hi ha maniobres que coincideixen amb l'hora actual |
+| `OUTPUT_RESULT_SIG` (`OutputResultEvt`) | `ActuadorSortides` | subscrit — activa GPIOs (ESP32) o printf (Windows) |
 
 ---
 
