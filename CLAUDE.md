@@ -8,9 +8,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 bash build.sh
 ```
 
-Output: `build-win/app.exe`. The script compiles `mongoose/mongoose.c` with `gcc` then links everything with `g++ -std=c++17 -O1 -Wall -static -lwinmm -lws2_32`.
+Output: `build-win/app.exe`. Each run the script:
+1. Assembles `web/index.html` from subsystem files (`web/assemble.sh`)
+2. Generates `web/index_html.h` (embedded HTML/JS header)
+3. Compiles `mongoose/mongoose.c` (always, no incremental check)
+4. Compiles and links all `.cpp` files with `g++ -std=c++17 -O1 -Wall -static -lwinmm -lws2_32`
 
-**Important:** The HTML/JS UI is embedded as a string constant in `HttpServer/HttpServer.cpp`. Any JS/HTML change requires a full recompile, app restart, and hard browser refresh (Ctrl+Shift+R).
+Uses `x86_64-w64-mingw32-g++` (devcontainer cross-compiler) if available, otherwise `g++`.
+
+**Important:** The HTML/JS UI is embedded via `web/index_html.h` into `HttpServer/HttpServer.cpp`. Any JS/HTML change requires a full recompile, app restart, and hard browser refresh (Ctrl+Shift+R).
 
 ## Run (Windows)
 
