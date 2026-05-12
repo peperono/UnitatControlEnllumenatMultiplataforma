@@ -2,7 +2,9 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Build (Windows)
+## Windows
+
+### Build
 
 ```bash
 bash build.sh
@@ -18,7 +20,7 @@ Uses `x86_64-w64-mingw32-g++` (devcontainer cross-compiler) if available, otherw
 
 **Important:** The HTML/JS UI is embedded via `web/index_html.h` into `HttpServer/HttpServer.cpp`. Any JS/HTML change requires a full recompile, app restart, and hard browser refresh (Ctrl+Shift+R).
 
-## Run (Windows)
+### Run
 
 ```bash
 ./build/app.exe
