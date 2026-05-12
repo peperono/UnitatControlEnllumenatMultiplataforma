@@ -12,13 +12,98 @@ Output: `build-win/app.exe`. The script compiles `mongoose/mongoose.c` with `gcc
 
 **Important:** The HTML/JS UI is embedded as a string constant in `HttpServer/HttpServer.cpp`. Any JS/HTML change requires a full recompile, app restart, and hard browser refresh (Ctrl+Shift+R).
 
-## Run
+## Run (Windows)
 
 ```bash
 ./build/app.exe
 # 1 → Test mode (automated IO sequence, prints OK/FALLO per step)
 # 2 → Remote mode (web UI at http://localhost:8080)
 ```
+
+## ESP32
+
+### Compilar
+
+```bash
+source ~/esp/esp-idf/export.sh
+idf.py build
+```
+
+### Connectar USB (des de PowerShell a Windows, com a administrador)
+
+```powershell
+.\flash-attach-usb.ps1
+```
+
+Detecta automàticament el dispositiu FTDI/CP210x, fa `bind --force` si cal i `attach` a docker-desktop. El port apareix com `/dev/ttyUSB0` i `/dev/ttyUSB1` al contenidor.
+
+### Compilar i flashejar
+
+```bash
+bash flash_esp32.sh           # compila i flasheja via /dev/ttyUSB1
+bash flash_esp32.sh --erase   # esborra NVS primer (útil si el WiFi no arrenca)
+```
+
+Si el port està ocupat:
+
+```bash
+fuser /dev/ttyUSB1   # mostra el PID bloquejant
+kill <PID>
+idf.py -p /dev/ttyUSB1 flash
+```
+
+### Monitor sèrie
+
+Des d'un terminal interactiu:
+
+```bash
+bash monitor_esp32.sh
+```
+
+Des de Claude Code (sense TTY), llegir log d'arrencada amb reset via pyserial:
+
+```bash
+/home/vscode/.espressif/python_env/idf5.4_py3.10_env/bin/python -c "
+import serial, sys, time
+s = serial.Serial('/dev/ttyUSB1', 115200, timeout=1)
+s.setDTR(False); s.setRTS(True); time.sleep(0.1); s.setRTS(False)
+end = time.time() + 15
+while time.time() < end:
+    d = s.read(512)
+    if d: sys.stdout.buffer.write(d); sys.stdout.flush()
+" | strings
+```
+
+### Configuració WiFi
+
+SSID i contrasenya es configuren via `idf.py menuconfig` → *Example Connection Configuration*, o editant directament `sdkconfig`.
+
+### Hardware (ESP-WROVER-KIT V4.1)
+
+**Entrades** — `HWReader/IOReader_HW.hpp` → `makeHWReader()`:
+
+| ID | GPIO | Nota |
+|----|------|------|
+| E1 | GPIO34 | Input-only; requereix pull-up extern 10 kΩ a 3.3 V |
+
+**Sortides** — `ActuadorSortides/OutputWriter_HW.hpp` → `makeGPIOWriter()`:
+
+| ID | GPIO | LED placa |
+|----|------|-----------|
+| S1 | GPIO4 | Blau |
+| S2 | GPIO0 | Vermell (strapping pin; no baixar durant el reset) |
+| S3 | GPIO2 | Verd |
+
+GPIOs a evitar: GPIO16/17 (PSRAM), GPIO6–11 (flash SPI), GPIO21 (càmera D7 a la placa WROVER-KIT).
+
+### Injecció de plataforma
+
+| Abstracció | Windows (`main.cpp`) | ESP32 (`main/main_esp32.cpp`) |
+|-----------|----------------------|-------------------------------|
+| `IOReader` | `makeRemoteReader()` | `makeHWReader()` |
+| `OutputWriter` | `makeConsoleWriter()` | `makeGPIOWriter()` |
+
+A ESP32, la prioritat 1 correspon a `ActuadorSortides` (en lloc de `TestObserver`).
 
 ## Architecture
 
@@ -42,7 +127,9 @@ Output: `build-win/app.exe`. The script compiles `mongoose/mongoose.c` with `gcc
 
 **Cross-thread data:** `SharedState se` (defined in `main.cpp`, declared `extern` in `DigitalEdgeDetector/SharedState.h`) is the only shared data between the QV thread and the Mongoose thread. All access is guarded by `se.mtx`. `DigitalEdgeDetector` writes `se.inputs`, `se.outputs`, `se.last_edges`, `se.edge_counts` and sets `se.push_pending = true` directly in the poll handler. The Mongoose thread reads `se` and pushes WebSocket messages when `push_pending` is set.
 
-**IOReader injection:** `DigitalEdgeDetector` accepts an `IOReader = std::function<void(map<int,bool>&, map<int,bool>&)>` at construction. In test mode `makeTestReader()` (`Test/TestController.hpp`) returns a lambda cycling through `TestStep` scenarios. In remote mode `makeRemoteReader()` (`RemoteIO/IOReader_Remot.hpp`) returns a lambda that reads from `RemoteIOState remoteIO` (mutex-protected, written by the Mongoose thread via WebSocket). Future platform implementations: `HWReader` (reads GPIO hardware).
+**IOReader injection:** `DigitalEdgeDetector` accepts an `IOReader = std::function<void(map<int,bool>&, map<int,bool>&)>` at construction. In test mode `makeTestReader()` (`Test/TestController.hpp`) returns a lambda cycling through `TestStep` scenarios. In remote mode `makeRemoteReader()` (`RemoteIO/IOReader_Remot.hpp`) returns a lambda that reads from `RemoteIOState remoteIO` (mutex-protected, written by the Mongoose thread via WebSocket). On ESP32 `makeHWReader()` (`HWReader/IOReader_HW.hpp`) reads physical GPIO inputs.
+
+**OutputWriter injection:** `ActuadorSortides` accepts an `OutputWriter = std::function<void(int id, bool actiu)>` at construction. `makeGPIOWriter()` (`ActuadorSortides/OutputWriter_HW.hpp`) initialises GPIOs and returns a lambda that calls `gpio_set_level`. `makeConsoleWriter()` (`ActuadorSortides/OutputWriter_Console.hpp`) returns a lambda that prints to stdout. This removes all `#ifdef ESP_PLATFORM` from the AO itself.
 
 **Event memory:** `IOStateEvt` and `EdgeDetectedEvt` use static (zero-pool) semantics because they hold `std::vector`/`std::unordered_map` which are incompatible with QP memory pools. This is safe under the QV cooperative scheduler. `ReconfigureEvt` uses a QP memory pool (initialized in `main.cpp`). Max 16 configs per `ReconfigureEvt`. Remote IO input is not a QP event: the Mongoose thread writes directly to `remoteIO` (mutex-protected), and `DigitalEdgeDetector` reads it via the injected `IOReader` lambda on each poll tick.
 
@@ -161,8 +248,17 @@ Cap endpoint ni WS interactua directament amb aquest AO. Només consumeix events
 - `DigitalEdgeDetector/SharedState.h` — the shared struct between QV and Mongoose threads
 - `InputConfig.h` — `InputConfig` struct: `id`, `logic_positive`, `detection_always`, `linked_outputs`
 - `Test/TestController.hpp` — TestObserver AO + verifyStep() + makeTestReader() + g_* globals
-- `docs/ControlEntrades.drawio` — system architecture diagram
+- `docs/ControlEntrades.drawio` — entrades architecture diagram
+- `docs/ControlSortides.drawio` — sortides architecture diagram (ControlHorari, ControlRemot, ActuadorSortides)
 - `qp_config.hpp` — QP tunables (`QF_MAX_ACTIVE=32`, `QF_MAX_EPOOL=3`)
+- `main.cpp` — entry point Windows
+- `main/main_esp32.cpp` — entry point ESP32 (WiFi, FreeRTOS stacks, makeHWReader, makeGPIOWriter)
+- `HWReader/IOReader_HW.hpp` — `makeHWReader()`: GPIO34 → E1
+- `ActuadorSortides/OutputWriter_HW.hpp` — `makeGPIOWriter()`: GPIO4/0/2 → S1/S2/S3
+- `ActuadorSortides/OutputWriter_Console.hpp` — `makeConsoleWriter()`: printf stdout
+- `flash_esp32.sh` — compila i flasheja l'ESP32 via `/dev/ttyUSB1`
+- `monitor_esp32.sh` — monitor sèrie interactiu
+- `flash-attach-usb.ps1` — connecta USB al contenidor via usbipd (PowerShell, Windows)
 
 El diagrama de referència és `docs/ControlEntrades.drawio`. Les convencions visuals (colors, fletxes, etiquetes, estructura dels nodes) estan documentades a [`docs/drawio-conventions.md`](docs/drawio-conventions.md).
 
