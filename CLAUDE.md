@@ -75,6 +75,11 @@ while time.time() < end:
 " | strings
 ```
 
+- `serial.Serial('/dev/ttyUSB1', 115200, timeout=1)` — obre el port a 115200 bauds; `timeout=1` fa que cada `read()` esperi màxim 1 segon abans de retornar buit.
+- `setRTS(True/False)` — manipula la línia RTS del FTDI, connectada al pin EN de l'ESP32: equivalent a prémer el botó EN de la placa. Sense el reset, el dispositiu ja hauria arrencat i no es veuria res.
+- `stdout.buffer.write` — escriu bytes raw sense conversió de codificació.
+- `| strings` — filtra el flux binari i només mostra seqüències de 4+ caràcters ASCII imprimibles; sense això els bytes de control UART corromprien la sortida.
+
 ### Configuració WiFi
 
 SSID i contrasenya es configuren via `idf.py menuconfig` → *Example Connection Configuration*, o editant directament `sdkconfig`.
