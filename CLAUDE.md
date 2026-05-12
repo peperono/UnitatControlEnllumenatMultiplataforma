@@ -55,13 +55,13 @@ idf.py -p /dev/ttyUSB1 flash
 
 ### Monitor sèrie
 
-Des d'un terminal interactiu:
+**Usuari** (terminal interactiu amb TTY):
 
 ```bash
 bash monitor_esp32.sh
 ```
 
-Des de Claude Code (sense TTY), llegir log d'arrencada amb reset via pyserial:
+**Claude Code** (`idf.py monitor` no funciona sense TTY — usar pyserial directament):
 
 ```bash
 /home/vscode/.espressif/python_env/idf5.4_py3.10_env/bin/python -c "
