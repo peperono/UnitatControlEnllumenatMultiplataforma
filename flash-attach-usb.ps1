@@ -9,6 +9,15 @@ param(
     [string]$BusId = ""
 )
 
+# --- Relança com a administrador si cal ---
+if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    Write-Host "Relançant com a administrador..." -ForegroundColor Yellow
+    $args = @("-File", $MyInvocation.MyCommand.Path)
+    if ($BusId -ne "") { $args += @("-BusId", $BusId) }
+    Start-Process powershell -Verb RunAs -ArgumentList (@("-NoExit") + $args)
+    exit
+}
+
 $knownChips = @("FT2232", "CP210", "CH340", "CH341", "UART", "Serial")
 
 function Find-EspDevice {
@@ -43,15 +52,18 @@ if ($BusId -eq "") {
     Write-Host "Trobat: BUSID $BusId" -ForegroundColor Green
 }
 
-# --- Bind (si encara no s'ha fet) ---
+# --- Bind --force: només si encara no és Shared ---
 $listOut = usbipd list 2>&1 | Out-String
-if ($listOut -match "$BusId\s.*Not shared") {
-    Write-Host "Fent bind de $BusId (cal admin la primera vegada)..." -ForegroundColor Yellow
-    usbipd bind --busid $BusId
+if ($listOut -notmatch "$BusId\s.*Shared") {
+    Write-Host "Alliberant dispositiu de Windows (bind --force)..." -ForegroundColor Yellow
+    usbipd bind --busid $BusId --force 2>&1 | Out-Null
     if ($LASTEXITCODE -ne 0) {
         Write-Host "Error al bind. Obre PowerShell com a administrador i torna a executar." -ForegroundColor Red
         exit 1
     }
+    Start-Sleep -Seconds 2
+} else {
+    Write-Host "Dispositiu ja en estat Shared, saltant bind." -ForegroundColor Gray
 }
 
 # --- Detach previ si ja estava attached ---
@@ -66,14 +78,10 @@ if ($listOut2 -match "$BusId\s.*Attached") {
 Write-Host "Carregant driver ftdi_sio a docker-desktop..." -ForegroundColor Cyan
 wsl -d docker-desktop modprobe ftdi_sio 2>&1 | Out-Null
 
-# --- Attach a docker-desktop ---
-Write-Host "Connectant $BusId a docker-desktop..." -ForegroundColor Cyan
-$attachOut = usbipd attach --wsl docker-desktop --busid $BusId 2>&1
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "Error al attach: $attachOut" -ForegroundColor Red
-    exit 1
-}
-Start-Sleep -Seconds 1
+# --- Attach a docker-desktop amb auto-attach en background ---
+Write-Host "Connectant $BusId a docker-desktop (auto-attach)..." -ForegroundColor Cyan
+Start-Process powershell -ArgumentList "-Command", "usbipd attach --wsl docker-desktop --busid $BusId --auto-attach" -WindowStyle Hidden
+Start-Sleep -Seconds 3
 
 # --- Crea els nodes de dispositiu al contenidor Docker ---
 Write-Host "Creant nodes /dev/ttyUSB* al contenidor..." -ForegroundColor Cyan

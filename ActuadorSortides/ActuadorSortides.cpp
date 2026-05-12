@@ -6,13 +6,12 @@
 
 // Mapeig: id de sortida → GPIO físic de l'ESP-WROVER-KIT V4.1
 // Correspondència GPIO → pin físic del mòdul ESP32:
-//   GPIO_21 = pin 33 | GPIO_4 = pin 26 | GPIO_0 = pin 25 | GPIO_2 = pin 24
-// NOTA: GPIO_16 reservat per PSRAM (mòdul WROVER) — no usar
+//   GPIO_4 = pin 26 | GPIO_0 = pin 25 | GPIO_2 = pin 24
+// NOTA: GPIO_16/17 reservats per PSRAM (mòdul WROVER) — no usar
 static const struct { int id; gpio_num_t gpio; } k_mapa[] = {
-    {1, GPIO_NUM_21},  // S1 — pin 33
-    {2, GPIO_NUM_4 },  // S2 — pin 26 — LED blau
-    {3, GPIO_NUM_0 },  // S3 — pin 25 — LED vermell (compartit amb BOOT; no baixar durant el reset)
-    {4, GPIO_NUM_2 },  // S4 — pin 24 — LED verd
+    {1, GPIO_NUM_4 },  // S1 — pin 26 — LED blau
+    {2, GPIO_NUM_0 },  // S2 — pin 25 — LED vermell (compartit amb BOOT; no baixar durant el reset)
+    {3, GPIO_NUM_2 },  // S3 — pin 24 — LED verd
 };
 static constexpr int k_n = sizeof(k_mapa) / sizeof(k_mapa[0]);
 

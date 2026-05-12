@@ -7,6 +7,7 @@
 #include "DigitalEdgeDetector/SharedState.h"
 #include "RemoteIO/RemoteIOState.h"
 #include "RemoteIO/IOReader_Remot.hpp"
+#include "HWReader/IOReader_HW.hpp"
 #include "ControlRemot/ControlRemot.h"
 #include "ControlHorari/ControlHorari.h"
 #include "ControlHorari/ControlHorariState.h"
@@ -145,9 +146,9 @@ extern "C" void app_main() {
 
     // Configuració d'entrades per defecte (editable via PUT /config_inputs)
     const std::vector<InputConfig> configs = {
-        InputConfig{1, /*logic_positive=*/true,  /*always=*/true,  {}   },
-        InputConfig{2, /*logic_positive=*/true,  /*always=*/false, {10} },
-        InputConfig{4, /*logic_positive=*/false, /*always=*/true,  {}   }
+        InputConfig{1, /*logic_positive=*/false, /*always=*/true,  {}   },
+        InputConfig{2, /*logic_positive=*/true,  /*always=*/false, {1} },
+        InputConfig{3, /*logic_positive=*/false, /*always=*/true,  {}   }
     };
 
     {
@@ -176,7 +177,7 @@ extern "C" void app_main() {
     // hagin processat l'anterior, hi ha una condició de cursa. A 100 Hz de
     // polling i subscriptors lleugers, el risc pràctic és baix, però s'ha de
     // refactoritzar si es requereix garantia estricta.
-    static DigitalEdgeDetector edgeDetector{makeRemoteReader(), 1U};
+    static DigitalEdgeDetector edgeDetector{makeHWReader(), 1U};
     static Monitor             monitor;
     static ControlRemot        controlRemot;
     static ControlHorari       controlHorari;
