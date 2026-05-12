@@ -126,20 +126,21 @@ A ESP32, la prioritat 1 correspon a `ActuadorSortides` (en lloc de `TestObserver
 **Framework:** QP/C++ with the QV cooperative scheduler (single thread). A separate Mongoose thread handles HTTP/WebSocket I/O.
 
 **Threads:**
-- **QV thread (cooperative):** IOReader, DigitalEdgeDetector, Monitor, TestObserver
+- **QV thread (cooperative):** IOReader, DigitalEdgeDetector, Monitor, ActuadorSortides; TestObserver (Windows mode test)
 - **Mongoose thread:** HttpServer, access to SharedState (via mutex)
 - **External process:** Browser (HTTP + WebSocket)
 
 **Active Objects (priority order):**
 
-| Priority | AO | Publishes | Subscribes |
-|----------|----|-----------|------------|
-| 6 | `Rellotge` | `RELLOTGE_TICK_SIG` | — |
-| 5 | `DigitalEdgeDetector` | `IO_STATE_CHANGED_SIG`, `EDGE_DETECTED_SIG` | `RECONFIGURE_SIG`, `OUTPUT_RESULT_SIG` |
-| 4 | `ControlRemot` | `OUTPUT_RESULT_SIG` | `OUTPUT_STATE_SIG`, `CTRL_OUTPUT_CMD_SIG`, `CTRL_OUTPUT_MODE_SIG`, `CTRL_OUTPUT_RETURN_AUTO_SIG`, `CTRL_OUTPUT_DELETE_SIG` |
-| 3 | `ControlHorari` | `OUTPUT_STATE_SIG` | `RELLOTGE_TICK_SIG` |
-| 2 | `Monitor` | — | `IO_STATE_CHANGED_SIG`, `EDGE_DETECTED_SIG` |
-| 1 | `TestObserver` | — | `IO_STATE_CHANGED_SIG`, `EDGE_DETECTED_SIG` (test mode only) |
+| Priority | AO | Plataforma | Publishes | Subscribes |
+|----------|----|------------|-----------|------------|
+| 6 | `Rellotge` | ambdues | `RELLOTGE_TICK_SIG` | — |
+| 5 | `DigitalEdgeDetector` | ambdues | `IO_STATE_CHANGED_SIG`, `EDGE_DETECTED_SIG` | `RECONFIGURE_SIG`, `OUTPUT_RESULT_SIG` |
+| 4 | `ControlRemot` | ambdues | `OUTPUT_RESULT_SIG` | `OUTPUT_STATE_SIG`, `CTRL_OUTPUT_CMD_SIG`, `CTRL_OUTPUT_MODE_SIG`, `CTRL_OUTPUT_RETURN_AUTO_SIG`, `CTRL_OUTPUT_DELETE_SIG` |
+| 3 | `ControlHorari` | ambdues | `OUTPUT_STATE_SIG` | `RELLOTGE_TICK_SIG` |
+| 2 | `Monitor` | ambdues | — | `IO_STATE_CHANGED_SIG`, `EDGE_DETECTED_SIG` |
+| 1 | `ActuadorSortides` | ambdues | — | `OUTPUT_RESULT_SIG` |
+| 1 | `TestObserver` | Windows (mode test) | — | `IO_STATE_CHANGED_SIG`, `EDGE_DETECTED_SIG` |
 
 **Cross-thread data:** `SharedState se` (defined in `main.cpp`, declared `extern` in `DigitalEdgeDetector/SharedState.h`) is the only shared data between the QV thread and the Mongoose thread. All access is guarded by `se.mtx`. `DigitalEdgeDetector` writes `se.inputs`, `se.outputs`, `se.last_edges`, `se.edge_counts` and sets `se.push_pending = true` directly in the poll handler. The Mongoose thread reads `se` and pushes WebSocket messages when `push_pending` is set.
 
