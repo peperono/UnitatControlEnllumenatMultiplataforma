@@ -152,6 +152,28 @@ A ESP32, la prioritat 1 correspon a `ActuadorSortides` (en lloc de `TestObserver
 | 1 | `ActuadorSortides` | ambdues | — | `OUTPUT_RESULT_SIG` |
 | 1 | `TestObserver` | Windows (mode test) | — | `IO_STATE_CHANGED_SIG`, `EDGE_DETECTED_SIG` |
 
+### Events QP
+
+| Event | AO | Rol |
+|-------|----|-----|
+| `RELLOTGE_TICK_INTERNAL_SIG` | `Rellotge` | intern — time event armat en `initial`, cada 50 ms (= 1 minut simulat) |
+| `RELLOTGE_TICK_SIG` (`RellotgeTickEvt`) | `Rellotge` | publica — hora/minut/dia actuals |
+| `RELLOTGE_TICK_SIG` (`RellotgeTickEvt`) | `ControlHorari` | subscrit — cada minut: comprova `load_pending` i executa maniobres |
+| `RECONFIGURE_SIG` (`ReconfigureEvt`) | `DigitalEdgeDetector` | subscrit — recarrega configuració d'entrades |
+| `OUTPUT_RESULT_SIG` (`OutputResultEvt`) | `DigitalEdgeDetector` | subscrit — actualitza `m_commandedOutputs` per a `detection_enabled()` |
+| `IO_STATE_CHANGED_SIG` (`IOStateEvt`) | `DigitalEdgeDetector` | publica — inputs/outputs actuals |
+| `EDGE_DETECTED_SIG` (`EdgeDetectedEvt`) | `DigitalEdgeDetector` | publica — IDs d'entrades amb flanc detectat |
+| `IO_STATE_CHANGED_SIG` (`IOStateEvt`) | `Monitor` | subscrit |
+| `EDGE_DETECTED_SIG` (`EdgeDetectedEvt`) | `Monitor` | subscrit |
+| `OUTPUT_STATE_SIG` (`OutputStateEvt`) | `ControlRemot` | subscrit — rep l'estat real de sortides (des de `ControlHorari`) |
+| `CTRL_OUTPUT_CMD_SIG` (`OutputCmdEvt`) | `ControlRemot` | subscrit — ordre activate/deactivate |
+| `CTRL_OUTPUT_MODE_SIG` (`OutputModeEvt`) | `ControlRemot` | subscrit — canvi mode AUTO/REMOTE |
+| `CTRL_OUTPUT_RETURN_AUTO_SIG` (`OutputReturnAutoEvt`) | `ControlRemot` | subscrit — torna a AUTO (una o totes) |
+| `CTRL_OUTPUT_DELETE_SIG` (`OutputDeleteEvt`) | `ControlRemot` | subscrit — elimina una sortida |
+| `OUTPUT_RESULT_SIG` (`OutputResultEvt`) | `ControlRemot` | publica — resultat consolidat de totes les sortides |
+| `OUTPUT_STATE_SIG` (`OutputStateEvt`) | `ControlHorari` | publica — quan hi ha maniobres que coincideixen amb l'hora actual |
+| `OUTPUT_RESULT_SIG` (`OutputResultEvt`) | `ActuadorSortides` | subscrit — activa GPIOs (ESP32) o printf (Windows) |
+
 ## Active Objects — endpoints, WebSocket
 
 ### `DigitalEdgeDetector` (prioritat 5)
@@ -204,30 +226,6 @@ Cap endpoint ni WS interactua directament amb aquest AO. Només consumeix events
 ### `ActuadorSortides` (prioritat 1)
 
 Cap endpoint ni WS. Només consumeix events QP i actua sobre hardware o consola.
-
----
-
-### Events QP
-
-| Event | AO | Rol |
-|-------|----|-----|
-| `RELLOTGE_TICK_INTERNAL_SIG` | `Rellotge` | intern — time event armat en `initial`, cada 50 ms (= 1 minut simulat) |
-| `RELLOTGE_TICK_SIG` (`RellotgeTickEvt`) | `Rellotge` | publica — hora/minut/dia actuals |
-| `RELLOTGE_TICK_SIG` (`RellotgeTickEvt`) | `ControlHorari` | subscrit — cada minut: comprova `load_pending` i executa maniobres |
-| `RECONFIGURE_SIG` (`ReconfigureEvt`) | `DigitalEdgeDetector` | subscrit — recarrega configuració d'entrades |
-| `OUTPUT_RESULT_SIG` (`OutputResultEvt`) | `DigitalEdgeDetector` | subscrit — actualitza `m_commandedOutputs` per a `detection_enabled()` |
-| `IO_STATE_CHANGED_SIG` (`IOStateEvt`) | `DigitalEdgeDetector` | publica — inputs/outputs actuals |
-| `EDGE_DETECTED_SIG` (`EdgeDetectedEvt`) | `DigitalEdgeDetector` | publica — IDs d'entrades amb flanc detectat |
-| `IO_STATE_CHANGED_SIG` (`IOStateEvt`) | `Monitor` | subscrit |
-| `EDGE_DETECTED_SIG` (`EdgeDetectedEvt`) | `Monitor` | subscrit |
-| `OUTPUT_STATE_SIG` (`OutputStateEvt`) | `ControlRemot` | subscrit — rep l'estat real de sortides (des de `ControlHorari`) |
-| `CTRL_OUTPUT_CMD_SIG` (`OutputCmdEvt`) | `ControlRemot` | subscrit — ordre activate/deactivate |
-| `CTRL_OUTPUT_MODE_SIG` (`OutputModeEvt`) | `ControlRemot` | subscrit — canvi mode AUTO/REMOTE |
-| `CTRL_OUTPUT_RETURN_AUTO_SIG` (`OutputReturnAutoEvt`) | `ControlRemot` | subscrit — torna a AUTO (una o totes) |
-| `CTRL_OUTPUT_DELETE_SIG` (`OutputDeleteEvt`) | `ControlRemot` | subscrit — elimina una sortida |
-| `OUTPUT_RESULT_SIG` (`OutputResultEvt`) | `ControlRemot` | publica — resultat consolidat de totes les sortides |
-| `OUTPUT_STATE_SIG` (`OutputStateEvt`) | `ControlHorari` | publica — quan hi ha maniobres que coincideixen amb l'hora actual |
-| `OUTPUT_RESULT_SIG` (`OutputResultEvt`) | `ActuadorSortides` | subscrit — activa GPIOs (ESP32) o printf (Windows) |
 
 ## Key files
 
