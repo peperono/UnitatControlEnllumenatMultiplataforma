@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - [Windows](#windows)
 - [ESP32](#esp32)
 - [Architecture](#architecture)
-- [Active Objects — endpoints, WebSocket i events](#active-objects--endpoints-websocket-i-events)
+- [Active Objects — endpoints, WebSocket](#active-objects--endpoints-websocket-i-events)
 - [Key files](#key-files)
 - [Convencions](#convencions)
 
@@ -151,7 +151,7 @@ A ESP32, la prioritat 1 correspon a `ActuadorSortides` (en lloc de `TestObserver
 
 **Race condition to be aware of:** After a `PUT /config_inputs` HTTP response is sent, the QV poll timer may fire before `RECONFIGURE_SIG` is processed, emitting a WS push with stale IDs. The JS UI guards against this with `expectedInputIds`.
 
-## Active Objects — endpoints, WebSocket i events
+## Active Objects — endpoints, WebSocket
 
 ### `DigitalEdgeDetector` (prioritat 5)
 
