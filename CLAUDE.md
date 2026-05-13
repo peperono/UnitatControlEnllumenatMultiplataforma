@@ -8,7 +8,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - [ESP32](#esp32)
 - [Architecture](#architecture)
 - [Active Objects — endpoints, WebSocket i events](#active-objects--endpoints-websocket-i-events)
-- [HTTP endpoints](#http-endpoints)
 - [Key files](#key-files)
 - [Convencions](#convencions)
 
@@ -228,35 +227,6 @@ Cap endpoint ni WS. Només consumeix events QP i actua sobre hardware o consola.
 | `OUTPUT_RESULT_SIG` (`OutputResultEvt`) | `ControlRemot` | publica — resultat consolidat de totes les sortides |
 | `OUTPUT_STATE_SIG` (`OutputStateEvt`) | `ControlHorari` | publica — quan hi ha maniobres que coincideixen amb l'hora actual |
 | `OUTPUT_RESULT_SIG` (`OutputResultEvt`) | `ActuadorSortides` | subscrit — activa GPIOs (ESP32) o printf (Windows) |
-
----
-
-## HTTP endpoints
-
-- `GET /` — serves embedded HTML/JS page
-- `GET /config_inputs` — returns `se.configs[]` as JSON array
-  ```json
-  [{"id":2,"logic_positive":true,"detection_always":false,"linked_outputs":[10]}]
-  ```
-- `PUT /config_inputs` — replaces full config array, posts `RECONFIGURE_SIG`. Body: same format as GET response. Max 16 entries (`MAX_CONFIGS`), max 8 linked outputs (`MAX_LINKED`).
-- `POST /control_outputs` — posts command events to `ControlRemot` via `handleJson`. Body: array of actions:
-  ```json
-  [{"id":1,"action":"activate"}]
-  ```
-  Valid actions: `activate`, `deactivate`, `set_remote`, `set_auto`, `return_auto` (`id:-1` targets all outputs), `delete`.
-- `GET /programacio_horaria` — returns `ch_state.programacioHoraria` as JSON
-  ```json
-  {"dilluns":[{"id":1,"act":"on","time":"08:00"},{"id":1,"act":"off","time":"22:00"}],"dimarts":[...],...}
-  ```
-- `POST /programacio_horaria` — replaces schedule, sets `ch_state.load_pending`. Body: same format as GET response. `ControlHorari` reloads it on the next `RELLOTGE_TICK_SIG`.
-- `WebSocket /ws` — server pushes on any `push_pending` flag (se / cr_state / rellotge_state / log_state):
-  ```json
-  {"inputs":{"1":true},"last_edges":[2],"edge_counts":{"2":3},
-   "time":"14:32","day":"dimarts",
-   "cs_outputs":{"1":{"state":false,"commanded":true,"result":true,"mode":"REMOTE"}},
-   "log":[{"t":"14:32:01","src":"ControlRemot","sig":"OUTPUT_RESULT_SIG","d":"1=ON(REM)"}]}
-  ```
-  Client sends to simulate inputs: `{"inputs":{"1":true}}` — written directly to `remoteIO.inputs`. Outputs are not sent via WS; `DigitalEdgeDetector` uses `m_commandedOutputs` (from `OUTPUT_RESULT_SIG`) per a `detection_enabled()`.
 
 ## Key files
 
