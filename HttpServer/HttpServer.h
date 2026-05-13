@@ -3,6 +3,7 @@
 #include <cstdint>
 
 namespace HttpServer {
-    void start(uint16_t port, QP::QActive* edgeDetector, QP::QActive* controlRemot);
+    void start(uint16_t port, QP::QActive* edgeDetector, QP::QActive* controlRemot,
+               const char* platform = "Windows");
     void stop();
 }

@@ -32,14 +32,15 @@
     .nav-brand {
       padding: 20px 16px 16px;
       border-bottom: 1px solid #21262d;
+      text-align: center;
     }
     .nav-brand-title {
-      font-size: 13px; font-weight: 800; color: #e02020;
+      font-size: 13px; font-weight: 800; color: var(--primary);
       letter-spacing: -0.2px; white-space: nowrap; display: block;
     }
     .nav-section-label {
       font-size: 10px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 1.5px; color: #484f58;
+      letter-spacing: 1.5px; color: #8b949e;
       padding: 14px 16px 6px;
     }
     .nav-item {
@@ -146,6 +147,7 @@
   <nav>
     <div class="nav-brand">
       <span class="nav-brand-title">CONTROL ENLLUMENAT</span>
+      <span id="platform-label" style="font-size:10px;color:var(--primary);display:block;margin-top:2px;letter-spacing:0.5px"></span>
       <span id="status" class="err" style="font-size:10px;margin-top:5px;display:block">&#9679; Desconnectat</span>
     </div>
     <div class="nav-section-label">Subsistemes</div>
@@ -174,7 +176,8 @@
 
     // ── WebSocket: només transport, emet CustomEvents ──
     let ws = null;
-    const statusEl = document.getElementById('status');
+    const statusEl   = document.getElementById('status');
+    const platformEl = document.getElementById('platform-label');
 
     function wsSend(data) {
       if (ws && ws.readyState === WebSocket.OPEN)
@@ -197,9 +200,10 @@
       };
       ws.onerror = () => ws.close();
       ws.onmessage = ({ data }) => {
-        window.dispatchEvent(new CustomEvent('ws-io-update', {
-          detail: JSON.parse(data)
-        }));
+        const msg = JSON.parse(data);
+        if (msg.platform && !platformEl.textContent)
+          platformEl.textContent = 'Plataforma ' + msg.platform;
+        window.dispatchEvent(new CustomEvent('ws-io-update', { detail: msg }));
       };
     }
 

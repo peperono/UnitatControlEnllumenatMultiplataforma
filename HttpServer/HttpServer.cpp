@@ -69,6 +69,8 @@ static std::string json_str(const std::string& v) {
 
 // ── Missatge WS unificat (Control Entrades + Control Sortides) ────────────────
 
+static const char* s_platform = "Windows";
+
 static std::string build_ws_msg(
         const std::unordered_map<int, bool>& inputs,
         const std::vector<int>&              edges,
@@ -109,7 +111,9 @@ static std::string build_ws_msg(
            + ",\"d\":"   + json_str(e.detail) + "}";
         fl = false;
     }
-    s += "]}";
+    s += "],\"platform\":\"";
+    s += s_platform;
+    s += "\"}";
     return s;
 }
 
@@ -376,7 +380,9 @@ static void server_loop(uint16_t port) {
     mg_mgr_free(&mgr);
 }
 
-void HttpServer::start(uint16_t port, QP::QActive* edgeDetector, QP::QActive* controlRemot) {
+void HttpServer::start(uint16_t port, QP::QActive* edgeDetector, QP::QActive* controlRemot,
+                       const char* platform) {
+    s_platform     = platform;
     s_edgeDetector = edgeDetector;
     s_controlRemot = static_cast<ControlRemot*>(controlRemot);
     s_running = true;

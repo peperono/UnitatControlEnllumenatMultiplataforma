@@ -215,7 +215,7 @@ extern "C" void app_main() {
     }
     controlHorari.loadJson(JSON_HORARI, sizeof(JSON_HORARI) - 1);
 
-    HttpServer::start(8080, &edgeDetector, &controlRemot);
+    HttpServer::start(8080, &edgeDetector, &controlRemot, "ESP32");
 
     QP::QF::run(); // inicia el scheduler FreeRTOS — no retorna
 }

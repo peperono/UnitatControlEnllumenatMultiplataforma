@@ -137,7 +137,7 @@ int main() {
     }
     controlHorari.loadJson(JSON_HORARI, sizeof(JSON_HORARI) - 1);
 
-    HttpServer::start(8080, &edgeDetector, &controlRemot);
+    HttpServer::start(8080, &edgeDetector, &controlRemot, "Windows");
 
     int ret = QP::QF::run();
 
