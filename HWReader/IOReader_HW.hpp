@@ -1,10 +1,7 @@
 #pragma once
 #include "../DigitalEdgeDetector/DigitalEdgeDetector.h"
-
-#ifdef ESP_PLATFORM
 #include "driver/gpio.h"
 
-// Mapeig: id d'entrada → GPIO físic
 // GPIO34 és input-only, sense pull-up intern → requereix pull-up extern (10kΩ a 3.3V)
 static const struct { int id; gpio_num_t gpio; } k_hw_inputs[] = {
     {1, GPIO_NUM_34},  // E1 — pull-up extern 10kΩ a 3.3V
@@ -18,24 +15,13 @@ inline void hw_inputs_init() {
         // GPIO34-39 no tenen pull-up intern — no cridar gpio_pullup_en
     }
 }
-#endif
 
 inline IOReader makeHWReader() {
-#ifdef ESP_PLATFORM
     hw_inputs_init();
     return [](std::unordered_map<int, bool>& inputs,
               std::unordered_map<int, bool>& outputs) {
         for (int i = 0; i < k_hw_n; ++i)
             inputs[k_hw_inputs[i].id] = (gpio_get_level(k_hw_inputs[i].gpio) == 1);
-        // Les sortides no es llegeixen per hardware — les gestiona ControlRemot
         (void)outputs;
     };
-#else
-    // En Windows no hi ha GPIO: retorna entrades sempre a false
-    return [](std::unordered_map<int, bool>& inputs,
-              std::unordered_map<int, bool>& outputs) {
-        (void)inputs;
-        (void)outputs;
-    };
-#endif
 }
