@@ -36,11 +36,11 @@ struct ReconfigureEvt : public QP::QEvt {
     static constexpr int MAX_CONFIGS = 16;
     static constexpr int MAX_LINKED  = 8;
     struct Entry {
-        int  id;
-        bool logic_positive;
-        bool detection_always;
-        int  linked_outputs[MAX_LINKED];
-        int  n_linked;
+        int          id;
+        EdgePolarity detect_edge;
+        bool         detection_always;
+        int          linked_outputs[MAX_LINKED];
+        int          n_linked;
     };
     Entry entries[MAX_CONFIGS];
     int   n_configs;

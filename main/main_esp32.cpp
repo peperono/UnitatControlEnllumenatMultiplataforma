@@ -146,9 +146,8 @@ extern "C" void app_main() {
 
     // Configuració d'entrades per defecte (editable via PUT /config_inputs)
     const std::vector<InputConfig> configs = {
-        InputConfig{1, /*logic_positive=*/false, /*always=*/true,  {}   },
-        InputConfig{2, /*logic_positive=*/true,  /*always=*/false, {1} },
-        InputConfig{3, /*logic_positive=*/false, /*always=*/true,  {}   }
+        InputConfig{1, /*detect_edge=*/EdgePolarity::falling, /*always=*/true,  {}   },
+        InputConfig{2, /*detect_edge=*/EdgePolarity::rising,  /*always=*/false, {1} },
     };
 
     {

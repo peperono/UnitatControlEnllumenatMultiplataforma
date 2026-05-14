@@ -68,7 +68,8 @@ Q_STATE_DEF(DigitalEdgeDetector, operating) {
 
                     bool rising_edge   = !prev && current;
                     bool falling_edge  =  prev && !current;
-                    bool edge_detected = cfg.logic_positive ? rising_edge : falling_edge;
+                    // falling = tancament (false→true); rising = obertura (true→false)
+                    bool edge_detected = (cfg.detect_edge == EdgePolarity::falling) ? rising_edge : falling_edge;
 
                     if (edge_detected && detection_enabled(cfg, outputs)) {
                         m_edgeEvt.input_ids.push_back(cfg.id);
@@ -114,7 +115,7 @@ Q_STATE_DEF(DigitalEdgeDetector, operating) {
                 auto const& e = evt->entries[i];
                 InputConfig cfg;
                 cfg.id               = e.id;
-                cfg.logic_positive   = e.logic_positive;
+                cfg.detect_edge      = e.detect_edge;
                 cfg.detection_always = e.detection_always;
                 for (int j = 0; j < e.n_linked; ++j)
                     cfg.linked_outputs.push_back(e.linked_outputs[j]);

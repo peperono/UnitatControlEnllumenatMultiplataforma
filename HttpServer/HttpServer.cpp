@@ -233,7 +233,7 @@ static void http_fn(struct mg_connection* c, int ev, void* ev_data) {
                     const auto& cfg = se.configs[i];
                     if (i > 0) body += ",";
                     body += "{\"id\":"               + std::to_string(cfg.id);
-                    body += ",\"logic_positive\":"   + std::string(cfg.logic_positive   ? "true" : "false");
+                    body += ",\"detect_edge\":\""     + std::string(cfg.detect_edge == EdgePolarity::rising ? "rising" : "falling") + "\"";
                     body += ",\"detection_always\":" + std::string(cfg.detection_always ? "true" : "false");
                     body += ",\"linked_outputs\":"   + int_vec_to_json(cfg.linked_outputs) + "}";
                 }
@@ -256,7 +256,9 @@ static void http_fn(struct mg_connection* c, int ev, void* ev_data) {
                 if (id < 0) break;
                 InputConfig cfg;
                 cfg.id = (int)id;
-                { bool v = false; mg_json_get_bool(elem, "$.logic_positive",   &v); cfg.logic_positive   = v; }
+                { int slen = 0; int soff = mg_json_get(elem, "$.detect_edge", &slen);
+                  cfg.detect_edge = (soff >= 0 && slen >= 6 && std::strncmp(elem.buf + soff + 1, "rising", 6) == 0)
+                                    ? EdgePolarity::rising : EdgePolarity::falling; }
                 { bool v = false; mg_json_get_bool(elem, "$.detection_always", &v); cfg.detection_always = v; }
                 { int llen = 0;
                   int loff = mg_json_get(elem, "$.linked_outputs", &llen);
@@ -350,7 +352,7 @@ static void post_reconfigure(const std::vector<InputConfig>& configs) {
         if (evt->n_configs >= ReconfigureEvt::MAX_CONFIGS) break;
         auto& e          = evt->entries[evt->n_configs++];
         e.id               = cfg.id;
-        e.logic_positive   = cfg.logic_positive;
+        e.detect_edge      = cfg.detect_edge;
         e.detection_always = cfg.detection_always;
         e.n_linked = 0;
         for (int out : cfg.linked_outputs) {

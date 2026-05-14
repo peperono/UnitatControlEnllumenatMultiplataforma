@@ -238,7 +238,7 @@ inline IOReader makeTestReader() {
         { {{1,true},{2,true},{3,true}},   {{10,true}},
           "(E1 = TANCAT, E2 = TANCAT) => (flanc E1, flanc E2)", {1,2} },
 
-        // ── Casos logic_positive=false, always=true (entrada 4) ──────────────
+        // ── Casos detect_edge=rising, always=true (entrada 4 detecta obertura) ─
 
         { {{1,true},{2,true},{3,true},{4,true}},  {{10,true}},
           "(E4 = TANCAT) => (sense events)", {} },

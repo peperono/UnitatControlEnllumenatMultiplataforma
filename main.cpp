@@ -70,9 +70,9 @@ int main() {
     mg_log_set(dbg == 's' ? MG_LL_DEBUG : MG_LL_NONE);
 
     const std::vector<InputConfig> configs = {
-        InputConfig{1, /*logic_positive=*/true,  /*always=*/true,  {}   },
-        InputConfig{2, /*logic_positive=*/true,  /*always=*/false, {10} },
-        InputConfig{4, /*logic_positive=*/false, /*always=*/true,  {}   }
+        InputConfig{1, /*detect_edge=*/EdgePolarity::falling, /*always=*/true,  {}   },
+        InputConfig{2, /*detect_edge=*/EdgePolarity::falling, /*always=*/false, {10} },
+        InputConfig{4, /*detect_edge=*/EdgePolarity::rising,  /*always=*/true,  {}   }
     };
 
     if (choice == 2) {
