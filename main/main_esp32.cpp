@@ -4,7 +4,7 @@
 #include "DigitalEdgeDetector/DigitalEdgeDetector.h"
 #include "Monitor/Monitor.h"
 #include "HttpServer/HttpServer.h"
-#include "DigitalEdgeDetector/SharedState.h"
+#include "DigitalEdgeDetector/DigitalEdgeDetectorState.h"
 #include "RemoteIO/RemoteIOState.h"
 #include "RemoteIO/IOReader_Remot.hpp"
 #include "HWReader/IOReader_HW.hpp"
@@ -33,7 +33,7 @@
 
 // ── Globals compartits entre threads ─────────────────────────────────────────
 portMUX_TYPE  g_qp_mux = portMUX_INITIALIZER_UNLOCKED; // secció crítica QP
-SharedState   edge_detector_state;
+DigitalEdgeDetectorState   edge_detector_state;
 RemoteIOState remote_io_state;
 
 extern "C" Q_NORETURN Q_onError(char const * const module, int_t const id) {

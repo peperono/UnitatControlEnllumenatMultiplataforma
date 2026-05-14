@@ -4,7 +4,7 @@
 #include "DigitalEdgeDetector/DigitalEdgeDetector.h"
 #include "Monitor/Monitor.h"
 #include "HttpServer/HttpServer.h"
-#include "DigitalEdgeDetector/SharedState.h"
+#include "DigitalEdgeDetector/DigitalEdgeDetectorState.h"
 #include "RemoteIO/RemoteIOState.h"
 #include "Test/TestController.hpp"
 #include "RemoteIO/IOReader_Remot.hpp"
@@ -18,7 +18,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-SharedState   edge_detector_state;
+DigitalEdgeDetectorState   edge_detector_state;
 RemoteIOState remote_io_state;
 
 extern "C" Q_NORETURN Q_onError(char const * const module, int_t const id) {

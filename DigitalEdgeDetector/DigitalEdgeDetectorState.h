@@ -7,11 +7,11 @@
 #include <vector>
 #include <cstdint>
 
-// ── SharedState ───────────────────────────────────────────────────────────────
+// ── DigitalEdgeDetectorState ───────────────────────────────────────────────────────────────
 // Shared between the QV thread (DigitalEdgeDetector writes) and the Mongoose HTTP thread
 // (HttpServer reads). Access must be guarded by mtx.
 
-struct SharedState {
+struct DigitalEdgeDetectorState {
     std::mutex                    mtx;
     std::unordered_map<int, bool> inputs;       // true = interruptor tancat
     std::unordered_map<int, bool> outputs;      // true = sortida activa
@@ -21,4 +21,4 @@ struct SharedState {
     std::vector<InputConfig>      configs;      // configurat a l'inici i en cada RECONFIGURE_SIG
 };
 
-extern SharedState edge_detector_state;
+extern DigitalEdgeDetectorState edge_detector_state;
