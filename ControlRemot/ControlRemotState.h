@@ -16,4 +16,4 @@ struct ControlRemotState {
     std::atomic<bool>                   push_pending{false};
 };
 
-extern ControlRemotState cr_state;
+extern ControlRemotState control_remot_state;

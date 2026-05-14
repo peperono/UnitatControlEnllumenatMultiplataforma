@@ -5,7 +5,7 @@
 #include <cstdio>
 #include <mutex>
 
-ControlHorariState ch_state;
+ControlHorariState control_horari_state;
 
 static const char* DAY_KEYS[7] = {
     "$.dilluns", "$.dimarts", "$.dimecres", "$.dijous",
@@ -36,11 +36,11 @@ Q_STATE_DEF(ControlHorari, operating) {
             int mm   = tick->minute;
             int wday = tick->wday;
 
-            if (ch_state.load_pending.exchange(false)) {
+            if (control_horari_state.load_pending.exchange(false)) {
                 std::string copy;
                 {
-                    std::lock_guard<std::mutex> lk(ch_state.mtx);
-                    copy = ch_state.programacioHoraria;
+                    std::lock_guard<std::mutex> lk(control_horari_state.mtx);
+                    copy = control_horari_state.programacioHoraria;
                 }
                 loadJson(copy.c_str(), copy.size());
             }

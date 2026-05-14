@@ -8,4 +8,4 @@ struct RemoteIOState {
     std::unordered_map<int, bool> outputs;
 };
 
-extern RemoteIOState remoteIO;
+extern RemoteIOState remote_io_state;

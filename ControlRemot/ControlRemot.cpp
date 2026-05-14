@@ -5,7 +5,7 @@
 #include <cstdio>
 #include <mutex>
 
-ControlRemotState cr_state;
+ControlRemotState control_remot_state;
 
 ControlRemot::ControlRemot() noexcept
     : QP::QActive{Q_STATE_CAST(&ControlRemot::initial)},
@@ -99,16 +99,16 @@ void ControlRemot::publishResult() {
         m_resultEvt.outputs[id] = out.result;
 
     {
-        std::lock_guard<std::mutex> lk(cr_state.mtx);
-        cr_state.outputsResult.clear();
+        std::lock_guard<std::mutex> lk(control_remot_state.mtx);
+        control_remot_state.outputsResult.clear();
         for (auto const& [id, out] : m_outputs) {
-            cr_state.outputsResult[id] = {
+            control_remot_state.outputsResult[id] = {
                 out.state, out.commanded, out.result,
                 out.mode == OutputEntry::Mode::REMOTE
             };
         }
     }
-    cr_state.push_pending.store(true);
+    control_remot_state.push_pending.store(true);
 
     std::string detail;
     for (auto const& [id, out] : m_outputs) {

@@ -9,4 +9,4 @@ struct ControlHorariState {
     std::atomic<bool> load_pending{false};
 };
 
-extern ControlHorariState ch_state;
+extern ControlHorariState control_horari_state;

@@ -13,12 +13,12 @@
 
 struct SharedState {
     std::mutex                    mtx;
-    std::unordered_map<int, bool> inputs;
-    std::unordered_map<int, bool> outputs;
-    std::vector<int>              last_edges;
-    std::unordered_map<int, int>  edge_counts;    // cumulative edge count per input id
-    std::atomic<bool>             push_pending{false}; // set by WsPublisher, cleared by Mongoose
-    std::vector<InputConfig>      configs;             // written at startup and on reconfigure
+    std::unordered_map<int, bool> inputs;       // true = interruptor tancat
+    std::unordered_map<int, bool> outputs;      // true = sortida activa
+    std::vector<int>              last_edges;   // IDs amb flanc detectat en el darrer poll
+    std::unordered_map<int, int>  edge_counts;  // nombre acumulat de flancs per ID d'entrada
+    std::atomic<bool>             push_pending{false}; // activat per DigitalEdgeDetector, esborrat pel fil Mongoose
+    std::vector<InputConfig>      configs;      // configurat a l'inici i en cada RECONFIGURE_SIG
 };
 
-extern SharedState se;
+extern SharedState edge_detector_state;

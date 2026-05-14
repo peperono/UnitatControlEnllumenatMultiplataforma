@@ -22,7 +22,7 @@
         <mxCell id="ch_tick" value="RellotgeTickEvt&#xa;(RELLOTGE_TICK_SIG, subscribe)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
           <mxGeometry x="576" y="534" width="139" height="35" as="geometry" />
         </mxCell>
-        <mxCell id="ch_reload" value="ch_state.programacioHoraria/&lt;div&gt;load_pending&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=8" parent="1" vertex="1">
+        <mxCell id="ch_reload" value="control_horari_state.programacioHoraria/&lt;div&gt;load_pending&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=8" parent="1" vertex="1">
           <mxGeometry x="576" y="569" width="139" height="35" as="geometry" />
         </mxCell>
         <mxCell id="ch_out_io" value="OutputStateEvt&#xa;(OUTPUT_STATE_SIG, PUBLISH)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
@@ -61,7 +61,7 @@
         <mxCell id="out_pub" value="OutputResultEvt&#xa;(OUTPUT_RESULT_SIG, PUBLISH)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
           <mxGeometry x="1236" y="819" width="145" height="35" as="geometry" />
         </mxCell>
-        <mxCell id="out_ss" value="cr_state.outputsResult/push_pending" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=8" parent="1" vertex="1">
+        <mxCell id="out_ss" value="control_remot_state.outputsResult/push_pending" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=8" parent="1" vertex="1">
           <mxGeometry x="1236" y="776" width="145" height="35" as="geometry" />
         </mxCell>
         <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5" parent="1" source="http" target="in_cmd" edge="1">

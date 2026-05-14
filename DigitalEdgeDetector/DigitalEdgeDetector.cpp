@@ -83,18 +83,18 @@ Q_STATE_DEF(DigitalEdgeDetector, operating) {
                 }
 
                 {
-                    std::lock_guard<std::mutex> lk(se.mtx);
-                    se.inputs  = inputs;
-                    se.outputs = outputs;
+                    std::lock_guard<std::mutex> lk(edge_detector_state.mtx);
+                    edge_detector_state.inputs  = inputs;
+                    edge_detector_state.outputs = outputs;
                     if (!m_edgeEvt.input_ids.empty()) {
-                        se.last_edges = m_edgeEvt.input_ids;
+                        edge_detector_state.last_edges = m_edgeEvt.input_ids;
                         for (int id : m_edgeEvt.input_ids)
-                            ++se.edge_counts[id];
+                            ++edge_detector_state.edge_counts[id];
                     } else {
-                        se.last_edges.clear();
+                        edge_detector_state.last_edges.clear();
                     }
                 }
-                se.push_pending.store(true);
+                edge_detector_state.push_pending.store(true);
             }
 
             status = Q_HANDLED();
@@ -125,19 +125,19 @@ Q_STATE_DEF(DigitalEdgeDetector, operating) {
             m_prevInputs.clear();
             m_prevOutputs.clear();
             {
-                std::lock_guard<std::mutex> lk(se.mtx);
-                se.configs = m_configs;
-                se.inputs.clear();
-                se.outputs.clear();
-                se.edge_counts.clear();
-                se.last_edges.clear();
+                std::lock_guard<std::mutex> lk(edge_detector_state.mtx);
+                edge_detector_state.configs = m_configs;
+                edge_detector_state.inputs.clear();
+                edge_detector_state.outputs.clear();
+                edge_detector_state.edge_counts.clear();
+                edge_detector_state.last_edges.clear();
                 for (const auto& cfg : m_configs) {
-                    se.inputs[cfg.id] = false;
+                    edge_detector_state.inputs[cfg.id] = false;
                     for (int out_id : cfg.linked_outputs)
-                        se.outputs[out_id] = false;
+                        edge_detector_state.outputs[out_id] = false;
                 }
             }
-            se.push_pending.store(true);
+            edge_detector_state.push_pending.store(true);
             status = Q_HANDLED();
             break;
         }

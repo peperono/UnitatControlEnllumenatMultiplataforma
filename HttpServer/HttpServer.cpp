@@ -120,8 +120,8 @@ static std::string build_ws_msg(
 // ── Push WS si hi ha dades pendents ──────────────────────────────────────────
 
 static void push_if_pending(struct mg_mgr* mgr) {
-    bool pending = se.push_pending.exchange(false)
-                 | cr_state.push_pending.exchange(false)
+    bool pending = edge_detector_state.push_pending.exchange(false)
+                 | control_remot_state.push_pending.exchange(false)
                  | rellotge_state.push_pending.exchange(false)
                  | log_state.push_pending.exchange(false);
     if (!pending) return;
@@ -134,14 +134,14 @@ static void push_if_pending(struct mg_mgr* mgr) {
     std::vector<LogEntry> logs;
 
     {
-        std::lock_guard<std::mutex> lk(se.mtx);
-        inputs  = se.inputs;
-        edges   = std::move(se.last_edges);
-        counts  = se.edge_counts;
+        std::lock_guard<std::mutex> lk(edge_detector_state.mtx);
+        inputs  = edge_detector_state.inputs;
+        edges   = std::move(edge_detector_state.last_edges);
+        counts  = edge_detector_state.edge_counts;
     }
     {
-        std::lock_guard<std::mutex> lk(cr_state.mtx);
-        cs_outputs = cr_state.outputsResult;
+        std::lock_guard<std::mutex> lk(control_remot_state.mtx);
+        cs_outputs = control_remot_state.outputsResult;
     }
     {
         std::lock_guard<std::mutex> lk(rellotge_state.mtx);
@@ -208,12 +208,12 @@ static void http_fn(struct mg_connection* c, int ev, void* ev_data) {
             std::unordered_map<int, OutputInfo> cs_outputs;
             int hh, mm, wd;
             {
-                std::lock_guard<std::mutex> lk(se.mtx);
-                inputs = se.inputs;  counts = se.edge_counts;
+                std::lock_guard<std::mutex> lk(edge_detector_state.mtx);
+                inputs = edge_detector_state.inputs;  counts = edge_detector_state.edge_counts;
             }
             {
-                std::lock_guard<std::mutex> lk(cr_state.mtx);
-                cs_outputs = cr_state.outputsResult;
+                std::lock_guard<std::mutex> lk(control_remot_state.mtx);
+                cs_outputs = control_remot_state.outputsResult;
             }
             {
                 std::lock_guard<std::mutex> lk(rellotge_state.mtx);
@@ -227,10 +227,10 @@ static void http_fn(struct mg_connection* c, int ev, void* ev_data) {
                    && mg_match(hm->method, mg_str("GET"), NULL)) {
             std::string body;
             {
-                std::lock_guard<std::mutex> lk(se.mtx);
+                std::lock_guard<std::mutex> lk(edge_detector_state.mtx);
                 body = "[";
-                for (std::size_t i = 0; i < se.configs.size(); ++i) {
-                    const auto& cfg = se.configs[i];
+                for (std::size_t i = 0; i < edge_detector_state.configs.size(); ++i) {
+                    const auto& cfg = edge_detector_state.configs[i];
                     if (i > 0) body += ",";
                     body += "{\"id\":"               + std::to_string(cfg.id);
                     body += ",\"detect_edge\":\""     + std::string(cfg.detect_edge == EdgePolarity::rising ? "rising" : "falling") + "\"";
@@ -291,8 +291,8 @@ static void http_fn(struct mg_connection* c, int ev, void* ev_data) {
                    && mg_match(hm->method, mg_str("GET"), NULL)) {
             std::string body;
             {
-                std::lock_guard<std::mutex> lk(ch_state.mtx);
-                body = ch_state.programacioHoraria;
+                std::lock_guard<std::mutex> lk(control_horari_state.mtx);
+                body = control_horari_state.programacioHoraria;
             }
             mg_http_reply(c, 200, "Content-Type: application/json\r\n",
                           "%.*s", (int)body.size(), body.c_str());
@@ -302,10 +302,10 @@ static void http_fn(struct mg_connection* c, int ev, void* ev_data) {
                    && mg_match(hm->method, mg_str("POST"), NULL)) {
             if (hm->body.len > 0) {
                 {
-                    std::lock_guard<std::mutex> lk(ch_state.mtx);
-                    ch_state.programacioHoraria.assign(hm->body.buf, hm->body.len);
+                    std::lock_guard<std::mutex> lk(control_horari_state.mtx);
+                    control_horari_state.programacioHoraria.assign(hm->body.buf, hm->body.len);
                 }
-                ch_state.load_pending.store(true);
+                control_horari_state.load_pending.store(true);
             }
             mg_http_reply(c, 200, "Content-Type: application/json\r\n", "{}");
 
@@ -328,8 +328,8 @@ static void http_fn(struct mg_connection* c, int ev, void* ev_data) {
         int ioff = mg_json_get(wm->data, "$.inputs", &ilen);
         if (ioff > 0) parse_bool_object({wm->data.buf + ioff, (size_t)ilen}, inputs);
         if (!inputs.empty()) {
-            std::lock_guard<std::mutex> lk(remoteIO.mtx);
-            for (auto const& [id, v] : inputs) remoteIO.inputs[id] = v;
+            std::lock_guard<std::mutex> lk(remote_io_state.mtx);
+            for (auto const& [id, v] : inputs) remote_io_state.inputs[id] = v;
         }
     }
 }
@@ -337,13 +337,13 @@ static void http_fn(struct mg_connection* c, int ev, void* ev_data) {
 static void post_reconfigure(const std::vector<InputConfig>& configs) {
     if (!s_edgeDetector) return;
     {
-        std::lock_guard<std::mutex> lk(remoteIO.mtx);
-        remoteIO.inputs.clear();
-        remoteIO.outputs.clear();
+        std::lock_guard<std::mutex> lk(remote_io_state.mtx);
+        remote_io_state.inputs.clear();
+        remote_io_state.outputs.clear();
         for (const auto& cfg : configs) {
-            remoteIO.inputs[cfg.id] = false;
+            remote_io_state.inputs[cfg.id] = false;
             for (int out_id : cfg.linked_outputs)
-                remoteIO.outputs[out_id] = false;
+                remote_io_state.outputs[out_id] = false;
         }
     }
     auto* evt = Q_NEW(ReconfigureEvt, RECONFIGURE_SIG);

@@ -33,8 +33,8 @@
 
 // ── Globals compartits entre threads ─────────────────────────────────────────
 portMUX_TYPE  g_qp_mux = portMUX_INITIALIZER_UNLOCKED; // secció crítica QP
-SharedState   se;
-RemoteIOState remoteIO;
+SharedState   edge_detector_state;
+RemoteIOState remote_io_state;
 
 extern "C" Q_NORETURN Q_onError(char const * const module, int_t const id) {
     std::fprintf(stderr, "Q_onError: %s:%d\n", module, id);
@@ -151,21 +151,21 @@ extern "C" void app_main() {
     };
 
     {
-        std::lock_guard<std::mutex> lk(remoteIO.mtx);
+        std::lock_guard<std::mutex> lk(remote_io_state.mtx);
         for (const auto& cfg : configs) {
-            remoteIO.inputs[cfg.id] = false;
+            remote_io_state.inputs[cfg.id] = false;
             for (int out_id : cfg.linked_outputs)
-                remoteIO.outputs[out_id] = false;
+                remote_io_state.outputs[out_id] = false;
         }
     }
 
     {
-        std::lock_guard<std::mutex> lk(se.mtx);
-        se.configs = configs;
+        std::lock_guard<std::mutex> lk(edge_detector_state.mtx);
+        edge_detector_state.configs = configs;
         for (const auto& cfg : configs) {
-            se.inputs[cfg.id] = false;
+            edge_detector_state.inputs[cfg.id] = false;
             for (int out_id : cfg.linked_outputs)
-                se.outputs[out_id] = false;
+                edge_detector_state.outputs[out_id] = false;
         }
     }
 
@@ -209,8 +209,8 @@ extern "C" void app_main() {
                        actuadorSortidesStk, sizeof(actuadorSortidesStk));
 
     {
-        std::lock_guard<std::mutex> lk(ch_state.mtx);
-        ch_state.programacioHoraria.assign(JSON_HORARI, sizeof(JSON_HORARI) - 1);
+        std::lock_guard<std::mutex> lk(control_horari_state.mtx);
+        control_horari_state.programacioHoraria.assign(JSON_HORARI, sizeof(JSON_HORARI) - 1);
     }
     controlHorari.loadJson(JSON_HORARI, sizeof(JSON_HORARI) - 1);
 
