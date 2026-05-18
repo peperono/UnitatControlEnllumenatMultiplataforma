@@ -33,7 +33,6 @@
 
 // ── Globals compartits entre threads ─────────────────────────────────────────
 portMUX_TYPE  g_qp_mux = portMUX_INITIALIZER_UNLOCKED; // secció crítica QP
-DigitalEdgeDetectorState   edge_detector_state;
 RemoteIOState remote_io_state;
 
 extern "C" Q_NORETURN Q_onError(char const * const module, int_t const id) {

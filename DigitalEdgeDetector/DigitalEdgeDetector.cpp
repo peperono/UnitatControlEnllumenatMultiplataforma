@@ -2,6 +2,8 @@
 #include "DigitalEdgeDetectorState.h"
 #include <mutex>
 
+DigitalEdgeDetectorState edge_detector_state;
+
 // ── Constructor ───────────────────────────────────────────────────────────────
 
 DigitalEdgeDetector::DigitalEdgeDetector(IOReader reader,
