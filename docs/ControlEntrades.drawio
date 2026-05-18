@@ -28,6 +28,9 @@
         <mxCell id="ded_poll" value="QTimeEvt&#xa;(EDGE_DETECTOR_POLL_SIG, intern)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
           <mxGeometry x="608" y="757" width="165" height="35" as="geometry" />
         </mxCell>
+        <mxCell id="ded_in_output_result" value="OutputResultEvt&#xa;(OUTPUT_RESULT_SIG, PUBLISH)&#xa;← ControlRemot" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
+          <mxGeometry x="608" y="797" width="165" height="40" as="geometry" />
+        </mxCell>
         <mxCell id="ded_reader_slot" value="IOReader m_reader&#xa;(injectat al constructor)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=8" parent="1" vertex="1">
           <mxGeometry x="608" y="540" width="200" height="40" as="geometry" />
         </mxCell>
