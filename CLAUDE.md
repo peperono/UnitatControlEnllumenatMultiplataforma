@@ -116,7 +116,7 @@ GPIOs a evitar: GPIO16/17 (PSRAM), GPIO6–11 (flash SPI), GPIO21 (càmera D7 a 
 
 | Abstracció | Windows (`main.cpp`) | ESP32 (`main/main_esp32.cpp`) |
 |-----------|----------------------|-------------------------------|
-| `IOReader` | `makeRemoteReader()` | `makeHWReader()` |
+| `IOReader` | `makeWSInputReader()` | `makeHWReader()` |
 | `OutputWriter` | `makeConsoleWriter()` | `makeGPIOWriter()` |
 
 A ESP32, la prioritat 1 correspon a `ActuadorSortides` (en lloc de `TestObserver`).
@@ -127,16 +127,16 @@ A ESP32, la prioritat 1 correspon a `ActuadorSortides` (en lloc de `TestObserver
 
 **Threads:**
 - **QV thread (cooperative):** IOReader, DigitalEdgeDetector, Monitor, ActuadorSortides; TestObserver (Windows mode test)
-- **Mongoose thread:** HttpServer, access to SharedState (via mutex)
+- **Mongoose thread:** HttpServer, access to DigitalEdgeDetectorState (via mutex)
 - **External process:** Browser (HTTP + WebSocket)
 
-**Cross-thread data:** `SharedState se` (defined in `main.cpp`, declared `extern` in `DigitalEdgeDetector/SharedState.h`) is the only shared data between the QV thread and the Mongoose thread. All access is guarded by `se.mtx`. `DigitalEdgeDetector` writes `se.inputs`, `se.outputs`, `se.last_edges`, `se.edge_counts` and sets `se.push_pending = true` directly in the poll handler. The Mongoose thread reads `se` and pushes WebSocket messages when `push_pending` is set.
+**Cross-thread data:** `DigitalEdgeDetectorState edge_detector_state` (defined in `DigitalEdgeDetector/DigitalEdgeDetector.cpp`, declared `extern` in `DigitalEdgeDetector/DigitalEdgeDetectorState.h`) is the only shared data between the QV thread and the Mongoose thread. All access is guarded by `edge_detector_state.mtx`. `DigitalEdgeDetector` writes `edge_detector_state.inputs`, `edge_detector_state.outputs`, `edge_detector_state.last_edges`, `edge_detector_state.edge_counts` and sets `edge_detector_state.push_pending = true` directly in the poll handler. The Mongoose thread reads `edge_detector_state` and pushes WebSocket messages when `push_pending` is set.
 
-**IOReader injection:** `DigitalEdgeDetector` accepts an `IOReader = std::function<void(map<int,bool>&, map<int,bool>&)>` at construction. In test mode `makeTestReader()` (`Test/TestController.hpp`) returns a lambda cycling through `TestStep` scenarios. In remote mode `makeRemoteReader()` (`RemoteIO/IOReader_Remot.hpp`) returns a lambda that reads from `RemoteIOState remoteIO` (mutex-protected, written by the Mongoose thread via WebSocket). On ESP32 `makeHWReader()` (`HWReader/IOReader_HW.hpp`) reads physical GPIO inputs.
+**IOReader injection:** `DigitalEdgeDetector` accepts an `IOReader = std::function<void(map<int,bool>&, map<int,bool>&)>` at construction. In test mode `makeTestReader()` (`Test/TestController.hpp`) returns a lambda cycling through `TestStep` scenarios. In remote mode `makeWSInputReader()` (`RemoteIO/InputReader_WS.hpp`) returns a lambda that reads from `remote_io_state` (mutex-protected, written by the Mongoose thread via WebSocket). On ESP32 `makeHWReader()` (`HWReader/IOReader_HW.hpp`) reads physical GPIO inputs.
 
 **OutputWriter injection:** `ActuadorSortides` accepts an `OutputWriter = std::function<void(int id, bool actiu)>` at construction. `makeGPIOWriter()` (`ActuadorSortides/OutputWriter_HW.hpp`) initialises GPIOs and returns a lambda that calls `gpio_set_level`. `makeConsoleWriter()` (`ActuadorSortides/OutputWriter_Console.hpp`) returns a lambda that prints to stdout. This removes all `#ifdef ESP_PLATFORM` from the AO itself.
 
-**Event memory:** `IOStateEvt` and `EdgeDetectedEvt` use static (zero-pool) semantics because they hold `std::vector`/`std::unordered_map` which are incompatible with QP memory pools. This is safe under the QV cooperative scheduler. `ReconfigureEvt` uses a QP memory pool (initialized in `main.cpp`). Max 16 configs per `ReconfigureEvt`. Remote IO input is not a QP event: the Mongoose thread writes directly to `remoteIO` (mutex-protected), and `DigitalEdgeDetector` reads it via the injected `IOReader` lambda on each poll tick.
+**Event memory:** `InputChangedEvt` and `EdgeDetectedEvt` use static (zero-pool) semantics because they hold `std::vector`/`std::unordered_map` which are incompatible with QP memory pools. This is safe under the QV cooperative scheduler. `ReconfigureEvt` uses a QP memory pool (initialized in `main.cpp`). Max 16 configs per `ReconfigureEvt`. Remote IO input is not a QP event: the Mongoose thread writes directly to `remote_io_state` (mutex-protected), and `DigitalEdgeDetector` reads it via the injected `IOReader` lambda on each poll tick.
 
 **Race condition to be aware of:** After a `PUT /config_inputs` HTTP response is sent, the QV poll timer may fire before `RECONFIGURE_SIG` is processed, emitting a WS push with stale IDs. The JS UI guards against this with `expectedInputIds`.
 
@@ -145,12 +145,12 @@ A ESP32, la prioritat 1 correspon a `ActuadorSortides` (en lloc de `TestObserver
 | Priority | AO | Plataforma | Publishes | Subscribes |
 |----------|----|------------|-----------|------------|
 | 6 | `Rellotge` | ambdues | `RELLOTGE_TICK_SIG` | — |
-| 5 | `DigitalEdgeDetector` | ambdues | `IO_STATE_CHANGED_SIG`, `EDGE_DETECTED_SIG` | `RECONFIGURE_SIG`, `OUTPUT_RESULT_SIG` |
+| 5 | `DigitalEdgeDetector` | ambdues | `INPUT_CHANGED_SIG`, `EDGE_DETECTED_SIG` | `RECONFIGURE_SIG`, `OUTPUT_RESULT_SIG` |
 | 4 | `ControlRemot` | ambdues | `OUTPUT_RESULT_SIG` | `OUTPUT_STATE_SIG`, `CTRL_OUTPUT_CMD_SIG`, `CTRL_OUTPUT_MODE_SIG`, `CTRL_OUTPUT_RETURN_AUTO_SIG`, `CTRL_OUTPUT_DELETE_SIG` |
 | 3 | `ControlHorari` | ambdues | `OUTPUT_STATE_SIG` | `RELLOTGE_TICK_SIG` |
-| 2 | `Monitor` | ambdues | — | `IO_STATE_CHANGED_SIG`, `EDGE_DETECTED_SIG` |
+| 2 | `Monitor` | ambdues | — | `INPUT_CHANGED_SIG`, `EDGE_DETECTED_SIG` |
 | 1 | `ActuadorSortides` | ambdues | — | `OUTPUT_RESULT_SIG` |
-| 1 | `TestObserver` | Windows (mode test) | — | `IO_STATE_CHANGED_SIG`, `EDGE_DETECTED_SIG` |
+| 1 | `TestObserver` | Windows (mode test) | — | `INPUT_CHANGED_SIG`, `EDGE_DETECTED_SIG` |
 
 ### Events QP
 
@@ -161,9 +161,9 @@ A ESP32, la prioritat 1 correspon a `ActuadorSortides` (en lloc de `TestObserver
 | `RELLOTGE_TICK_SIG` (`RellotgeTickEvt`) | `ControlHorari` | subscrit — cada minut: comprova `load_pending` i executa maniobres |
 | `RECONFIGURE_SIG` (`ReconfigureEvt`) | `DigitalEdgeDetector` | subscrit — recarrega configuració d'entrades |
 | `OUTPUT_RESULT_SIG` (`OutputResultEvt`) | `DigitalEdgeDetector` | subscrit — actualitza `m_commandedOutputs` per a `detection_enabled()` |
-| `IO_STATE_CHANGED_SIG` (`IOStateEvt`) | `DigitalEdgeDetector` | publica — inputs/outputs actuals |
+| `INPUT_CHANGED_SIG` (`InputChangedEvt`) | `DigitalEdgeDetector` | publica — inputs/outputs actuals |
 | `EDGE_DETECTED_SIG` (`EdgeDetectedEvt`) | `DigitalEdgeDetector` | publica — IDs d'entrades amb flanc detectat |
-| `IO_STATE_CHANGED_SIG` (`IOStateEvt`) | `Monitor` | subscrit |
+| `INPUT_CHANGED_SIG` (`InputChangedEvt`) | `Monitor` | subscrit |
 | `EDGE_DETECTED_SIG` (`EdgeDetectedEvt`) | `Monitor` | subscrit |
 | `OUTPUT_STATE_SIG` (`OutputStateEvt`) | `ControlRemot` | subscrit — rep l'estat real de sortides (des de `ControlHorari`) |
 | `CTRL_OUTPUT_CMD_SIG` (`OutputCmdEvt`) | `ControlRemot` | subscrit — ordre activate/deactivate |
@@ -230,7 +230,7 @@ Cap endpoint ni WS. Només consumeix events QP i actua sobre hardware o consola.
 ## Key files
 
 - `signals.h` — all QP signal enums and event struct definitions
-- `DigitalEdgeDetector/SharedState.h` — the shared struct between QV and Mongoose threads
+- `DigitalEdgeDetector/DigitalEdgeDetectorState.h` — the shared struct between QV and Mongoose threads
 - `InputConfig.h` — `InputConfig` struct: `id`, `logic_positive`, `detection_always`, `linked_outputs`
 - `Test/TestController.hpp` — TestObserver AO + verifyStep() + makeTestReader() + g_* globals
 - `docs/ControlEntrades.drawio` — entrades architecture diagram
