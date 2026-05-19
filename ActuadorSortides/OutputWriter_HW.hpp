@@ -34,11 +34,7 @@ inline OutputWriter makeGPIOWriter() {
     }
     return [](int id, bool actiu) {
         gpio_num_t pin = gpio_per_id(id);
-        if (pin != GPIO_NUM_NC) {
-            std::printf("[ActuadorSortides] gpio_set_level(%d, %d)\n", (int)pin, actiu ? 1 : 0);
+        if (pin != GPIO_NUM_NC)
             gpio_set_level(pin, actiu ? 1 : 0);
-        } else {
-            std::printf("[ActuadorSortides] id=%d sense GPIO assignat\n", id);
-        }
     };
 }

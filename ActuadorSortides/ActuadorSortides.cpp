@@ -1,4 +1,5 @@
 #include "ActuadorSortides.hpp"
+#include <cstdio>
 
 ActuadorSortides::ActuadorSortides(OutputWriter writer) noexcept
     : QP::QActive{Q_STATE_CAST(&ActuadorSortides::initial)},
@@ -27,6 +28,7 @@ Q_STATE_DEF(ActuadorSortides, running) {
                 auto it = m_prevOutputs.find(id);
                 if (it != m_prevOutputs.end() && it->second == actiu)
                     continue;
+                std::printf("[ActuadorSortides] S%d -> %s\n", id, actiu ? "ON" : "OFF");
                 m_writer(id, actiu);
             }
             m_prevOutputs = evt->outputs;
