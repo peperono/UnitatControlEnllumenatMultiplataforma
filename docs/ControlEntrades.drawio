@@ -143,7 +143,7 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="k19ayqWkpwsrz_kTSfV8-16" value="makeHWReader() — ESP32&#xa;E1→GPIO34&#xa;HWReader/IOReader_HW.hpp" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=8" parent="1" vertex="1">
+        <mxCell id="k19ayqWkpwsrz_kTSfV8-16" value="makeHWInputReader() — ESP32&#xa;E1→GPIO34&#xa;HWReader/InputReader_HW.hpp" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=8" parent="1" vertex="1">
           <mxGeometry x="740" y="350" width="185" height="55" as="geometry" />
         </mxCell>
         <mxCell id="TGelueud6IlWOtYhra94-3" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;dashed=1;" parent="1" vertex="1">

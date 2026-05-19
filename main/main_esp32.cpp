@@ -7,7 +7,7 @@
 #include "DigitalEdgeDetector/DigitalEdgeDetectorState.h"
 #include "RemoteIO/RemoteIOState.h"
 #include "RemoteIO/InputReader_WS.hpp"
-#include "HWReader/IOReader_HW.hpp"
+#include "HWReader/InputReader_HW.hpp"
 #include "ControlRemot/ControlRemot.h"
 #include "ControlHorari/ControlHorari.h"
 #include "ControlHorari/ControlHorariState.h"
@@ -175,7 +175,7 @@ extern "C" void app_main() {
     // hagin processat l'anterior, hi ha una condició de cursa. A 100 Hz de
     // polling i subscriptors lleugers, el risc pràctic és baix, però s'ha de
     // refactoritzar si es requereix garantia estricta.
-    static DigitalEdgeDetector edgeDetector{makeHWReader(), 1U};
+    static DigitalEdgeDetector edgeDetector{makeHWInputReader(), 1U};
     static Monitor             monitor;
     static ControlRemot        controlRemot;
     static ControlHorari       controlHorari;

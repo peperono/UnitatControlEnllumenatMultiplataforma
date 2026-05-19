@@ -96,7 +96,7 @@ SSID i contrasenya es configuren via `idf.py menuconfig` → *Example Connection
 
 ### Hardware (ESP-WROVER-KIT V4.1)
 
-**Entrades** — `HWReader/IOReader_HW.hpp` → `makeHWReader()`:
+**Entrades** — `HWReader/InputReader_HW.hpp` → `makeHWInputReader()`:
 
 | ID | GPIO | Nota |
 |----|------|------|
@@ -116,7 +116,7 @@ GPIOs a evitar: GPIO16/17 (PSRAM), GPIO6–11 (flash SPI), GPIO21 (càmera D7 a 
 
 | Abstracció | Windows (`main.cpp`) | ESP32 (`main/main_esp32.cpp`) |
 |-----------|----------------------|-------------------------------|
-| `IOReader` | `makeWSInputReader()` | `makeHWReader()` |
+| `IOReader` | `makeWSInputReader()` | `makeHWInputReader()` |
 | `OutputWriter` | `makeConsoleWriter()` | `makeGPIOWriter()` |
 
 A ESP32, la prioritat 1 correspon a `ActuadorSortides` (en lloc de `TestObserver`).
@@ -132,7 +132,7 @@ A ESP32, la prioritat 1 correspon a `ActuadorSortides` (en lloc de `TestObserver
 
 **Cross-thread data:** `DigitalEdgeDetectorState edge_detector_state` (defined in `DigitalEdgeDetector/DigitalEdgeDetector.cpp`, declared `extern` in `DigitalEdgeDetector/DigitalEdgeDetectorState.h`) is the only shared data between the QV thread and the Mongoose thread. All access is guarded by `edge_detector_state.mtx`. `DigitalEdgeDetector` writes `edge_detector_state.inputs`, `edge_detector_state.outputs`, `edge_detector_state.last_edges`, `edge_detector_state.edge_counts` and sets `edge_detector_state.push_pending = true` directly in the poll handler. The Mongoose thread reads `edge_detector_state` and pushes WebSocket messages when `push_pending` is set.
 
-**IOReader injection:** `DigitalEdgeDetector` accepts an `IOReader = std::function<void(map<int,bool>&, map<int,bool>&)>` at construction. In test mode `makeTestReader()` (`Test/TestController.hpp`) returns a lambda cycling through `TestStep` scenarios. In remote mode `makeWSInputReader()` (`RemoteIO/InputReader_WS.hpp`) returns a lambda that reads from `remote_io_state` (mutex-protected, written by the Mongoose thread via WebSocket). On ESP32 `makeHWReader()` (`HWReader/IOReader_HW.hpp`) reads physical GPIO inputs.
+**IOReader injection:** `DigitalEdgeDetector` accepts an `IOReader = std::function<void(map<int,bool>&, map<int,bool>&)>` at construction. In test mode `makeTestReader()` (`Test/TestController.hpp`) returns a lambda cycling through `TestStep` scenarios. In remote mode `makeWSInputReader()` (`RemoteIO/InputReader_WS.hpp`) returns a lambda that reads from `remote_io_state` (mutex-protected, written by the Mongoose thread via WebSocket). On ESP32 `makeHWInputReader()` (`HWReader/InputReader_HW.hpp`) reads physical GPIO inputs.
 
 **OutputWriter injection:** `ActuadorSortides` accepts an `OutputWriter = std::function<void(int id, bool actiu)>` at construction. `makeGPIOWriter()` (`ActuadorSortides/OutputWriter_HW.hpp`) initialises GPIOs and returns a lambda that calls `gpio_set_level`. `makeConsoleWriter()` (`ActuadorSortides/OutputWriter_Console.hpp`) returns a lambda that prints to stdout. This removes all `#ifdef ESP_PLATFORM` from the AO itself.
 
@@ -237,8 +237,8 @@ Cap endpoint ni WS. Només consumeix events QP i actua sobre hardware o consola.
 - `docs/ControlSortides.drawio` — sortides architecture diagram (ControlHorari, ControlRemot, ActuadorSortides)
 - `qp_config.hpp` — QP tunables (`QF_MAX_ACTIVE=32`, `QF_MAX_EPOOL=3`)
 - `main.cpp` — entry point Windows
-- `main/main_esp32.cpp` — entry point ESP32 (WiFi, FreeRTOS stacks, makeHWReader, makeGPIOWriter)
-- `HWReader/IOReader_HW.hpp` — `makeHWReader()`: GPIO34 → E1
+- `main/main_esp32.cpp` — entry point ESP32 (WiFi, FreeRTOS stacks, makeHWInputReader, makeGPIOWriter)
+- `HWReader/InputReader_HW.hpp` — `makeHWInputReader()`: GPIO34 → E1
 - `ActuadorSortides/OutputWriter_HW.hpp` — `makeGPIOWriter()`: GPIO4/0/2 → S1/S2/S3
 - `ActuadorSortides/OutputWriter_Console.hpp` — `makeConsoleWriter()`: printf stdout
 - `flash_esp32.sh` — compila i flasheja l'ESP32 via `/dev/ttyUSB1`

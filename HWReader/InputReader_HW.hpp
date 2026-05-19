@@ -17,7 +17,7 @@ inline void hw_inputs_init() {
     }
 }
 
-inline IOReader makeHWReader() {
+inline IOReader makeHWInputReader() {
     hw_inputs_init();
     return [](std::unordered_map<int, bool>& inputs,
               std::unordered_map<int, bool>& outputs) {
