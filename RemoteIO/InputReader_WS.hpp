@@ -3,7 +3,7 @@
 #include "RemoteIOState.h"
 #include <mutex>
 
-inline IOReader makeWSReader() {
+inline IOReader makeWSInputReader() {
     return [](std::unordered_map<int, bool>& inputs,
               std::unordered_map<int, bool>&) {
         std::lock_guard<std::mutex> lk(remote_io_state.mtx);
