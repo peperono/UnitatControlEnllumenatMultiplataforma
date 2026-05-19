@@ -125,7 +125,7 @@ Q_STATE_DEF(DigitalEdgeDetector, operating) {
             m_prevInputs.clear();
             {
                 std::lock_guard<std::mutex> lk(edge_detector_state.mtx);
-                edge_detector_state.configs = m_configs;
+                edge_detector_state.config_inputs = m_configs;
                 edge_detector_state.inputs.clear();
                 edge_detector_state.outputs.clear();
                 edge_detector_state.edge_counts.clear();

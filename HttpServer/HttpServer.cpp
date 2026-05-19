@@ -229,8 +229,8 @@ static void http_fn(struct mg_connection* c, int ev, void* ev_data) {
             {
                 std::lock_guard<std::mutex> lk(edge_detector_state.mtx);
                 body = "[";
-                for (std::size_t i = 0; i < edge_detector_state.configs.size(); ++i) {
-                    const auto& cfg = edge_detector_state.configs[i];
+                for (std::size_t i = 0; i < edge_detector_state.config_inputs.size(); ++i) {
+                    const auto& cfg = edge_detector_state.config_inputs[i];
                     if (i > 0) body += ",";
                     body += "{\"id\":"               + std::to_string(cfg.id);
                     body += ",\"detect_edge\":\""     + std::string(cfg.detect_edge == EdgePolarity::rising ? "rising" : "falling") + "\"";

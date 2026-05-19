@@ -160,7 +160,7 @@ extern "C" void app_main() {
 
     {
         std::lock_guard<std::mutex> lk(edge_detector_state.mtx);
-        edge_detector_state.configs = configs;
+        edge_detector_state.config_inputs = configs;
         for (const auto& cfg : configs) {
             edge_detector_state.inputs[cfg.id] = false;
             for (int out_id : cfg.linked_outputs)
