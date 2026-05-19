@@ -6,7 +6,7 @@
 #include "HttpServer/HttpServer.h"
 #include "DigitalEdgeDetector/DigitalEdgeDetectorState.h"
 #include "RemoteIO/RemoteIOState.h"
-#include "RemoteIO/IOReader_Remot.hpp"
+#include "RemoteIO/IOReader_WS.hpp"
 #include "HWReader/IOReader_HW.hpp"
 #include "ControlRemot/ControlRemot.h"
 #include "ControlHorari/ControlHorari.h"

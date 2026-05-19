@@ -7,7 +7,7 @@
 #include "DigitalEdgeDetector/DigitalEdgeDetectorState.h"
 #include "RemoteIO/RemoteIOState.h"
 #include "Test/TestController.hpp"
-#include "RemoteIO/IOReader_Remot.hpp"
+#include "RemoteIO/IOReader_WS.hpp"
 #include "ControlRemot/ControlRemot.h"
 #include "ControlHorari/ControlHorari.h"
 #include "ControlHorari/ControlHorariState.h"
@@ -83,7 +83,7 @@ int main() {
         }
     }
 
-    IOReader reader = (choice == 2) ? makeRemoteReader() : makeTestReader();
+    IOReader reader = (choice == 2) ? makeWSReader() : makeTestReader();
 
     // ── Active Object instances ───────────────────────────────────────────────
     static DigitalEdgeDetector edgeDetector{ std::move(reader), 1U };
