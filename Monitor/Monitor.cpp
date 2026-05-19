@@ -11,7 +11,7 @@ Monitor::Monitor() noexcept
 
 Q_STATE_DEF(Monitor, initial) {
     Q_UNUSED_PAR(e);
-    subscribe(IO_STATE_CHANGED_SIG);
+    subscribe(INPUT_CHANGED_SIG);
     subscribe(EDGE_DETECTED_SIG);
     return tran(&Monitor::running);
 }
@@ -28,20 +28,14 @@ Q_STATE_DEF(Monitor, running) {
             break;
         }
 
-        case IO_STATE_CHANGED_SIG: {
-            auto const* evt = Q_EVT_CAST(IOStateEvt);
+        case INPUT_CHANGED_SIG: {
+            auto const* evt = Q_EVT_CAST(InputChangedEvt);
             for (auto const& [id, state] : evt->inputs) {
                 auto it = m_prevInputs.find(id);
                 if (it == m_prevInputs.end() || it->second != state)
                     std::printf("[Monitor] entrada %d -> %s\n", id, state ? "ON" : "OFF");
             }
             m_prevInputs = evt->inputs;
-            for (auto const& [id, state] : evt->outputs) {
-                auto it = m_prevOutputs.find(id);
-                if (it == m_prevOutputs.end() || it->second != state)
-                    std::printf("[Monitor] sortida %d -> %s\n", id, state ? "ON" : "OFF");
-            }
-            m_prevOutputs = evt->outputs;
             status = Q_HANDLED();
             break;
         }

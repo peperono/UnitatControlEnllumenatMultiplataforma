@@ -12,5 +12,4 @@ private:
     Q_STATE_DECL(running);
 
     std::unordered_map<int, bool> m_prevInputs;
-    std::unordered_map<int, bool> m_prevOutputs;
 };

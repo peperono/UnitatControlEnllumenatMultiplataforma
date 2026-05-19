@@ -49,12 +49,10 @@ Q_STATE_DEF(DigitalEdgeDetector, operating) {
             std::unordered_map<int, bool> outputs;
             m_reader(inputs, outputs);
 
-            if ((inputs != m_prevInputs) || (outputs != m_prevOutputs)) {
-                m_prevInputs  = inputs;
-                m_prevOutputs = outputs;
+            if (inputs != m_prevInputs) {
+                m_prevInputs = inputs;
 
-                m_ioEvt.inputs  = inputs;
-                m_ioEvt.outputs = outputs;
+                m_ioEvt.inputs = inputs;
                 PUBLISH(&m_ioEvt, this);
 
                 m_edgeEvt.input_ids.clear();
@@ -125,7 +123,6 @@ Q_STATE_DEF(DigitalEdgeDetector, operating) {
             }
             configure(newConfigs);
             m_prevInputs.clear();
-            m_prevOutputs.clear();
             {
                 std::lock_guard<std::mutex> lk(edge_detector_state.mtx);
                 edge_detector_state.configs = m_configs;

@@ -27,7 +27,6 @@ struct TestStep {
 static std::vector<int>              g_detectedEdges;
 static bool                          g_edgeReceived  = false;
 static std::unordered_map<int, bool> g_receivedInputs;
-static std::unordered_map<int, bool> g_receivedOutputs;
 static bool                          g_ioReceived    = false;
 
 // ── TestObserver ──────────────────────────────────────────────────────────────
@@ -45,7 +44,7 @@ private:
 
 Q_STATE_DEF(TestObserver, initial) {
     Q_UNUSED_PAR(e);
-    subscribe(IO_STATE_CHANGED_SIG);
+    subscribe(INPUT_CHANGED_SIG);
     subscribe(EDGE_DETECTED_SIG);
     return tran(&TestObserver::observing);
 }
@@ -57,11 +56,10 @@ Q_STATE_DEF(TestObserver, observing) {
             status = Q_HANDLED();
             break;
         }
-        case IO_STATE_CHANGED_SIG: {
-            auto const* evt   = Q_EVT_CAST(IOStateEvt);
-            g_receivedInputs  = evt->inputs;
-            g_receivedOutputs = evt->outputs;
-            g_ioReceived      = true;
+        case INPUT_CHANGED_SIG: {
+            auto const* evt  = Q_EVT_CAST(InputChangedEvt);
+            g_receivedInputs = evt->inputs;
+            g_ioReceived     = true;
             status = Q_HANDLED();
             break;
         }
@@ -83,14 +81,13 @@ Q_STATE_DEF(TestObserver, observing) {
 // ── Verificación ──────────────────────────────────────────────────────────────
 
 static void verifyStep(int stepIdx, const TestStep& s,
-                       const std::unordered_map<int, bool>& prevInputs,
-                       const std::unordered_map<int, bool>& prevOutputs)
+                       const std::unordered_map<int, bool>& prevInputs)
 {
-    // IO_STATE_CHANGED_SIG se espera si el estado cambió respecto al paso anterior
-    bool expected_io = (s.inputs != prevInputs) || (s.outputs != prevOutputs);
+    // INPUT_CHANGED_SIG s'espera si les entrades han canviat respecte al pas anterior
+    bool expected_io = s.inputs != prevInputs;
     bool io_ok = (expected_io == g_ioReceived);
     if (expected_io && g_ioReceived) {
-        io_ok = (g_receivedInputs == s.inputs) && (g_receivedOutputs == s.outputs);
+        io_ok = g_receivedInputs == s.inputs;
     }
 
     // EDGE_DETECTED_SIG
@@ -111,9 +108,9 @@ static void verifyStep(int stepIdx, const TestStep& s,
                 stepIdx, s.description, ok ? "OK" : "FALLO");
 
     if (!io_ok) {
-        std::printf("  IO_STATE: esperado=%s  recibido=%s\n",
-                    expected_io      ? "SI" : "NO",
-                    g_ioReceived     ? "SI" : "NO");
+        std::printf("  INPUT_CHANGED: esperat=%s  rebut=%s\n",
+                    expected_io  ? "SI" : "NO",
+                    g_ioReceived ? "SI" : "NO");
     }
     if (!edge_ok) {
         if (s.expected_edges.empty()) {
@@ -137,7 +134,6 @@ static void verifyStep(int stepIdx, const TestStep& s,
     g_detectedEdges.clear();
     g_edgeReceived = false;
     g_receivedInputs.clear();
-    g_receivedOutputs.clear();
     g_ioReceived = false;
 }
 
@@ -256,7 +252,6 @@ inline IOReader makeTestReader() {
     static int step = 0;
     // Estado previo: mapa vacío antes del primer poll (igual que DigitalEdgeDetector)
     static std::unordered_map<int, bool> prevInputs;
-    static std::unordered_map<int, bool> prevOutputs;
 
     return [](std::unordered_map<int, bool>& inputs,
               std::unordered_map<int, bool>& outputs)
@@ -290,9 +285,8 @@ inline IOReader makeTestReader() {
         announced = false;
 
         if (step > 0) {
-            verifyStep(step - 1, steps[step - 1], prevInputs, prevOutputs);
-            prevInputs  = steps[step - 1].inputs;
-            prevOutputs = steps[step - 1].outputs;
+            verifyStep(step - 1, steps[step - 1], prevInputs);
+            prevInputs = steps[step - 1].inputs;
         }
 
         if (step >= static_cast<int>(steps.size())) {

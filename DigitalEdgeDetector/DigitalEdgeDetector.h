@@ -29,9 +29,8 @@ private:
     std::vector<InputConfig>      m_configs;
     std::unordered_map<int, bool> m_prevStates;
     std::unordered_map<int, bool> m_prevInputs;
-    std::unordered_map<int, bool> m_prevOutputs;
     std::unordered_map<int, bool> m_commandedOutputs; // estat efectiu rebut de ControlRemot
-    IOStateEvt                    m_ioEvt;
+    InputChangedEvt               m_ioEvt;
     EdgeDetectedEvt               m_edgeEvt;
 
     bool detection_enabled(const InputConfig& cfg,

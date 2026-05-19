@@ -169,7 +169,7 @@ extern "C" void app_main() {
     }
 
     // ── Active Objects ────────────────────────────────────────────────────────
-    // NOTA: IOStateEvt/EdgeDetectedEvt usen semàntiques zero-pool (sense còpia).
+    // NOTA: InputChangedEvt/EdgeDetectedEvt usen semàntiques zero-pool (sense còpia).
     // Sota QV (cooperatiu, Windows) és segur. Sota FreeRTOS (preemptiu), si
     // DigitalEdgeDetector publica un nou event abans que tots els subscriptors
     // hagin processat l'anterior, hi ha una condició de cursa. A 100 Hz de

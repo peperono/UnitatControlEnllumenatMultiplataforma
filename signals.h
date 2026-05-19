@@ -8,7 +8,7 @@
 
 enum Signals : QP::QSignal {
     // Control Entrades
-    IO_STATE_CHANGED_SIG = QP::Q_USER_SIG,
+    INPUT_CHANGED_SIG = QP::Q_USER_SIG,
     EDGE_DETECTED_SIG,
     EDGE_DETECTOR_POLL_SIG,
     RECONFIGURE_SIG,
@@ -26,10 +26,9 @@ enum Signals : QP::QSignal {
 
 // ── Events Control Entrades ───────────────────────────────────────────────────
 
-struct IOStateEvt : public QP::QEvt {
+struct InputChangedEvt : public QP::QEvt {
     std::unordered_map<int, bool> inputs;
-    std::unordered_map<int, bool> outputs;
-    explicit IOStateEvt() noexcept : QP::QEvt{IO_STATE_CHANGED_SIG} {}
+    explicit InputChangedEvt() noexcept : QP::QEvt{INPUT_CHANGED_SIG} {}
 };
 
 struct ReconfigureEvt : public QP::QEvt {
