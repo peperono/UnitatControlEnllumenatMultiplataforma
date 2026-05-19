@@ -1,5 +1,5 @@
 #pragma once
-#include "../DigitalEdgeDetector/DigitalEdgeDetector.h"
+#include "../ControlEntrades/ControlEntrades.h"
 #include "driver/gpio.h"
 
 // GPIO34 és input-only, sense pull-up intern → requereix pull-up extern (10kΩ a 3.3V)

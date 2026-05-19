@@ -1,5 +1,5 @@
 #include "HttpServer.h"
-#include "../DigitalEdgeDetector/DigitalEdgeDetectorState.h"
+#include "../ControlEntrades/ControlEntradesState.h"
 #include "../RemoteIO/RemoteIOState.h"
 #include "../ControlRemot/ControlRemot.h"
 #include "../ControlRemot/ControlRemotState.h"
@@ -120,7 +120,7 @@ static std::string build_ws_msg(
 // ── Push WS si hi ha dades pendents ──────────────────────────────────────────
 
 static void push_if_pending(struct mg_mgr* mgr) {
-    bool pending = edge_detector_state.push_pending.exchange(false)
+    bool pending = control_entrades_state.push_pending.exchange(false)
                  | control_remot_state.push_pending.exchange(false)
                  | rellotge_state.push_pending.exchange(false)
                  | log_state.push_pending.exchange(false);
@@ -134,10 +134,10 @@ static void push_if_pending(struct mg_mgr* mgr) {
     std::vector<LogEntry> logs;
 
     {
-        std::lock_guard<std::mutex> lk(edge_detector_state.mtx);
-        inputs  = edge_detector_state.inputs;
-        edges   = std::move(edge_detector_state.last_edges);
-        counts  = edge_detector_state.edge_counts;
+        std::lock_guard<std::mutex> lk(control_entrades_state.mtx);
+        inputs  = control_entrades_state.inputs;
+        edges   = std::move(control_entrades_state.last_edges);
+        counts  = control_entrades_state.edge_counts;
     }
     {
         std::lock_guard<std::mutex> lk(control_remot_state.mtx);
@@ -208,8 +208,8 @@ static void http_fn(struct mg_connection* c, int ev, void* ev_data) {
             std::unordered_map<int, OutputInfo> cs_outputs;
             int hh, mm, wd;
             {
-                std::lock_guard<std::mutex> lk(edge_detector_state.mtx);
-                inputs = edge_detector_state.inputs;  counts = edge_detector_state.edge_counts;
+                std::lock_guard<std::mutex> lk(control_entrades_state.mtx);
+                inputs = control_entrades_state.inputs;  counts = control_entrades_state.edge_counts;
             }
             {
                 std::lock_guard<std::mutex> lk(control_remot_state.mtx);
@@ -227,10 +227,10 @@ static void http_fn(struct mg_connection* c, int ev, void* ev_data) {
                    && mg_match(hm->method, mg_str("GET"), NULL)) {
             std::string body;
             {
-                std::lock_guard<std::mutex> lk(edge_detector_state.mtx);
+                std::lock_guard<std::mutex> lk(control_entrades_state.mtx);
                 body = "[";
-                for (std::size_t i = 0; i < edge_detector_state.config_inputs.size(); ++i) {
-                    const auto& cfg = edge_detector_state.config_inputs[i];
+                for (std::size_t i = 0; i < control_entrades_state.config_inputs.size(); ++i) {
+                    const auto& cfg = control_entrades_state.config_inputs[i];
                     if (i > 0) body += ",";
                     body += "{\"id\":"               + std::to_string(cfg.id);
                     body += ",\"detect_edge\":\""     + std::string(cfg.detect_edge == EdgePolarity::rising ? "rising" : "falling") + "\"";

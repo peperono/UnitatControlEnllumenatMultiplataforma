@@ -1,10 +1,10 @@
 #include "qp_config.hpp"
 #include "qpcpp/include/qpcpp.hpp"
 #include "signals.h"
-#include "DigitalEdgeDetector/DigitalEdgeDetector.h"
+#include "ControlEntrades/ControlEntrades.h"
 #include "Monitor/Monitor.h"
 #include "HttpServer/HttpServer.h"
-#include "DigitalEdgeDetector/DigitalEdgeDetectorState.h"
+#include "ControlEntrades/ControlEntradesState.h"
 #include "RemoteIO/RemoteIOState.h"
 #include "RemoteIO/InputReader_WS.hpp"
 #include "HWReader/InputReader_HW.hpp"
@@ -159,23 +159,23 @@ extern "C" void app_main() {
     }
 
     {
-        std::lock_guard<std::mutex> lk(edge_detector_state.mtx);
-        edge_detector_state.config_inputs = configs;
+        std::lock_guard<std::mutex> lk(control_entrades_state.mtx);
+        control_entrades_state.config_inputs = configs;
         for (const auto& cfg : configs) {
-            edge_detector_state.inputs[cfg.id] = false;
+            control_entrades_state.inputs[cfg.id] = false;
             for (int out_id : cfg.linked_outputs)
-                edge_detector_state.outputs[out_id] = false;
+                control_entrades_state.outputs[out_id] = false;
         }
     }
 
     // ── Active Objects ────────────────────────────────────────────────────────
     // NOTA: InputChangedEvt/EdgeDetectedEvt usen semàntiques zero-pool (sense còpia).
     // Sota QV (cooperatiu, Windows) és segur. Sota FreeRTOS (preemptiu), si
-    // DigitalEdgeDetector publica un nou event abans que tots els subscriptors
+    // ControlEntrades publica un nou event abans que tots els subscriptors
     // hagin processat l'anterior, hi ha una condició de cursa. A 100 Hz de
     // polling i subscriptors lleugers, el risc pràctic és baix, però s'ha de
     // refactoritzar si es requereix garantia estricta.
-    static DigitalEdgeDetector edgeDetector{makeHWInputReader(), 1U};
+    static ControlEntrades edgeDetector{makeHWInputReader(), 1U};
     static Monitor             monitor;
     static ControlRemot        controlRemot;
     static ControlHorari       controlHorari;

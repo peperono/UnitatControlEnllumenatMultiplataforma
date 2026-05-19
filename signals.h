@@ -1,6 +1,6 @@
 #pragma once
 #include "qpcpp/include/qpcpp.hpp"
-#include "DigitalEdgeDetector/InputConfig.h"
+#include "ControlEntrades/InputConfig.h"
 #include <unordered_map>
 #include <vector>
 

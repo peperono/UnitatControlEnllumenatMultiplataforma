@@ -1,14 +1,14 @@
-#include "DigitalEdgeDetector.h"
-#include "DigitalEdgeDetectorState.h"
+#include "ControlEntrades.h"
+#include "ControlEntradesState.h"
 #include <mutex>
 
-DigitalEdgeDetectorState edge_detector_state;
+ControlEntradesState control_entrades_state;
 
 // ── Constructor ───────────────────────────────────────────────────────────────
 
-DigitalEdgeDetector::DigitalEdgeDetector(IOReader reader,
+ControlEntrades::ControlEntrades(IOReader reader,
                                          std::uint32_t poll_ticks) noexcept
-    : QP::QActive{Q_STATE_CAST(&DigitalEdgeDetector::initial)},
+    : QP::QActive{Q_STATE_CAST(&ControlEntrades::initial)},
       m_pollTimer{this, EDGE_DETECTOR_POLL_SIG},
       m_reader{std::move(reader)},
       m_pollTicks{poll_ticks},
@@ -18,23 +18,23 @@ DigitalEdgeDetector::DigitalEdgeDetector(IOReader reader,
 
 // ── Public API ────────────────────────────────────────────────────────────────
 
-void DigitalEdgeDetector::configure(const std::vector<InputConfig>& configs) {
+void ControlEntrades::configure(const std::vector<InputConfig>& configs) {
     m_configs = configs;
     m_prevStates.clear();
 }
 
 // ── State: initial (pseudo-state) ─────────────────────────────────────────────
 
-Q_STATE_DEF(DigitalEdgeDetector, initial) {
+Q_STATE_DEF(ControlEntrades, initial) {
     Q_UNUSED_PAR(e);
     subscribe(OUTPUT_RESULT_SIG);
     m_pollTimer.armX(m_pollTicks, m_pollTicks);
-    return tran(&DigitalEdgeDetector::operating);
+    return tran(&ControlEntrades::operating);
 }
 
 // ── State: operating ──────────────────────────────────────────────────────────
 
-Q_STATE_DEF(DigitalEdgeDetector, operating) {
+Q_STATE_DEF(ControlEntrades, operating) {
     QP::QState status;
 
     switch (e->sig) {
@@ -83,18 +83,18 @@ Q_STATE_DEF(DigitalEdgeDetector, operating) {
                 }
 
                 {
-                    std::lock_guard<std::mutex> lk(edge_detector_state.mtx);
-                    edge_detector_state.inputs  = inputs;
-                    edge_detector_state.outputs = outputs;
+                    std::lock_guard<std::mutex> lk(control_entrades_state.mtx);
+                    control_entrades_state.inputs  = inputs;
+                    control_entrades_state.outputs = outputs;
                     if (!m_edgeEvt.input_ids.empty()) {
-                        edge_detector_state.last_edges = m_edgeEvt.input_ids;
+                        control_entrades_state.last_edges = m_edgeEvt.input_ids;
                         for (int id : m_edgeEvt.input_ids)
-                            ++edge_detector_state.edge_counts[id];
+                            ++control_entrades_state.edge_counts[id];
                     } else {
-                        edge_detector_state.last_edges.clear();
+                        control_entrades_state.last_edges.clear();
                     }
                 }
-                edge_detector_state.push_pending.store(true);
+                control_entrades_state.push_pending.store(true);
             }
 
             status = Q_HANDLED();
@@ -124,25 +124,25 @@ Q_STATE_DEF(DigitalEdgeDetector, operating) {
             configure(newConfigs);
             m_prevInputs.clear();
             {
-                std::lock_guard<std::mutex> lk(edge_detector_state.mtx);
-                edge_detector_state.config_inputs = m_configs;
-                edge_detector_state.inputs.clear();
-                edge_detector_state.outputs.clear();
-                edge_detector_state.edge_counts.clear();
-                edge_detector_state.last_edges.clear();
+                std::lock_guard<std::mutex> lk(control_entrades_state.mtx);
+                control_entrades_state.config_inputs = m_configs;
+                control_entrades_state.inputs.clear();
+                control_entrades_state.outputs.clear();
+                control_entrades_state.edge_counts.clear();
+                control_entrades_state.last_edges.clear();
                 for (const auto& cfg : m_configs) {
-                    edge_detector_state.inputs[cfg.id] = false;
+                    control_entrades_state.inputs[cfg.id] = false;
                     for (int out_id : cfg.linked_outputs)
-                        edge_detector_state.outputs[out_id] = false;
+                        control_entrades_state.outputs[out_id] = false;
                 }
             }
-            edge_detector_state.push_pending.store(true);
+            control_entrades_state.push_pending.store(true);
             status = Q_HANDLED();
             break;
         }
 
         default: {
-            status = super(&DigitalEdgeDetector::top);
+            status = super(&ControlEntrades::top);
             break;
         }
     }
@@ -151,7 +151,7 @@ Q_STATE_DEF(DigitalEdgeDetector, operating) {
 
 // ── Private helpers ───────────────────────────────────────────────────────────
 
-bool DigitalEdgeDetector::detection_enabled(
+bool ControlEntrades::detection_enabled(
     const InputConfig& cfg,
     const std::unordered_map<int, bool>& outputs) const
 {

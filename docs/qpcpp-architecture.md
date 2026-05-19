@@ -7,7 +7,7 @@ Aquest projecte usa el scheduler **QV** (cooperatiu, un sol fil d'execució per 
 ```
 ┌─────────────────────────────┐   ┌──────────────────────┐
 │  Fil QV (cooperatiu)        │   │  Fil extern (Mongoose)│
-│  DigitalEdgeDetector  p=3   │   │  HttpServer           │
+│  ControlEntrades  p=3   │   │  HttpServer           │
 │  Monitor              p=2   │   │  accés a SharedState  │
 │  TestObserver         p=1   │   │  via mutex            │
 └─────────────────────────────┘   └──────────────────────┘
@@ -124,7 +124,7 @@ Cada plataforma o mode proporciona la seva implementació concreta:
 L'AO rep el reader al constructor i el crida periòdicament via timer:
 
 ```cpp
-class DigitalEdgeDetector : public QP::QActive {
+class ControlEntrades : public QP::QActive {
     IOReader      m_reader;
     QP::QTimeEvt  m_pollTimer;
     // ...
@@ -134,9 +134,9 @@ class DigitalEdgeDetector : public QP::QActive {
 El timer s'arma a `initial`:
 
 ```cpp
-Q_STATE_DEF(DigitalEdgeDetector, initial) {
+Q_STATE_DEF(ControlEntrades, initial) {
     m_pollTimer.armX(m_pollTicks, m_pollTicks);
-    return tran(&DigitalEdgeDetector::operating);
+    return tran(&ControlEntrades::operating);
 }
 ```
 
@@ -205,7 +205,7 @@ La llista de configuracions es passa a l'AO amb `configure()` i a `SharedState` 
 El mode de test usa tres components al mateix fil QV:
 
 ```
-makeTestReader() lambda ──publica passos──► DigitalEdgeDetector
+makeTestReader() lambda ──publica passos──► ControlEntrades
                          ◄─ g_* globals ──  TestObserver
 ```
 
@@ -291,7 +291,7 @@ namespace QP { namespace QF {
 |---|---|
 | `signals.h` | Tots els senyals i structs d'events |
 | `InputConfig.h` | Struct de configuració d'entrada |
-| `DigitalEdgeDetector/SharedState.h` | Memòria compartida QV↔Mongoose |
+| `ControlEntrades/SharedState.h` | Memòria compartida QV↔Mongoose |
 | `RemoteIO/RemoteIOState.h` | Memòria compartida Mongoose↔IOReader |
 | `Test/TestController.hpp` | TestObserver, TestStep, makeTestReader, verifyStep, g_* |
 | `main.cpp` | Instàncies globals, inicialització, start dels AOs |

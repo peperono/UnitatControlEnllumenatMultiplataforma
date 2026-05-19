@@ -1,5 +1,5 @@
 #pragma once
-#include "../DigitalEdgeDetector/DigitalEdgeDetector.h"
+#include "../ControlEntrades/ControlEntrades.h"
 #include "RemoteIOState.h"
 #include <mutex>
 

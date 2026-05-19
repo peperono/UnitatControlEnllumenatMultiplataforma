@@ -1,10 +1,10 @@
 #include "qp_config.hpp"
 #include "qpcpp/include/qpcpp.hpp"
 #include "signals.h"
-#include "DigitalEdgeDetector/DigitalEdgeDetector.h"
+#include "ControlEntrades/ControlEntrades.h"
 #include "Monitor/Monitor.h"
 #include "HttpServer/HttpServer.h"
-#include "DigitalEdgeDetector/DigitalEdgeDetectorState.h"
+#include "ControlEntrades/ControlEntradesState.h"
 #include "RemoteIO/RemoteIOState.h"
 #include "Test/TestController.hpp"
 #include "RemoteIO/InputReader_WS.hpp"
@@ -86,7 +86,7 @@ int main() {
     IOReader reader = (choice == 2) ? makeWSInputReader() : makeTestReader();
 
     // ── Active Object instances ───────────────────────────────────────────────
-    static DigitalEdgeDetector edgeDetector{ std::move(reader), 1U };
+    static ControlEntrades edgeDetector{ std::move(reader), 1U };
     static Monitor             monitor;
     static TestObserver        testObserver;
     static ControlRemot        controlRemot;
@@ -97,12 +97,12 @@ int main() {
     edgeDetector.configure(configs);
 
     {
-        std::lock_guard<std::mutex> lk(edge_detector_state.mtx);
-        edge_detector_state.config_inputs = configs;
+        std::lock_guard<std::mutex> lk(control_entrades_state.mtx);
+        control_entrades_state.config_inputs = configs;
         for (const auto& cfg : configs) {
-            edge_detector_state.inputs[cfg.id] = false;
+            control_entrades_state.inputs[cfg.id] = false;
             for (int out_id : cfg.linked_outputs)
-                edge_detector_state.outputs[out_id] = false;
+                control_entrades_state.outputs[out_id] = false;
         }
     }
 

@@ -12,7 +12,7 @@ endif()
 idf_component_register(
     SRCS
         "main_esp32.cpp"
-        "${ROOT}/DigitalEdgeDetector/DigitalEdgeDetector.cpp"
+        "${ROOT}/ControlEntrades/ControlEntrades.cpp"
         "${ROOT}/Monitor/Monitor.cpp"
         "${ROOT}/ActuadorSortides/ActuadorSortides.cpp"
         "${ROOT}/HttpServer/HttpServer.cpp"

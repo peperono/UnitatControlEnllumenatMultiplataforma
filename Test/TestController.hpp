@@ -1,6 +1,6 @@
 #pragma once
-#include "DigitalEdgeDetector/DigitalEdgeDetector.h"
-#include "../DigitalEdgeDetector/DigitalEdgeDetectorState.h"
+#include "ControlEntrades/ControlEntrades.h"
+#include "../ControlEntrades/ControlEntradesState.h"
 #include "qpcpp/include/qpcpp.hpp"
 #include "signals.h"
 #include <vector>
@@ -250,7 +250,7 @@ inline IOReader makeTestReader() {
     };
 
     static int step = 0;
-    // Estado previo: mapa vacío antes del primer poll (igual que DigitalEdgeDetector)
+    // Estado previo: mapa vacío antes del primer poll (igual que ControlEntrades)
     static std::unordered_map<int, bool> prevInputs;
 
     return [](std::unordered_map<int, bool>& inputs,

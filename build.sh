@@ -63,7 +63,7 @@ $GPP -std=c++17 -Wall -O1 -static \
     -I"$QPCPP/src" \
     -I"$QPCPP/ports/win32-qv" \
     "$ROOT/main.cpp" \
-    "$ROOT/DigitalEdgeDetector/DigitalEdgeDetector.cpp" \
+    "$ROOT/ControlEntrades/ControlEntrades.cpp" \
     "$ROOT/Monitor/Monitor.cpp" \
     "$ROOT/HttpServer/HttpServer.cpp" \
     "$ROOT/ControlRemot/ControlRemot.cpp" \

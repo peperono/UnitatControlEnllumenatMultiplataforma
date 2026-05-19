@@ -11,12 +11,12 @@ using IOReader = std::function<void(
     std::unordered_map<int, bool>& inputs,
     std::unordered_map<int, bool>& outputs)>;
 
-// ── DigitalEdgeDetector ───────────────────────────────────────────────────────
+// ── ControlEntrades ───────────────────────────────────────────────────────
 // Active Object that periodically polls IO via an IOReader callback,
 // detects configured rising/falling edges, and publishes EDGE_DETECTED_SIG.
-class DigitalEdgeDetector : public QP::QActive {
+class ControlEntrades : public QP::QActive {
 public:
-    explicit DigitalEdgeDetector(IOReader reader, std::uint32_t poll_ticks) noexcept;
+    explicit ControlEntrades(IOReader reader, std::uint32_t poll_ticks) noexcept;
 
     // Must be called before starting the AO.
     void configure(const std::vector<InputConfig>& configs);
