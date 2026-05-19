@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.2.8 Chrome/140.0.7339.240 Electron/38.4.0 Safari/537.36" version="28.2.8">
   <diagram name="DigitalInputsDetector" id="digitalinputsdetector">
-    <mxGraphModel dx="857" dy="553" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1209" dy="780" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -79,7 +79,7 @@
         <mxCell id="http" value="HttpServer&#xa;(thread Mongoose)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffcccc;strokeColor=#36393d;fontSize=9;fontStyle=1" parent="1" vertex="1">
           <mxGeometry x="338" y="224.5" width="150" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="k19ayqWkpwsrz_kTSfV8-4" value="&lt;span style=&quot;font-size: 8px;&quot;&gt;ws(inputs,outputs,last_edges,edge_counts)&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;" parent="1" source="http" target="k19ayqWkpwsrz_kTSfV8-3" edge="1">
+        <mxCell id="k19ayqWkpwsrz_kTSfV8-4" value="&lt;span style=&quot;font-size: 8px;&quot;&gt;WS(inputs, last_edges,edge_counts)&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;" parent="1" source="http" target="k19ayqWkpwsrz_kTSfV8-3" edge="1">
           <mxGeometry x="-0.2182" relative="1" as="geometry">
             <mxPoint as="offset" />
             <Array as="points">
@@ -93,10 +93,10 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="ss" value="- inputs&lt;div&gt;- outputs&lt;/div&gt;&lt;div&gt;- configs&lt;br&gt;- last_edges&lt;/div&gt;&lt;div&gt;- edge_counts&lt;/div&gt;&lt;div&gt;- push_pending&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=8;align=left;" parent="1" vertex="1">
+        <mxCell id="ss" value="- inputs&lt;div&gt;- outputs&lt;/div&gt;&lt;div&gt;- config_inputs&lt;br&gt;- last_edges&lt;/div&gt;&lt;div&gt;- edge_counts&lt;/div&gt;&lt;div&gt;- push_pending&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=8;align=left;" parent="1" vertex="1">
           <mxGeometry x="608" y="615" width="102" height="75" as="geometry" />
         </mxCell>
-        <mxCell id="k19ayqWkpwsrz_kTSfV8-1" value="&lt;span style=&quot;font-size: 8px;&quot;&gt;read(inputs, outputs, last_edges, edge_counts, configs)&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.75;entryY=1;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;exitX=0;exitY=0.25;exitDx=0;exitDy=0;" parent="1" source="ded" target="http" edge="1">
+        <mxCell id="k19ayqWkpwsrz_kTSfV8-1" value="&lt;span style=&quot;font-size: 8px;&quot;&gt;inputs,&amp;nbsp;&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;font-size: 8px;&quot;&gt;last_edges,&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-size: 8px;&quot;&gt;edge_counts,&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-size: 8px;&quot;&gt;config_inputs&lt;/span&gt;&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.75;entryY=1;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;exitX=0;exitY=0.25;exitDx=0;exitDy=0;" parent="1" source="ded" target="http" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="e_post_reconfig" value="POST (configs)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;fontSize=8;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="http" target="ded_in_reconfig" edge="1">
@@ -109,7 +109,7 @@
         <mxCell id="bhttp" value="&lt;b&gt;Browser&lt;/b&gt;&lt;div&gt;&lt;b&gt;(HTTP)&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontColor=#333333;fontSize=11;" parent="1" vertex="1">
           <mxGeometry x="38" y="161" width="110" height="55" as="geometry" />
         </mxCell>
-        <mxCell id="k19ayqWkpwsrz_kTSfV8-2" value="&lt;span style=&quot;font-size: 8px;&quot;&gt;GET /&lt;br&gt;GET /configs&lt;br&gt;PUT /configs&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.25;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;startArrow=classic;startFill=1;" parent="1" source="bhttp" target="http" edge="1">
+        <mxCell id="k19ayqWkpwsrz_kTSfV8-2" value="&lt;span style=&quot;font-size: 8px;&quot;&gt;GET /&lt;br&gt;GET /config_inputs&lt;br&gt;PUT /config_inputs&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.25;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;startArrow=classic;startFill=1;" parent="1" source="bhttp" target="http" edge="1">
           <mxGeometry x="-0.2449" relative="1" as="geometry">
             <mxPoint as="offset" />
             <Array as="points">
@@ -122,7 +122,7 @@
         <mxCell id="k19ayqWkpwsrz_kTSfV8-3" value="&lt;b&gt;Browser&lt;/b&gt;&lt;div&gt;&lt;b&gt;(WebSocket)&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontColor=#333333;fontSize=11;" parent="1" vertex="1">
           <mxGeometry x="38" y="331" width="110" height="55" as="geometry" />
         </mxCell>
-        <mxCell id="k19ayqWkpwsrz_kTSfV8-5" value="&lt;span style=&quot;font-size: 8px;&quot;&gt;ws(inputs)&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=-0.001;entryY=0.594;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;entryPerimeter=0;" parent="1" source="k19ayqWkpwsrz_kTSfV8-3" target="http" edge="1">
+        <mxCell id="k19ayqWkpwsrz_kTSfV8-5" value="&lt;span style=&quot;font-size: 8px;&quot;&gt;WS(inputs)&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=-0.001;entryY=0.594;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;entryPerimeter=0;" parent="1" source="k19ayqWkpwsrz_kTSfV8-3" target="http" edge="1">
           <mxGeometry x="-0.104" relative="1" as="geometry">
             <mxPoint as="offset" />
             <Array as="points">
