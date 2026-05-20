@@ -55,6 +55,14 @@ Q_STATE_DEF(ControlEntrades, operating) {
                 m_prevInputs = inputs;
 
                 m_ioEvt.inputs = inputs;
+                {
+                    std::string detail;
+                    for (auto const& [id, state] : inputs) {
+                        if (!detail.empty()) detail += ", ";
+                        detail += "E" + std::to_string(id) + "=" + (state ? "ON" : "OFF");
+                    }
+                    log_append("ControlEntrades", ">> INPUT_CHANGED_SIG", detail);
+                }
                 PUBLISH(&m_ioEvt, this);
 
                 m_edgeEvt.input_ids.clear();
@@ -80,8 +88,15 @@ Q_STATE_DEF(ControlEntrades, operating) {
                     m_prevStates[cfg.id] = current;
                 }
 
-                if (!m_edgeEvt.input_ids.empty())
+                if (!m_edgeEvt.input_ids.empty()) {
+                    std::string detail;
+                    for (int id : m_edgeEvt.input_ids) {
+                        if (!detail.empty()) detail += ", ";
+                        detail += "E" + std::to_string(id);
+                    }
+                    log_append("ControlEntrades", ">> EDGE_DETECTED_SIG", detail);
                     PUBLISH(&m_edgeEvt, this);
+                }
 
                 {
                     std::lock_guard<std::mutex> lk(control_entrades_state.mtx);
