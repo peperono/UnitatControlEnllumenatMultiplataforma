@@ -117,7 +117,7 @@ void ControlRemot::publishResult() {
         detail += out.result ? "ON" : "OFF";
         detail += out.mode == OutputEntry::Mode::REMOTE ? "(REM)" : "(AUTO)";
     }
-    log_append("ControlRemot", "OUTPUT_RESULT_SIG", detail);
+    log_append("ControlRemot", ">> OUTPUT_RESULT_SIG", detail);
 
     PUBLISH(&m_resultEvt, this);
 }

@@ -64,7 +64,7 @@ Q_STATE_DEF(ControlHorari, operating) {
                     detail += std::to_string(ev->outputs[i].id);
                     detail += ev->outputs[i].state ? "=ON" : "=OFF";
                 }
-                log_append("ControlHorari", "OUTPUT_STATE_SIG", detail);
+                log_append("ControlHorari", ">> OUTPUT_STATE_SIG", detail);
                 PUBLISH(ev, this);
             }
             status = Q_HANDLED();

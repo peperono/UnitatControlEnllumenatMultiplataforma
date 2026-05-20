@@ -40,7 +40,7 @@ Q_STATE_DEF(Monitor, running) {
                 }
             }
             if (!detail.empty())
-                log_append("Monitor", "INPUT_CHANGED_SIG", detail);
+                log_append("Monitor", "<< INPUT_CHANGED_SIG", detail);
             m_prevInputs = evt->inputs;
             status = Q_HANDLED();
             break;
@@ -53,7 +53,7 @@ Q_STATE_DEF(Monitor, running) {
                 if (!detail.empty()) detail += ", ";
                 detail += "E" + std::to_string(id);
             }
-            log_append("Monitor", "EDGE_DETECTED_SIG", detail);
+            log_append("Monitor", "<< EDGE_DETECTED_SIG", detail);
             status = Q_HANDLED();
             break;
         }

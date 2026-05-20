@@ -1,5 +1,6 @@
 #include "ActuadorSortides.hpp"
-#include <cstdio>
+#include "../LogState.h"
+#include <string>
 
 ActuadorSortides::ActuadorSortides(OutputWriter writer) noexcept
     : QP::QActive{Q_STATE_CAST(&ActuadorSortides::initial)},
@@ -24,13 +25,17 @@ Q_STATE_DEF(ActuadorSortides, running) {
 
         case OUTPUT_RESULT_SIG: {
             auto const* evt = Q_EVT_CAST(OutputResultEvt);
+            std::string detail;
             for (auto const& [id, actiu] : evt->outputs) {
                 auto it = m_prevOutputs.find(id);
                 if (it != m_prevOutputs.end() && it->second == actiu)
                     continue;
-                std::printf("[ActuadorSortides] S%d -> %s\n", id, actiu ? "ON" : "OFF");
+                if (!detail.empty()) detail += ", ";
+                detail += "S" + std::to_string(id) + "=" + (actiu ? "ON" : "OFF");
                 m_writer(id, actiu);
             }
+            if (!detail.empty())
+                log_append("ActuadorSortides", "<< OUTPUT_RESULT_SIG", detail);
             m_prevOutputs = evt->outputs;
             status = Q_HANDLED();
             break;
