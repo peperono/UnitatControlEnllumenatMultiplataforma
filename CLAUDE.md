@@ -250,7 +250,7 @@ El diagrama de referència és `docs/ControlEntrades.drawio`. Les convencions vi
 
 ## Flux de treball
 
-Després de qualsevol modificació de codi, sempre en aquest ordre:
+Després de qualsevol modificació de codi (no documentació), sempre en aquest ordre:
 
 1. Compila Windows: `bash build.sh`
 2. Compila ESP32: `source ~/esp/esp-idf/export.sh > /dev/null 2>&1 && idf.py build`
