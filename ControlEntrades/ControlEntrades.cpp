@@ -1,6 +1,8 @@
 #include "ControlEntrades.h"
 #include "ControlEntradesState.h"
+#include "../LogState.h"
 #include <mutex>
+#include <string>
 
 ControlEntradesState control_entrades_state;
 
@@ -53,6 +55,14 @@ Q_STATE_DEF(ControlEntrades, operating) {
                 m_prevInputs = inputs;
 
                 m_ioEvt.inputs = inputs;
+                {
+                    std::string detail;
+                    for (auto const& [id, state] : inputs) {
+                        if (!detail.empty()) detail += ", ";
+                        detail += "E" + std::to_string(id) + "=" + (state ? "ON" : "OFF");
+                    }
+                    log_append("ControlEntrades", ">> INPUT_CHANGED_SIG", detail);
+                }
                 PUBLISH(&m_ioEvt, this);
 
                 m_edgeEvt.input_ids.clear();
@@ -79,6 +89,12 @@ Q_STATE_DEF(ControlEntrades, operating) {
                 }
 
                 if (!m_edgeEvt.input_ids.empty()) {
+                    std::string detail;
+                    for (int id : m_edgeEvt.input_ids) {
+                        if (!detail.empty()) detail += ", ";
+                        detail += "E" + std::to_string(id);
+                    }
+                    log_append("ControlEntrades", ">> EDGE_DETECTED_SIG", detail);
                     PUBLISH(&m_edgeEvt, this);
                 }
 
@@ -104,12 +120,22 @@ Q_STATE_DEF(ControlEntrades, operating) {
         case OUTPUT_RESULT_SIG: {
             auto const* ev = Q_EVT_CAST(OutputResultEvt);
             m_commandedOutputs = ev->outputs;
+            {
+                std::string detail;
+                for (auto const& [id, state] : ev->outputs) {
+                    if (!detail.empty()) detail += ", ";
+                    detail += "S" + std::to_string(id) + "=" + (state ? "ON" : "OFF");
+                }
+                log_append("ControlEntrades", "<< OUTPUT_RESULT_SIG", detail);
+            }
             status = Q_HANDLED();
             break;
         }
 
         case RECONFIGURE_SIG: {
             auto const* evt = Q_EVT_CAST(ReconfigureEvt);
+            log_append("ControlEntrades", "<< RECONFIGURE_SIG",
+                       std::to_string(evt->n_configs) + " entrades");
             std::vector<InputConfig> newConfigs;
             for (int i = 0; i < evt->n_configs; ++i) {
                 auto const& e = evt->entries[i];
