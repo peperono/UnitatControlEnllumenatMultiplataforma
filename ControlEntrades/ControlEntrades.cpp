@@ -52,12 +52,15 @@ Q_STATE_DEF(ControlEntrades, operating) {
             m_reader(inputs, outputs);
 
             if (inputs != m_prevInputs) {
+                auto prevInputs = m_prevInputs;
                 m_prevInputs = inputs;
 
                 m_ioEvt.inputs = inputs;
                 {
                     std::string detail;
                     for (auto const& [id, state] : inputs) {
+                        auto it = prevInputs.find(id);
+                        if (it != prevInputs.end() && it->second == state) continue;
                         if (!detail.empty()) detail += ", ";
                         detail += "E" + std::to_string(id) + "=" + (state ? "ON" : "OFF");
                     }
