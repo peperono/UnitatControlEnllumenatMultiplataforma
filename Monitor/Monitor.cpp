@@ -1,5 +1,6 @@
 #include "Monitor.h"
-#include <cstdio>
+#include "../LogState.h"
+#include <string>
 
 // ── Constructor ───────────────────────────────────────────────────────────────
 
@@ -30,11 +31,16 @@ Q_STATE_DEF(Monitor, running) {
 
         case INPUT_CHANGED_SIG: {
             auto const* evt = Q_EVT_CAST(InputChangedEvt);
+            std::string detail;
             for (auto const& [id, state] : evt->inputs) {
                 auto it = m_prevInputs.find(id);
-                if (it == m_prevInputs.end() || it->second != state)
-                    std::printf("[Monitor] entrada %d -> %s\n", id, state ? "ON" : "OFF");
+                if (it == m_prevInputs.end() || it->second != state) {
+                    if (!detail.empty()) detail += ", ";
+                    detail += "E" + std::to_string(id) + "=" + (state ? "ON" : "OFF");
+                }
             }
+            if (!detail.empty())
+                log_append("Monitor", "INPUT_CHANGED_SIG", detail);
             m_prevInputs = evt->inputs;
             status = Q_HANDLED();
             break;
@@ -42,8 +48,12 @@ Q_STATE_DEF(Monitor, running) {
 
         case EDGE_DETECTED_SIG: {
             auto const* evt = Q_EVT_CAST(EdgeDetectedEvt);
-            for (int id : evt->input_ids)
-                std::printf("[Monitor] flanc entrada %d\n", id);
+            std::string detail;
+            for (int id : evt->input_ids) {
+                if (!detail.empty()) detail += ", ";
+                detail += "E" + std::to_string(id);
+            }
+            log_append("Monitor", "EDGE_DETECTED_SIG", detail);
             status = Q_HANDLED();
             break;
         }
