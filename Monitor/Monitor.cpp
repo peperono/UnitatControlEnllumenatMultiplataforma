@@ -42,9 +42,12 @@ Q_STATE_DEF(Monitor, running) {
             if (!detail.empty())
                 log_append("Monitor", "<< INPUT_CHANGED_SIG", detail);
             m_prevInputs = evt->inputs;
-            for (auto const& [id, state] : evt->inputs)
-                log_append("Monitor", "=>",
-                           "E" + std::to_string(id) + ": " + (state ? "ON" : "OFF"));
+            std::string all;
+            for (auto const& [id, state] : evt->inputs) {
+                if (!all.empty()) all += ", ";
+                all += "E" + std::to_string(id) + ": " + (state ? "ON" : "OFF");
+            }
+            log_append("Monitor", "=>", all);
             status = Q_HANDLED();
             break;
         }
