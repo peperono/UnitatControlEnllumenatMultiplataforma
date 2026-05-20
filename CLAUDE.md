@@ -247,6 +247,16 @@ Cap endpoint ni WS. Només consumeix events QP i actua sobre hardware o consola.
 
 El diagrama de referència és `docs/ControlEntrades.drawio`. Les convencions visuals (colors, fletxes, etiquetes, estructura dels nodes) estan documentades a [`docs/drawio-conventions.md`](docs/drawio-conventions.md).
 
+## Flux de treball
+
+Després de qualsevol modificació de codi, sempre en aquest ordre:
+
+1. Compila Windows: `bash build.sh`
+2. Compila ESP32: `source ~/esp/esp-idf/export.sh > /dev/null 2>&1 && idf.py build`
+3. Si ambdues compilen sense errors: `git commit -am "..." && git push`
+
+No fer commit si qualsevol de les dues compilacions falla.
+
 ## Convencions
 
 - Codi i comentaris en **català**
