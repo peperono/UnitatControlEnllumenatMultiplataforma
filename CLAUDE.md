@@ -10,6 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - [Active Objects — events](#active-objects--events)
 - [Active Objects — endpoints, WebSocket](#active-objects--endpoints-websocket)
 - [Key files](#key-files)
+- [Flux de treball](#flux-de-treball)
 - [Convencions](#convencions)
 
 ## Windows
