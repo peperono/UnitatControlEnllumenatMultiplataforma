@@ -28,12 +28,17 @@ Q_STATE_DEF(ControlRemot, operating) {
 
         case OUTPUT_STATE_SIG: {
             auto const* ev = Q_EVT_CAST(OutputStateEvt);
+            std::string detail;
             for (int i = 0; i < ev->n_outputs; ++i) {
                 auto& out = m_outputs[ev->outputs[i].id];
                 out.state = ev->outputs[i].state;
                 if (out.mode == OutputEntry::Mode::AUTO)
                     out.result = ev->outputs[i].state;
+                if (!detail.empty()) detail += ", ";
+                detail += "S" + std::to_string(ev->outputs[i].id)
+                        + "=" + (ev->outputs[i].state ? "ON" : "OFF");
             }
+            log_append("ControlRemot", "<< OUTPUT_STATE_SIG", detail);
             publishResult();
             status = Q_HANDLED();
             break;
@@ -44,6 +49,8 @@ Q_STATE_DEF(ControlRemot, operating) {
             auto& out      = m_outputs[ev->output_id];
             out.commanded  = ev->activate;
             out.result     = ev->activate;
+            log_append("ControlRemot", "<< CTRL_OUTPUT_CMD_SIG",
+                       "S" + std::to_string(ev->output_id) + "=" + (ev->activate ? "ON" : "OFF"));
             publishResult();
             status = Q_HANDLED();
             break;
@@ -56,6 +63,8 @@ Q_STATE_DEF(ControlRemot, operating) {
                                   : OutputEntry::Mode::AUTO;
             out.result = (out.mode == OutputEntry::Mode::REMOTE)
                        ? out.commanded : out.state;
+            log_append("ControlRemot", "<< CTRL_OUTPUT_MODE_SIG",
+                       "S" + std::to_string(ev->output_id) + "=" + (ev->remote ? "REMOTE" : "AUTO"));
             publishResult();
             status = Q_HANDLED();
             break;
@@ -64,6 +73,8 @@ Q_STATE_DEF(ControlRemot, operating) {
         case CTRL_OUTPUT_DELETE_SIG: {
             auto const* ev = Q_EVT_CAST(OutputDeleteEvt);
             m_outputs.erase(ev->output_id);
+            log_append("ControlRemot", "<< CTRL_OUTPUT_DELETE_SIG",
+                       "S" + std::to_string(ev->output_id));
             publishResult();
             status = Q_HANDLED();
             break;
@@ -81,6 +92,8 @@ Q_STATE_DEF(ControlRemot, operating) {
                 out.mode   = OutputEntry::Mode::AUTO;
                 out.result = out.state;
             }
+            log_append("ControlRemot", "<< CTRL_OUTPUT_RETURN_AUTO_SIG",
+                       ev->output_id == -1 ? "all" : "S" + std::to_string(ev->output_id));
             publishResult();
             status = Q_HANDLED();
             break;
