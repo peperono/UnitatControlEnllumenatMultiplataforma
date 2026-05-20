@@ -32,10 +32,18 @@ Q_STATE_DEF(ActuadorSortides, running) {
                     continue;
                 if (!detail.empty()) detail += ", ";
                 detail += "S" + std::to_string(id) + "=" + (actiu ? "ON" : "OFF");
-                m_writer(id, actiu);
             }
-            if (!detail.empty())
+            if (!detail.empty()) {
                 log_append("ActuadorSortides", "<< OUTPUT_RESULT_SIG", detail);
+                for (auto const& [id, actiu] : evt->outputs) {
+                    auto it = m_prevOutputs.find(id);
+                    if (it != m_prevOutputs.end() && it->second == actiu)
+                        continue;
+                    m_writer(id, actiu);
+                    log_append("ActuadorSortides", "=>",
+                               "S" + std::to_string(id) + ": " + (actiu ? "ON" : "OFF"));
+                }
+            }
             m_prevOutputs = evt->outputs;
             status = Q_HANDLED();
             break;
