@@ -5,7 +5,6 @@
 #include "../ControlRemot/ControlRemotState.h"
 #include "../ControlHorari/ControlHorariState.h"
 #include "../Rellotge/RellotgeState.h"
-#include "../LogState.h"
 #include "../signals.h"
 #include <thread>
 #include <atomic>
@@ -19,8 +18,6 @@ extern "C" {
 }
 
 #include "../web/index_html.h"
-
-LogState log_state;
 
 // ── JSON helpers ──────────────────────────────────────────────────────────────
 
@@ -76,8 +73,7 @@ static std::string build_ws_msg(
         const std::vector<int>&              edges,
         const std::unordered_map<int, int>&  counts,
         const std::unordered_map<int, OutputInfo>& cs_outputs,
-        int hour, int minute, int wday,
-        const std::vector<LogEntry>& logs)
+        int hour, int minute, int wday)
 {
     static const char* DAYS[7] = {
         "dilluns","dimarts","dimecres","dijous","divendres","dissabte","diumenge"};
@@ -101,17 +97,7 @@ static std::string build_ws_msg(
              "\"mode\":\""     + (v.remote    ? "REMOTE" : "AUTO") + "\"}";
         first = false;
     }
-    s += "},\"log\":[";
-    bool fl = true;
-    for (auto const& e : logs) {
-        if (!fl) s += ",";
-        s += "{\"t\":"   + json_str(e.time)
-           + ",\"src\":" + json_str(e.src)
-           + ",\"sig\":" + json_str(e.sig)
-           + ",\"d\":"   + json_str(e.detail) + "}";
-        fl = false;
-    }
-    s += "],\"platform\":\"";
+    s += "},\"platform\":\"";
     s += s_platform;
     s += "\"}";
     return s;
@@ -122,8 +108,7 @@ static std::string build_ws_msg(
 static void push_if_pending(struct mg_mgr* mgr) {
     bool pending = control_entrades_state.push_pending.exchange(false)
                  | control_remot_state.push_pending.exchange(false)
-                 | rellotge_state.push_pending.exchange(false)
-                 | log_state.push_pending.exchange(false);
+                 | rellotge_state.push_pending.exchange(false);
     if (!pending) return;
 
     std::unordered_map<int, bool>       inputs;
@@ -131,7 +116,6 @@ static void push_if_pending(struct mg_mgr* mgr) {
     std::vector<int>                    edges;
     std::unordered_map<int, OutputInfo> cs_outputs;
     int hh, mm, wd;
-    std::vector<LogEntry> logs;
 
     {
         std::lock_guard<std::mutex> lk(control_entrades_state.mtx);
@@ -149,13 +133,9 @@ static void push_if_pending(struct mg_mgr* mgr) {
         mm = rellotge_state.minute;
         wd = rellotge_state.wday;
     }
-    {
-        std::lock_guard<std::mutex> lk(log_state.mtx);
-        logs = std::move(log_state.pending);
-    }
 
     std::string msg = build_ws_msg(inputs, edges, counts,
-                                   cs_outputs, hh, mm, wd, logs);
+                                   cs_outputs, hh, mm, wd);
     for (struct mg_connection* c = mgr->conns; c != nullptr; c = c->next) {
         if (c->is_websocket)
             mg_ws_send(c, msg.c_str(), msg.size(), WEBSOCKET_OP_TEXT);
@@ -219,7 +199,7 @@ static void http_fn(struct mg_connection* c, int ev, void* ev_data) {
                 std::lock_guard<std::mutex> lk(rellotge_state.mtx);
                 hh = rellotge_state.hour;  mm = rellotge_state.minute;  wd = rellotge_state.wday;
             }
-            std::string msg = build_ws_msg(inputs, {}, counts, cs_outputs, hh, mm, wd, {});
+            std::string msg = build_ws_msg(inputs, {}, counts, cs_outputs, hh, mm, wd);
             mg_ws_send(c, msg.c_str(), msg.size(), WEBSOCKET_OP_TEXT);
 
         // ── GET /config_inputs ────────────────────────────────────────────────
