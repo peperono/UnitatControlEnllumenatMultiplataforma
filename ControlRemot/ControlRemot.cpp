@@ -35,12 +35,18 @@ Q_STATE_DEF(ControlRemot, operating) {
             auto const* ev = Q_EVT_CAST(OutputStateEvt);
             std::string detail;
             for (int i = 0; i < ev->n_outputs; ++i) {
-                auto& out = m_outputs[ev->outputs[i].id];
-                out.state = ev->outputs[i].state;
-                if (out.mode == OutputEntry::Mode::AUTO)
-                    out.result = ev->outputs[i].state;
+                int id = ev->outputs[i].id;
+                auto it = m_outputs.find(id);
+                if (it == m_outputs.end()) {
+                    log_append("ControlRemot", "WARN OUTPUT_STATE_SIG",
+                               "S" + std::to_string(id) + " no declarada, ignorada");
+                    continue;
+                }
+                it->second.state = ev->outputs[i].state;
+                if (it->second.mode == OutputEntry::Mode::AUTO)
+                    it->second.result = ev->outputs[i].state;
                 if (!detail.empty()) detail += ", ";
-                detail += "S" + std::to_string(ev->outputs[i].id)
+                detail += "S" + std::to_string(id)
                         + "=" + (ev->outputs[i].state ? "ON" : "OFF");
             }
             log_append("ControlRemot", "<< OUTPUT_STATE_SIG", detail);
@@ -51,9 +57,15 @@ Q_STATE_DEF(ControlRemot, operating) {
 
         case CTRL_OUTPUT_CMD_SIG: {
             auto const* ev = Q_EVT_CAST(OutputCmdEvt);
-            auto& out      = m_outputs[ev->output_id];
-            out.commanded  = ev->activate;
-            out.result     = ev->activate;
+            auto it = m_outputs.find(ev->output_id);
+            if (it == m_outputs.end()) {
+                log_append("ControlRemot", "WARN CTRL_OUTPUT_CMD_SIG",
+                           "S" + std::to_string(ev->output_id) + " no declarada, ignorada");
+                status = Q_HANDLED();
+                break;
+            }
+            it->second.commanded = ev->activate;
+            it->second.result    = ev->activate;
             log_append("ControlRemot", "<< CTRL_OUTPUT_CMD_SIG",
                        "S" + std::to_string(ev->output_id) + "=" + (ev->activate ? "ON" : "OFF"));
             publishResult();
@@ -63,11 +75,17 @@ Q_STATE_DEF(ControlRemot, operating) {
 
         case CTRL_OUTPUT_MODE_SIG: {
             auto const* ev = Q_EVT_CAST(OutputModeEvt);
-            auto& out      = m_outputs[ev->output_id];
-            out.mode = ev->remote ? OutputEntry::Mode::REMOTE
-                                  : OutputEntry::Mode::AUTO;
-            out.result = (out.mode == OutputEntry::Mode::REMOTE)
-                       ? out.commanded : out.state;
+            auto it = m_outputs.find(ev->output_id);
+            if (it == m_outputs.end()) {
+                log_append("ControlRemot", "WARN CTRL_OUTPUT_MODE_SIG",
+                           "S" + std::to_string(ev->output_id) + " no declarada, ignorada");
+                status = Q_HANDLED();
+                break;
+            }
+            it->second.mode = ev->remote ? OutputEntry::Mode::REMOTE
+                                         : OutputEntry::Mode::AUTO;
+            it->second.result = (it->second.mode == OutputEntry::Mode::REMOTE)
+                              ? it->second.commanded : it->second.state;
             log_append("ControlRemot", "<< CTRL_OUTPUT_MODE_SIG",
                        "S" + std::to_string(ev->output_id) + "=" + (ev->remote ? "REMOTE" : "AUTO"));
             publishResult();
@@ -77,6 +95,12 @@ Q_STATE_DEF(ControlRemot, operating) {
 
         case CTRL_OUTPUT_DELETE_SIG: {
             auto const* ev = Q_EVT_CAST(OutputDeleteEvt);
+            if (m_outputs.find(ev->output_id) == m_outputs.end()) {
+                log_append("ControlRemot", "WARN CTRL_OUTPUT_DELETE_SIG",
+                           "S" + std::to_string(ev->output_id) + " no declarada, ignorada");
+                status = Q_HANDLED();
+                break;
+            }
             m_outputs.erase(ev->output_id);
             log_append("ControlRemot", "<< CTRL_OUTPUT_DELETE_SIG",
                        "S" + std::to_string(ev->output_id));
@@ -93,9 +117,15 @@ Q_STATE_DEF(ControlRemot, operating) {
                     out.result = out.state;
                 }
             } else {
-                auto& out  = m_outputs[ev->output_id];
-                out.mode   = OutputEntry::Mode::AUTO;
-                out.result = out.state;
+                auto it = m_outputs.find(ev->output_id);
+                if (it == m_outputs.end()) {
+                    log_append("ControlRemot", "WARN CTRL_OUTPUT_RETURN_AUTO_SIG",
+                               "S" + std::to_string(ev->output_id) + " no declarada, ignorada");
+                    status = Q_HANDLED();
+                    break;
+                }
+                it->second.mode   = OutputEntry::Mode::AUTO;
+                it->second.result = it->second.state;
             }
             log_append("ControlRemot", "<< CTRL_OUTPUT_RETURN_AUTO_SIG",
                        ev->output_id == -1 ? "all" : "S" + std::to_string(ev->output_id));
