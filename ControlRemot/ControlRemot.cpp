@@ -2,8 +2,10 @@
 #include "ControlRemotState.h"
 #include "../LogState.h"
 #include "../mongoose/mongoose.h"
+#include <algorithm>
 #include <cstdio>
 #include <mutex>
+#include <vector>
 
 ControlRemotState control_remot_state;
 
@@ -159,10 +161,14 @@ void ControlRemot::publishResult() {
     }
     control_remot_state.push_pending.store(true);
 
+    std::vector<int> ids;
+    for (auto const& [id, out] : m_outputs) ids.push_back(id);
+    std::sort(ids.begin(), ids.end());
     std::string detail;
-    for (auto const& [id, out] : m_outputs) {
+    for (int id : ids) {
+        auto const& out = m_outputs.at(id);
         if (!detail.empty()) detail += ", ";
-        detail += std::to_string(id) + "=";
+        detail += "S" + std::to_string(id) + "=";
         detail += out.result ? "ON" : "OFF";
         detail += out.mode == OutputEntry::Mode::REMOTE ? "(REM)" : "(AUTO)";
     }
