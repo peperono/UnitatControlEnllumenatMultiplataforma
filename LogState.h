@@ -12,5 +12,5 @@ inline void log_append(const char* src, const char* sig, const std::string& deta
                       rellotge_state.hour, rellotge_state.minute,
                       rellotge_state.second);
     }
-    std::printf("[%s] [%s] %s %s\n", tbuf, src, sig, detail.c_str());
+    std::printf("[%s] [%-16.16s] %s %s\n", tbuf, src, sig, detail.c_str());
 }
