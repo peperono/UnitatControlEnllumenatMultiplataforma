@@ -25,6 +25,12 @@ Q_STATE_DEF(ActuadorSortides, running) {
 
         case OUTPUT_RESULT_SIG: {
             auto const* evt = Q_EVT_CAST(OutputResultEvt);
+            std::string all;
+            for (auto const& [id, actiu] : evt->outputs) {
+                if (!all.empty()) all += ", ";
+                all += "S" + std::to_string(id) + "=" + (actiu ? "ON" : "OFF");
+            }
+            log_append("ActuadorSortides", "<< OUTPUT_RESULT_SIG", all);
             std::string detail;
             for (auto const& [id, actiu] : evt->outputs) {
                 auto it = m_prevOutputs.find(id);
@@ -34,7 +40,6 @@ Q_STATE_DEF(ActuadorSortides, running) {
                 detail += "S" + std::to_string(id) + "=" + (actiu ? "ON" : "OFF");
             }
             if (!detail.empty()) {
-                log_append("ActuadorSortides", "<< OUTPUT_RESULT_SIG", detail);
                 for (auto const& [id, actiu] : evt->outputs) {
                     auto it = m_prevOutputs.find(id);
                     if (it != m_prevOutputs.end() && it->second == actiu)
