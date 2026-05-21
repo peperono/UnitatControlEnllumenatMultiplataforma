@@ -28,6 +28,7 @@ Q_STATE_DEF(ControlRemot, operating) {
     switch (e->sig) {
 
         case Q_ENTRY_SIG:
+            publishResult();
             status = Q_HANDLED();
             break;
 
