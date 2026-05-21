@@ -45,7 +45,7 @@ extern "C" Q_NORETURN Q_onError(char const * const module, int_t const id) {
 static QP::QSubscrList subscrSto[MAX_SIG];
 
 static QP::QEvtPtr rellotgeQSto      [16];
-static QP::QEvtPtr edgeDetectorQSto  [10];
+static QP::QEvtPtr controlEntradesQSto  [10];
 static QP::QEvtPtr controlRemotQSto  [64];
 static QP::QEvtPtr controlHorariQSto [32];
 static QP::QEvtPtr monitorQSto          [10];
@@ -55,7 +55,7 @@ static QP::QEvtPtr actuadorSortidesQSto [ 8];
 // El port FreeRTOS de QP/C++ requereix configSUPPORT_STATIC_ALLOCATION=1
 // NOTA: StackType_t = uint8_t en Xtensa → mides en bytes, no en paraules de 4B
 static StackType_t rellotgeStk      [ 4 * 1024];  //  4 KB
-static StackType_t edgeDetectorStk  [ 8 * 1024];  //  8 KB
+static StackType_t controlEntradesStk  [ 8 * 1024];  //  8 KB
 static StackType_t controlRemotStk  [ 8 * 1024];  //  8 KB
 static StackType_t controlHorariStk [16 * 1024];  // 16 KB (JSON parsing)
 static StackType_t monitorStk            [ 4 * 1024];  //  4 KB
@@ -175,14 +175,14 @@ extern "C" void app_main() {
     // hagin processat l'anterior, hi ha una condició de cursa. A 100 Hz de
     // polling i subscriptors lleugers, el risc pràctic és baix, però s'ha de
     // refactoritzar si es requereix garantia estricta.
-    static ControlEntrades edgeDetector{makeHWInputReader(), 1U};
+    static ControlEntrades controlEntrades{makeHWInputReader(), 1U};
     static ActuadorEntrades   monitor;
     static ControlRemot        controlRemot;
     static ControlHorari       controlHorari;
     static Rellotge            rellotge;
     static ActuadorSortides    actuadorSortides{makeGPIOWriter()};
 
-    edgeDetector.configure(configs);
+    controlEntrades.configure(configs);
 
     QP::QF::init();
     QP::QActive::psInit(subscrSto, Q_DIM(subscrSto));
@@ -196,8 +196,8 @@ extern "C" void app_main() {
     // Prioritats i stacks (FreeRTOS requereix stack explícit per static allocation)
     rellotge.start    (6U, rellotgeQSto,      Q_DIM(rellotgeQSto),
                        rellotgeStk,      sizeof(rellotgeStk));
-    edgeDetector.start(5U, edgeDetectorQSto,  Q_DIM(edgeDetectorQSto),
-                       edgeDetectorStk,  sizeof(edgeDetectorStk));
+    controlEntrades.start(5U, controlEntradesQSto,  Q_DIM(controlEntradesQSto),
+                       controlEntradesStk,  sizeof(controlEntradesStk));
     controlRemot.start(4U, controlRemotQSto,  Q_DIM(controlRemotQSto),
                        controlRemotStk,  sizeof(controlRemotStk));
     controlHorari.start(3U,controlHorariQSto, Q_DIM(controlHorariQSto),
@@ -213,7 +213,7 @@ extern "C" void app_main() {
     }
     controlHorari.loadJson(JSON_HORARI, sizeof(JSON_HORARI) - 1);
 
-    HttpServer::start(8080, &edgeDetector, &controlRemot, "ESP32");
+    HttpServer::start(8080, &controlEntrades, &controlRemot, "ESP32");
 
     QP::QF::run(); // inicia el scheduler FreeRTOS — no retorna
 }

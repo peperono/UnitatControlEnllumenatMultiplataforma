@@ -28,7 +28,7 @@ extern "C" Q_NORETURN Q_onError(char const * const module, int_t const id) {
 static QP::QSubscrList subscrSto[MAX_SIG];
 
 // ── Cues d'events ─────────────────────────────────────────────────────────────
-static QP::QEvtPtr edgeDetectorQSto[10];
+static QP::QEvtPtr controlEntradesQSto[10];
 static QP::QEvtPtr monitorQSto[10];
 static QP::QEvtPtr testObserverQSto[10];
 static QP::QEvtPtr controlRemotQSto[64];
@@ -86,7 +86,7 @@ int main() {
     IOReader reader = (choice == 2) ? makeWSInputReader() : makeTestReader();
 
     // ── Active Object instances ───────────────────────────────────────────────
-    static ControlEntrades edgeDetector{ std::move(reader), 1U };
+    static ControlEntrades controlEntrades{ std::move(reader), 1U };
     static ActuadorEntrades   monitor;
     static TestObserver        testObserver;
     static ControlRemot        controlRemot;
@@ -94,7 +94,7 @@ int main() {
     static Rellotge            rellotge;
     static ActuadorSortides    actuadorSortides{makeConsoleWriter()};
 
-    edgeDetector.configure(configs);
+    controlEntrades.configure(configs);
 
     {
         std::lock_guard<std::mutex> lk(control_entrades_state.mtx);
@@ -119,7 +119,7 @@ int main() {
 
     // Prioritats (alt→baix): Rellotge > EdgeDetector > ControlRemot > ControlHorari > ActuadorEntrades > TestObserver
     rellotge.start(    6U, rellotgeQSto,      Q_DIM(rellotgeQSto),      nullptr, 0U);
-    edgeDetector.start(5U, edgeDetectorQSto,  Q_DIM(edgeDetectorQSto),  nullptr, 0U);
+    controlEntrades.start(5U, controlEntradesQSto,  Q_DIM(controlEntradesQSto),  nullptr, 0U);
     controlRemot.start(4U, controlRemotQSto,  Q_DIM(controlRemotQSto),  nullptr, 0U);
     controlHorari.start(3U,controlHorariQSto, Q_DIM(controlHorariQSto), nullptr, 0U);
     monitor.start(     2U, monitorQSto,       Q_DIM(monitorQSto),       nullptr, 0U);
@@ -136,7 +136,7 @@ int main() {
     }
     controlHorari.loadJson(JSON_HORARI, sizeof(JSON_HORARI) - 1);
 
-    HttpServer::start(8080, &edgeDetector, &controlRemot, "Windows");
+    HttpServer::start(8080, &controlEntrades, &controlRemot, "Windows");
 
     int ret = QP::QF::run();
 
