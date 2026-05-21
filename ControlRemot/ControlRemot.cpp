@@ -11,7 +11,8 @@ ControlRemotState control_remot_state;
 
 ControlRemot::ControlRemot() noexcept
     : QP::QActive{Q_STATE_CAST(&ControlRemot::initial)},
-      m_resultEvt{}
+      m_resultEvt{},
+      m_initTimer{this, CTRL_REMOT_INIT_SIG}
 {}
 
 void ControlRemot::configure(const std::vector<OutputConfig>& configs) {
@@ -30,6 +31,11 @@ Q_STATE_DEF(ControlRemot, operating) {
     switch (e->sig) {
 
         case Q_ENTRY_SIG:
+            m_initTimer.armX(1U, 0U);
+            status = Q_HANDLED();
+            break;
+
+        case CTRL_REMOT_INIT_SIG:
             publishResult();
             status = Q_HANDLED();
             break;

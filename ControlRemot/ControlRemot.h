@@ -25,6 +25,7 @@ private:
 
     std::unordered_map<int, OutputEntry> m_outputs;
     OutputResultEvt                      m_resultEvt; // static event (poolNum_=0)
+    QP::QTimeEvt                         m_initTimer;
 
     void publishResult();
 
