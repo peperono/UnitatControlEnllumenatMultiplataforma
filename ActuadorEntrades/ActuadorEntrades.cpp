@@ -25,6 +25,13 @@ Q_STATE_DEF(ActuadorEntrades, running) {
     switch (e->sig) {
 
         case Q_ENTRY_SIG: {
+            std::string all;
+            for (auto const& [id, state] : m_allInputs) {
+                if (!all.empty()) all += ", ";
+                all += "E" + std::to_string(id) + ": " + (state ? "ON" : "OFF");
+            }
+            if (!all.empty())
+                log_append("ActuadorEntrades", "=>", all);
             status = Q_HANDLED();
             break;
         }

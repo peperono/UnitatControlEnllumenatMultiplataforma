@@ -19,6 +19,13 @@ Q_STATE_DEF(ActuadorSortides, running) {
     switch (e->sig) {
 
         case Q_ENTRY_SIG: {
+            std::string all;
+            for (auto const& [id, actiu] : m_prevOutputs) {
+                if (!all.empty()) all += ", ";
+                all += "S" + std::to_string(id) + ": " + (actiu ? "ON" : "OFF");
+            }
+            if (!all.empty())
+                log_append("ActuadorSortides", "=>", all);
             status = Q_HANDLED();
             break;
         }
