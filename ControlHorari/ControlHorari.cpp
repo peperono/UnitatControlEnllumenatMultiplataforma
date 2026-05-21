@@ -119,5 +119,5 @@ void ControlHorari::loadJson(const char* buf, std::size_t len) {
 
     int total = 0;
     for (auto const& v : m_schedule) total += (int)v.size();
-    std::printf("[ControlHorari] calendari carregat: %d maniobres\n", total);
+    log_append("ControlHorari", "calendari carregat", std::to_string(total) + " maniobres");
 }
