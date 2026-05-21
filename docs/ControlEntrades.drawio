@@ -175,7 +175,7 @@
             <mxPoint x="890" y="218" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="mon" value="Monitor (QP::QActive)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;verticalAlign=top;spacingTop=8" parent="1" vertex="1">
+        <mxCell id="mon" value="ActuadorEntrades (QP::QActive)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;verticalAlign=top;spacingTop=8" parent="1" vertex="1">
           <mxGeometry x="1419" y="740.5" width="183" height="120" as="geometry" />
         </mxCell>
         <mxCell id="mon_in_io" value="InputChangedEvt&#xa;(INPUT_CHANGED_SIG)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
