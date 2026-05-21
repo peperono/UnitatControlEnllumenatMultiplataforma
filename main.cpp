@@ -9,6 +9,7 @@
 #include "Test/TestController.hpp"
 #include "RemoteIO/InputReader_WS.hpp"
 #include "ControlRemot/ControlRemot.h"
+#include "ControlRemot/OutputConfig.h"
 #include "ControlHorari/ControlHorari.h"
 #include "ControlHorari/ControlHorariState.h"
 #include "ControlHorari/json_horari.h"
@@ -74,6 +75,12 @@ int main() {
         InputConfig{3, /*detect_edge=*/EdgePolarity::rising,  /*always=*/true,  {}   }
     };
 
+    const std::vector<OutputConfig> outputConfigs = {
+        OutputConfig{1},
+        OutputConfig{2},
+        OutputConfig{3}
+    };
+
     if (choice == 2) {
         std::lock_guard<std::mutex> lk(remote_io_state.mtx);
         for (const auto& cfg : configs) {
@@ -95,6 +102,7 @@ int main() {
     static ActuadorSortides    actuadorSortides{makeConsoleWriter()};
 
     controlEntrades.configure(configs);
+    controlRemot.configure(outputConfigs);
 
     {
         std::lock_guard<std::mutex> lk(control_entrades_state.mtx);

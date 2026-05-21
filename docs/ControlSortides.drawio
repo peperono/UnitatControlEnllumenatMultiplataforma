@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.2.8 Chrome/140.0.7339.240 Electron/38.4.0 Safari/537.36" version="28.2.8">
   <diagram name="ControlRemot" id="controlremot">
-    <mxGraphModel dx="1713" dy="1105" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2336" pageHeight="1654" math="0" shadow="0">
+    <mxGraphModel dx="1469" dy="947" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2336" pageHeight="1654" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -149,22 +149,10 @@
         <mxCell id="nPEGExYc4R3wSkc33mew-5" value="&lt;b&gt;Browser&lt;/b&gt;&lt;div&gt;&lt;b&gt;WebSocket&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontColor=#333333;fontSize=11;" parent="1" vertex="1">
           <mxGeometry x="1693" y="659" width="110" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="jaKRlGInz0ltfFADGkvu-2" value="push" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;" parent="1" source="jaKRlGInz0ltfFADGkvu-1" target="ws" edge="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="jaKRlGInz0ltfFADGkvu-1" value="LogState.h" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=8" parent="1" vertex="1">
-          <mxGeometry x="1470.5" y="582" width="60" height="35" as="geometry" />
-        </mxCell>
-        <mxCell id="jaKRlGInz0ltfFADGkvu-4" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;" parent="1" source="jaKRlGInz0ltfFADGkvu-3" target="jaKRlGInz0ltfFADGkvu-1" edge="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="jaKRlGInz0ltfFADGkvu-3" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;Log: events QP i POST HTTP&lt;/font&gt;" style="shape=note2;boundedLbl=1;whiteSpace=wrap;html=1;size=25;verticalAlign=top;align=center;" parent="1" vertex="1">
-          <mxGeometry x="1460" y="462" width="200" height="60" as="geometry" />
-        </mxCell>
         <mxCell id="jaKRlGInz0ltfFADGkvu-5" value="ControlSortides&lt;div&gt;Maig 2026&lt;/div&gt;" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;recursiveResize=0;container=1;collapsible=0;width=170;height=40;" parent="1" vertex="1">
           <mxGeometry x="180" y="154" width="1950" height="1120" as="geometry" />
         </mxCell>
-        <mxCell id="IJb5zE0oGNF-HTFJebx6-1" value="&lt;div&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;Blau: Fil QP (QP::QActive)&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;Verd: Events QP&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-size: 15px;&quot;&gt;Groc: Memòria compartida entre fils.&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;Rosa: Fil Mongoose&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;Gris: Estratègia injectada&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;Línia continua: read, write, publish, push, GET, PUT, POST&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;Línia discontinua: dependència / inject&lt;/font&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="jaKRlGInz0ltfFADGkvu-5">
+        <mxCell id="IJb5zE0oGNF-HTFJebx6-1" value="&lt;div&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;Blau: Fil QP (QP::QActive)&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;Verd: Events QP&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-size: 15px;&quot;&gt;Groc: Memòria compartida entre fils.&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;Rosa: Fil Mongoose&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;Gris: Estratègia injectada&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;Línia continua: read, write, publish, push, GET, PUT, POST&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;Línia discontinua: dependència / inject&lt;/font&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;whiteSpace=wrap;html=1;" parent="jaKRlGInz0ltfFADGkvu-5" vertex="1">
           <mxGeometry x="60" y="926" width="430" height="130" as="geometry" />
         </mxCell>
         <mxCell id="as" value="ActuadorSortides (QP::QActive)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;verticalAlign=top;spacingTop=8" parent="1" vertex="1">

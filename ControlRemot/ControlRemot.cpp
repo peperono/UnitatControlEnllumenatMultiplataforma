@@ -12,6 +12,11 @@ ControlRemot::ControlRemot() noexcept
       m_resultEvt{}
 {}
 
+void ControlRemot::configure(const std::vector<OutputConfig>& configs) {
+    for (auto const& cfg : configs)
+        m_outputs.emplace(cfg.id, OutputEntry{});
+}
+
 Q_STATE_DEF(ControlRemot, initial) {
     Q_UNUSED_PAR(e);
     subscribe(OUTPUT_STATE_SIG);

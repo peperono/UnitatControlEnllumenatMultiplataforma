@@ -1,12 +1,16 @@
 #pragma once
 #include "../qpcpp/include/qpcpp.hpp"
 #include "../signals.h"
+#include "OutputConfig.h"
 #include <unordered_map>
+#include <vector>
 #include <cstddef>
 
 class ControlRemot : public QP::QActive {
 public:
     explicit ControlRemot() noexcept;
+
+    void configure(const std::vector<OutputConfig>& configs);
 
     // Cridat des del thread Mongoose. Thread-safe: Q_NEW + POST a this.
     void handleJson(const char* buf, std::size_t len);

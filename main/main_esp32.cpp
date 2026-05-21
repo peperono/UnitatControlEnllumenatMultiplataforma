@@ -9,6 +9,7 @@
 #include "RemoteIO/InputReader_WS.hpp"
 #include "HWReader/InputReader_HW.hpp"
 #include "ControlRemot/ControlRemot.h"
+#include "ControlRemot/OutputConfig.h"
 #include "ControlHorari/ControlHorari.h"
 #include "ControlHorari/ControlHorariState.h"
 #include "ControlHorari/json_horari.h"
@@ -149,6 +150,10 @@ extern "C" void app_main() {
         InputConfig{2, /*detect_edge=*/EdgePolarity::rising,  /*always=*/false, {1} },
     };
 
+    const std::vector<OutputConfig> outputConfigs = {
+        OutputConfig{1},
+    };
+
     {
         std::lock_guard<std::mutex> lk(remote_io_state.mtx);
         for (const auto& cfg : configs) {
@@ -183,6 +188,7 @@ extern "C" void app_main() {
     static ActuadorSortides    actuadorSortides{makeGPIOWriter()};
 
     controlEntrades.configure(configs);
+    controlRemot.configure(outputConfigs);
 
     QP::QF::init();
     QP::QActive::psInit(subscrSto, Q_DIM(subscrSto));
