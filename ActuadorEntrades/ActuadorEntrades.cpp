@@ -1,25 +1,25 @@
-#include "Monitor.h"
+#include "ActuadorEntrades.h"
 #include "../LogState.h"
 #include <string>
 
 // ── Constructor ───────────────────────────────────────────────────────────────
 
-Monitor::Monitor() noexcept
-    : QP::QActive{Q_STATE_CAST(&Monitor::initial)}
+ActuadorEntrades::ActuadorEntrades() noexcept
+    : QP::QActive{Q_STATE_CAST(&ActuadorEntrades::initial)}
 {}
 
 // ── State: initial ────────────────────────────────────────────────────────────
 
-Q_STATE_DEF(Monitor, initial) {
+Q_STATE_DEF(ActuadorEntrades, initial) {
     Q_UNUSED_PAR(e);
     subscribe(INPUT_CHANGED_SIG);
     subscribe(EDGE_DETECTED_SIG);
-    return tran(&Monitor::running);
+    return tran(&ActuadorEntrades::running);
 }
 
 // ── State: running ────────────────────────────────────────────────────────────
 
-Q_STATE_DEF(Monitor, running) {
+Q_STATE_DEF(ActuadorEntrades, running) {
     QP::QState status;
 
     switch (e->sig) {
@@ -40,7 +40,7 @@ Q_STATE_DEF(Monitor, running) {
                 }
             }
             if (!detail.empty())
-                log_append("Monitor", "<< INPUT_CHANGED_SIG", detail);
+                log_append("ActuadorEntrades", "<< INPUT_CHANGED_SIG", detail);
             m_prevInputs = evt->inputs;
             m_allInputs  = evt->inputs;
             status = Q_HANDLED();
@@ -54,19 +54,19 @@ Q_STATE_DEF(Monitor, running) {
                 if (!detail.empty()) detail += ", ";
                 detail += "E" + std::to_string(id);
             }
-            log_append("Monitor", "<< EDGE_DETECTED_SIG", detail);
+            log_append("ActuadorEntrades", "<< EDGE_DETECTED_SIG", detail);
             std::string all;
             for (auto const& [id, state] : m_allInputs) {
                 if (!all.empty()) all += ", ";
                 all += "E" + std::to_string(id) + ": " + (state ? "ON" : "OFF");
             }
-            log_append("Monitor", "=>", all);
+            log_append("ActuadorEntrades", "=>", all);
             status = Q_HANDLED();
             break;
         }
 
         default: {
-            status = super(&Monitor::top);
+            status = super(&ActuadorEntrades::top);
             break;
         }
     }

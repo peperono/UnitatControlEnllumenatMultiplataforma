@@ -2,7 +2,7 @@
 #include "qpcpp/include/qpcpp.hpp"
 #include "signals.h"
 #include "ControlEntrades/ControlEntrades.h"
-#include "Monitor/Monitor.h"
+#include "ActuadorEntrades/ActuadorEntrades.h"
 #include "HttpServer/HttpServer.h"
 #include "ControlEntrades/ControlEntradesState.h"
 #include "RemoteIO/RemoteIOState.h"
@@ -87,7 +87,7 @@ int main() {
 
     // ── Active Object instances ───────────────────────────────────────────────
     static ControlEntrades edgeDetector{ std::move(reader), 1U };
-    static Monitor             monitor;
+    static ActuadorEntrades   monitor;
     static TestObserver        testObserver;
     static ControlRemot        controlRemot;
     static ControlHorari       controlHorari;
@@ -117,7 +117,7 @@ int main() {
     static QF_MPOOL_EL(ReconfigureEvt) largePool[8];
     QP::QF::poolInit(largePool, sizeof(largePool), sizeof(largePool[0]));
 
-    // Prioritats (alt→baix): Rellotge > EdgeDetector > ControlRemot > ControlHorari > Monitor > TestObserver
+    // Prioritats (alt→baix): Rellotge > EdgeDetector > ControlRemot > ControlHorari > ActuadorEntrades > TestObserver
     rellotge.start(    6U, rellotgeQSto,      Q_DIM(rellotgeQSto),      nullptr, 0U);
     edgeDetector.start(5U, edgeDetectorQSto,  Q_DIM(edgeDetectorQSto),  nullptr, 0U);
     controlRemot.start(4U, controlRemotQSto,  Q_DIM(controlRemotQSto),  nullptr, 0U);

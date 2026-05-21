@@ -3,9 +3,9 @@
 #include "../signals.h"
 #include <unordered_map>
 
-class Monitor : public QP::QActive {
+class ActuadorEntrades : public QP::QActive {
 public:
-    explicit Monitor() noexcept;
+    explicit ActuadorEntrades() noexcept;
 
 private:
     Q_STATE_DECL(initial);
