@@ -50,6 +50,14 @@ Q_STATE_DEF(ActuadorEntrades, running) {
                 log_append("ActuadorEntrades", "<< INPUT_CHANGED_SIG", detail);
             m_prevInputs = evt->inputs;
             m_allInputs  = evt->inputs;
+            {
+                std::string all;
+                for (auto const& [id, state] : m_allInputs) {
+                    if (!all.empty()) all += ", ";
+                    all += "E" + std::to_string(id) + ": " + (state ? "ON" : "OFF");
+                }
+                log_append("ActuadorEntrades", "=>", all);
+            }
             status = Q_HANDLED();
             break;
         }
@@ -62,12 +70,6 @@ Q_STATE_DEF(ActuadorEntrades, running) {
                 detail += "E" + std::to_string(id);
             }
             log_append("ActuadorEntrades", "<< EDGE_DETECTED_SIG", detail);
-            std::string all;
-            for (auto const& [id, state] : m_allInputs) {
-                if (!all.empty()) all += ", ";
-                all += "E" + std::to_string(id) + ": " + (state ? "ON" : "OFF");
-            }
-            log_append("ActuadorEntrades", "=>", all);
             status = Q_HANDLED();
             break;
         }
