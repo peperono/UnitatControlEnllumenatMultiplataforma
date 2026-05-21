@@ -5,6 +5,7 @@
 #include "../ControlRemot/ControlRemotState.h"
 #include "../ControlHorari/ControlHorariState.h"
 #include "../Rellotge/RellotgeState.h"
+#include "../LogState.h"
 #include "../signals.h"
 #include <thread>
 #include <atomic>
@@ -354,7 +355,7 @@ static void server_loop(uint16_t port) {
     struct mg_mgr mgr;
     mg_mgr_init(&mgr);
     mg_http_listen(&mgr, addr, http_fn, NULL);
-    std::printf("[HttpServer] listening on %s\n", addr);
+    log_append("HttpServer", "listening on", addr);
     while (s_running.load()) {
         mg_mgr_poll(&mgr, 100);
         push_if_pending(&mgr);
