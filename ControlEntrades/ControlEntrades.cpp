@@ -1,8 +1,10 @@
 #include "ControlEntrades.h"
 #include "ControlEntradesState.h"
 #include "../LogState.h"
+#include <algorithm>
 #include <mutex>
 #include <string>
+#include <vector>
 
 ControlEntradesState control_entrades_state;
 
@@ -57,12 +59,15 @@ Q_STATE_DEF(ControlEntrades, operating) {
 
                 m_ioEvt.inputs = inputs;
                 {
+                    std::vector<int> ids;
+                    for (auto const& [id, state] : inputs) ids.push_back(id);
+                    std::sort(ids.begin(), ids.end());
                     std::string detail;
-                    for (auto const& [id, state] : inputs) {
+                    for (int id : ids) {
                         auto it = prevInputs.find(id);
-                        if (it != prevInputs.end() && it->second == state) continue;
+                        if (it != prevInputs.end() && it->second == inputs.at(id)) continue;
                         if (!detail.empty()) detail += ", ";
-                        detail += "E" + std::to_string(id) + "=" + (state ? "ON" : "OFF");
+                        detail += "E" + std::to_string(id) + "=" + (inputs.at(id) ? "ON" : "OFF");
                     }
                     log_append("ControlEntrades", ">> INPUT_CHANGED_SIG", detail);
                 }
