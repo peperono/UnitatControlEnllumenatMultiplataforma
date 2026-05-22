@@ -29,13 +29,13 @@ extern "C" Q_NORETURN Q_onError(char const * const module, int_t const id) {
 static QP::QSubscrList subscrSto[MAX_SIG];
 
 // ── Cues d'events ─────────────────────────────────────────────────────────────
-static QP::QEvtPtr controlEntradesQSto[10];
-static QP::QEvtPtr monitorQSto[10];
+static QP::QEvtPtr controlEntradesQSto[32];
+static QP::QEvtPtr monitorQSto[32];
 static QP::QEvtPtr testObserverQSto[10];
 static QP::QEvtPtr controlRemotQSto[64];
-static QP::QEvtPtr controlHorariQSto[32];
-static QP::QEvtPtr rellotgeQSto[16];
-static QP::QEvtPtr actuadorSortidesQSto[8];
+static QP::QEvtPtr controlHorariQSto[64];
+static QP::QEvtPtr rellotgeQSto[32];
+static QP::QEvtPtr actuadorSortidesQSto[32];
 
 // ── Callbacks del port win32-qv ───────────────────────────────────────────────
 namespace QP {
@@ -121,8 +121,8 @@ int main() {
     static QF_MPOOL_EL(OutputCmdEvt) smallPool[16];
     QP::QF::poolInit(smallPool, sizeof(smallPool), sizeof(smallPool[0]));
 
-    // Pool 2 (gran): ReconfigureEvt i OutputStateEvt
-    static QF_MPOOL_EL(ReconfigureEvt) largePool[8];
+    // Pool 2 (gran): RellotgeTickEvt, OutputStateEvt, ReconfigureEvt
+    static QF_MPOOL_EL(ReconfigureEvt) largePool[32];
     QP::QF::poolInit(largePool, sizeof(largePool), sizeof(largePool[0]));
 
     // Prioritats (alt→baix): Rellotge > EdgeDetector > ControlRemot > ControlHorari > ActuadorEntrades > TestObserver

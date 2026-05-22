@@ -46,11 +46,11 @@ extern "C" Q_NORETURN Q_onError(char const * const module, int_t const id) {
 static QP::QSubscrList subscrSto[MAX_SIG];
 
 static QP::QEvtPtr rellotgeQSto      [16];
-static QP::QEvtPtr controlEntradesQSto  [10];
+static QP::QEvtPtr controlEntradesQSto  [16];
 static QP::QEvtPtr controlRemotQSto  [64];
 static QP::QEvtPtr controlHorariQSto [32];
-static QP::QEvtPtr monitorQSto          [10];
-static QP::QEvtPtr actuadorSortidesQSto [ 8];
+static QP::QEvtPtr monitorQSto          [16];
+static QP::QEvtPtr actuadorSortidesQSto [16];
 
 // ── Stacks estàtics per a cada tasca FreeRTOS ────────────────────────────────
 // El port FreeRTOS de QP/C++ requereix configSUPPORT_STATIC_ALLOCATION=1
@@ -196,7 +196,7 @@ extern "C" void app_main() {
     static QF_MPOOL_EL(OutputCmdEvt)   smallPool[16];
     QP::QF::poolInit(smallPool, sizeof(smallPool), sizeof(smallPool[0]));
 
-    static QF_MPOOL_EL(ReconfigureEvt) largePool[8];
+    static QF_MPOOL_EL(ReconfigureEvt) largePool[16];
     QP::QF::poolInit(largePool, sizeof(largePool), sizeof(largePool[0]));
 
     // Prioritats i stacks (FreeRTOS requereix stack explícit per static allocation)
