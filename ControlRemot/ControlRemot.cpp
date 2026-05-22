@@ -43,12 +43,13 @@ Q_STATE_DEF(ControlRemot, operating) {
         case OUTPUT_STATE_SIG: {
             auto const* ev = Q_EVT_CAST(OutputStateEvt);
             std::string detail;
+            std::string warn;
             for (int i = 0; i < ev->n_outputs; ++i) {
                 int id = ev->outputs[i].id;
                 auto it = m_outputs.find(id);
                 if (it == m_outputs.end()) {
-                    log_append("ControlRemot", "WARN OUTPUT_STATE_SIG",
-                               "S" + std::to_string(id) + " no declarada, ignorada");
+                    if (!warn.empty()) warn += ", ";
+                    warn += "S" + std::to_string(id);
                     continue;
                 }
                 it->second.state = ev->outputs[i].state;
@@ -59,6 +60,9 @@ Q_STATE_DEF(ControlRemot, operating) {
                         + "=" + (ev->outputs[i].state ? "ON" : "OFF");
             }
             log_append("ControlRemot", "<< OUTPUT_STATE_SIG", detail);
+            if (!warn.empty())
+                log_append("ControlRemot", "WARN OUTPUT_STATE_SIG",
+                           warn + " no declarada, ignorada");
             publishResult();
             status = Q_HANDLED();
             break;
