@@ -151,6 +151,20 @@ Q_STATE_DEF(ControlRemot, operating) {
 }
 
 void ControlRemot::publishResult() {
+    // Comprova si algun resultat ON/OFF ha canviat
+    bool changed = false;
+    for (auto const& [id, out] : m_outputs) {
+        auto it = m_prevResults.find(id);
+        if (it == m_prevResults.end() || it->second != out.result) {
+            changed = true;
+            break;
+        }
+    }
+    if (!changed) return;
+
+    for (auto const& [id, out] : m_outputs)
+        m_prevResults[id] = out.result;
+
     m_resultEvt.outputs.clear();
     for (auto const& [id, out] : m_outputs)
         m_resultEvt.outputs[id] = out.result;

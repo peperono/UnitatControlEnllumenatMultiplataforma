@@ -24,6 +24,7 @@ private:
     };
 
     std::unordered_map<int, OutputEntry> m_outputs;
+    std::unordered_map<int, bool>        m_prevResults;
     OutputResultEvt                      m_resultEvt; // static event (poolNum_=0)
     QP::QTimeEvt                         m_initTimer;
 
