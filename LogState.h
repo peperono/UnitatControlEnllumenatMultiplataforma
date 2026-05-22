@@ -5,10 +5,12 @@
 #include <string>
 
 inline void log_append(const char* src, const char* sig, const std::string& detail) {
-    char tbuf[12];
+    static const char* DIES[7] = {"dl","dt","dc","dj","dv","ds","dg"};
+    char tbuf[16];
     {
         std::lock_guard<std::mutex> lk(rellotge_state.mtx);
-        std::snprintf(tbuf, sizeof(tbuf), "%02d:%02d:%02d",
+        std::snprintf(tbuf, sizeof(tbuf), "%s %02d:%02d:%02d",
+                      DIES[rellotge_state.wday],
                       rellotge_state.hour, rellotge_state.minute,
                       rellotge_state.second);
     }
