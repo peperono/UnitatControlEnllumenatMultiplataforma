@@ -46,6 +46,9 @@ Q_STATE_DEF(ControlRemot, operating) {
             std::string warn;
             for (int i = 0; i < ev->n_outputs; ++i) {
                 int id = ev->outputs[i].id;
+                if (!detail.empty()) detail += ", ";
+                detail += "S" + std::to_string(id)
+                        + "=" + (ev->outputs[i].state ? "ON" : "OFF");
                 auto it = m_outputs.find(id);
                 if (it == m_outputs.end()) {
                     if (!warn.empty()) warn += ", ";
@@ -55,9 +58,6 @@ Q_STATE_DEF(ControlRemot, operating) {
                 it->second.state = ev->outputs[i].state;
                 if (it->second.mode == OutputEntry::Mode::AUTO)
                     it->second.result = ev->outputs[i].state;
-                if (!detail.empty()) detail += ", ";
-                detail += "S" + std::to_string(id)
-                        + "=" + (ev->outputs[i].state ? "ON" : "OFF");
             }
             log_append("ControlRemot", "<< OUTPUT_STATE_SIG", detail);
             if (!warn.empty())
