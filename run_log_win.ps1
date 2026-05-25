@@ -1,4 +1,4 @@
-$log = "build-win\app_$(Get-Date -Format 'yyyyMMdd_HHmmss').log"
+$log = "build-win\app.log"
 $writer = [System.IO.StreamWriter]::new($log, $false, [System.Text.Encoding]::ASCII)
 try {
     .\build-win\app.exe 2 2>&1 | ForEach-Object {
