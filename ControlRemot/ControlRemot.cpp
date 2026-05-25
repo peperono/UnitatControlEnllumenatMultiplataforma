@@ -155,23 +155,29 @@ Q_STATE_DEF(ControlRemot, operating) {
 }
 
 void ControlRemot::publishResult() {
-    // Comprova si algun resultat ON/OFF ha canviat
-    bool changed = false;
+    bool resultChanged = false;
     for (auto const& [id, out] : m_outputs) {
         auto it = m_prevResults.find(id);
         if (it == m_prevResults.end() || it->second != out.result) {
-            changed = true;
+            resultChanged = true;
             break;
         }
     }
-    if (!changed) return;
+    bool modeChanged = false;
+    for (auto const& [id, out] : m_outputs) {
+        bool remote = (out.mode == OutputEntry::Mode::REMOTE);
+        auto it = m_prevModes.find(id);
+        if (it == m_prevModes.end() || it->second != remote) {
+            modeChanged = true;
+            break;
+        }
+    }
+    if (!resultChanged && !modeChanged) return;
 
-    for (auto const& [id, out] : m_outputs)
+    for (auto const& [id, out] : m_outputs) {
         m_prevResults[id] = out.result;
-
-    m_resultEvt.outputs.clear();
-    for (auto const& [id, out] : m_outputs)
-        m_resultEvt.outputs[id] = out.result;
+        m_prevModes[id]   = (out.mode == OutputEntry::Mode::REMOTE);
+    }
 
     {
         std::lock_guard<std::mutex> lk(control_remot_state.mtx);
@@ -184,6 +190,12 @@ void ControlRemot::publishResult() {
         }
     }
     control_remot_state.push_pending.store(true);
+
+    if (!resultChanged) return;
+
+    m_resultEvt.outputs.clear();
+    for (auto const& [id, out] : m_outputs)
+        m_resultEvt.outputs[id] = out.result;
 
     std::vector<int> ids;
     for (auto const& [id, out] : m_outputs) ids.push_back(id);
