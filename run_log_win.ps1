@@ -1,7 +1,7 @@
-$log = "build-win\app.log"
+$log = Join-Path $PSScriptRoot "build-win\app.log"
 $writer = [System.IO.StreamWriter]::new($log, $false, [System.Text.Encoding]::ASCII)
 try {
-    .\build-win\app.exe 2 2>&1 | ForEach-Object {
+    & "$PSScriptRoot\build-win\app.exe" 2 2>&1 | ForEach-Object {
         Write-Host $_
         $writer.WriteLine($_)
         $writer.Flush()
