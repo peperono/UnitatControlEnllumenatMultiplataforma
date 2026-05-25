@@ -56,6 +56,7 @@ void onClockTick() {
 
 // ── main ──────────────────────────────────────────────────────────────────────
 int main(int argc, char* argv[]) {
+    std::setvbuf(stdout, nullptr, _IONBF, 0);
     std::printf("=== UnitatControlEnllumenat ===\n");
     int choice = 1;
     if (argc >= 2) {
