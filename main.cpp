@@ -64,10 +64,7 @@ int main() {
     int choice = 1;
     std::scanf("%d", &choice);
 
-    std::printf("Mostrar missatges de depuracio de Mongoose? (s/n): ");
-    char dbg = 'n';
-    std::scanf(" %c", &dbg);
-    mg_log_set(dbg == 's' ? MG_LL_DEBUG : MG_LL_NONE);
+    mg_log_set(MG_LL_NONE);
 
     const std::vector<InputConfig> configs = {
         InputConfig{1, /*detect_edge=*/EdgePolarity::falling, /*always=*/true,  {}   },
