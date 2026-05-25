@@ -55,14 +55,18 @@ void onClockTick() {
 } // namespace QP
 
 // ── main ──────────────────────────────────────────────────────────────────────
-int main() {
+int main(int argc, char* argv[]) {
     std::printf("=== UnitatControlEnllumenat ===\n");
-    std::printf("Selecciona reader (Control Entrades):\n");
-    std::printf("  1) Test (sequencia automatica)\n");
-    std::printf("  2) Control remot (navegador web)\n");
-    std::printf("> ");
     int choice = 1;
-    std::scanf("%d", &choice);
+    if (argc >= 2) {
+        choice = std::atoi(argv[1]);
+    } else {
+        std::printf("Selecciona reader (Control Entrades):\n");
+        std::printf("  1) Test (sequencia automatica)\n");
+        std::printf("  2) Control remot (navegador web)\n");
+        std::printf("> ");
+        std::scanf("%d", &choice);
+    }
 
     mg_log_set(MG_LL_NONE);
 
