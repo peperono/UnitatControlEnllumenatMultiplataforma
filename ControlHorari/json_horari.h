@@ -14,12 +14,12 @@
 
 static const char JSON_HORARI[] = R"RAWJSON(
 {
-  "dilluns":   [],
-  "dimarts":   [],
-  "dimecres":  [],
-  "dijous":    [],
-  "divendres": [],
-  "dissabte":  [],
-  "diumenge":  []
+  "dilluns":   [{"id":1,"act":"on","time":"21:00"},{"id":1,"act":"off","time":"06:00"}],
+  "dimarts":   [{"id":1,"act":"on","time":"21:00"},{"id":1,"act":"off","time":"06:00"}],
+  "dimecres":  [{"id":1,"act":"on","time":"21:00"},{"id":1,"act":"off","time":"06:00"}],
+  "dijous":    [{"id":1,"act":"on","time":"21:00"},{"id":1,"act":"off","time":"06:00"}],
+  "divendres": [{"id":1,"act":"on","time":"21:00"},{"id":1,"act":"off","time":"06:00"}],
+  "dissabte":  [{"id":1,"act":"on","time":"21:00"},{"id":1,"act":"off","time":"06:00"}],
+  "diumenge":  [{"id":1,"act":"on","time":"21:00"},{"id":1,"act":"off","time":"06:00"}]
 }
 )RAWJSON";
