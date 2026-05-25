@@ -9,9 +9,6 @@ PORT="/dev/ttyUSB1"
 
 source ~/esp/esp-idf/export.sh > /dev/null 2>&1
 
-echo "Compilant..."
-idf.py build
-
 if [[ "$1" == "--erase" ]]; then
     echo "Esborrant i flashant a $PORT..."
     idf.py -p "$PORT" erase-flash flash monitor
