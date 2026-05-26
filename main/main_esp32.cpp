@@ -154,7 +154,6 @@ extern "C" void app_main() {
     };
 
     const std::vector<OutputConfig> outputConfigs = {
-        OutputConfig{1},
         OutputConfig{2},
         OutputConfig{3},
     };
