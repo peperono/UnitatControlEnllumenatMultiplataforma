@@ -73,7 +73,7 @@ int main(int argc, char* argv[]) {
 
     const std::vector<InputConfig> configs = {
         InputConfig{1, /*detect_edge=*/EdgePolarity::falling, /*always=*/true,  {}   },
-        InputConfig{2, /*detect_edge=*/EdgePolarity::falling, /*always=*/false, {1} },
+        InputConfig{2, /*detect_edge=*/EdgePolarity::falling, /*always=*/false, {2} },
         InputConfig{3, /*detect_edge=*/EdgePolarity::rising,  /*always=*/true,  {}   }
     };
 

@@ -150,7 +150,7 @@ extern "C" void app_main() {
     // Configuració d'entrades per defecte (editable via PUT /config_inputs)
     const std::vector<InputConfig> configs = {
         InputConfig{1, /*detect_edge=*/EdgePolarity::falling, /*always=*/true,  {}   },
-        InputConfig{2, /*detect_edge=*/EdgePolarity::rising,  /*always=*/false, {1} },
+        InputConfig{2, /*detect_edge=*/EdgePolarity::rising,  /*always=*/false, {2} },
     };
 
     const std::vector<OutputConfig> outputConfigs = {
