@@ -19,6 +19,7 @@ idf_component_register(
         "${ROOT}/ControlRemot/ControlRemot.cpp"
         "${ROOT}/ControlHorari/ControlHorari.cpp"
         "${ROOT}/Rellotge/Rellotge.cpp"
+        "${ROOT}/Blink/Blink.cpp"
         "${ROOT}/mongoose/mongoose.c"
         "${QPCPP}/src/qf/qep_hsm.cpp"
         "${QPCPP}/src/qf/qep_msm.cpp"

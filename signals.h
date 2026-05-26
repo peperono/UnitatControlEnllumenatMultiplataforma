@@ -22,6 +22,7 @@ enum Signals : QP::QSignal {
     OUTPUT_RESULT_SIG,
     RELLOTGE_TICK_INTERNAL_SIG,
     RELLOTGE_TICK_SIG,
+    BLINK_TICK_SIG,
     MAX_SIG
 };
 

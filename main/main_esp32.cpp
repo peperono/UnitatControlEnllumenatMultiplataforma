@@ -14,6 +14,7 @@
 #include "ControlHorari/ControlHorariState.h"
 #include "ControlHorari/json_horari.h"
 #include "Rellotge/Rellotge.h"
+#include "Blink/Blink.h"
 #include "ActuadorSortides/OutputWriter_HW.hpp"
 #include "mongoose/mongoose.h"
 
@@ -51,6 +52,7 @@ static QP::QEvtPtr controlRemotQSto  [64];
 static QP::QEvtPtr controlHorariQSto [32];
 static QP::QEvtPtr monitorQSto          [16];
 static QP::QEvtPtr actuadorSortidesQSto [16];
+static QP::QEvtPtr blinkQSto            [ 4];
 
 // ── Stacks estàtics per a cada tasca FreeRTOS ────────────────────────────────
 // El port FreeRTOS de QP/C++ requereix configSUPPORT_STATIC_ALLOCATION=1
@@ -61,6 +63,7 @@ static StackType_t controlRemotStk  [ 8 * 1024];  //  8 KB
 static StackType_t controlHorariStk [16 * 1024];  // 16 KB (JSON parsing)
 static StackType_t monitorStk            [ 4 * 1024];  //  4 KB
 static StackType_t actuadorSortidesStk   [ 4 * 1024];  //  4 KB
+static StackType_t blinkStk              [ 4 * 1024];  //  4 KB
 
 // ── Tick de QP via esp_timer (10 ms = 100 Hz, igual que Win32) ───────────────
 static void qp_tick_cb(void*) {
@@ -188,6 +191,7 @@ extern "C" void app_main() {
     static ControlHorari       controlHorari;
     static Rellotge            rellotge;
     static ActuadorSortides    actuadorSortides{makeGPIOWriter()};
+    static Blink               blink{1, makeGPIOWriter()};
 
     controlEntrades.configure(configs);
     controlRemot.configure(outputConfigs);
@@ -202,18 +206,20 @@ extern "C" void app_main() {
     QP::QF::poolInit(largePool, sizeof(largePool), sizeof(largePool[0]));
 
     // Prioritats i stacks (FreeRTOS requereix stack explícit per static allocation)
-    rellotge.start    (6U, rellotgeQSto,      Q_DIM(rellotgeQSto),
-                       rellotgeStk,      sizeof(rellotgeStk));
-    controlEntrades.start(5U, controlEntradesQSto,  Q_DIM(controlEntradesQSto),
-                       controlEntradesStk,  sizeof(controlEntradesStk));
-    controlRemot.start(4U, controlRemotQSto,  Q_DIM(controlRemotQSto),
-                       controlRemotStk,  sizeof(controlRemotStk));
-    controlHorari.start(3U,controlHorariQSto, Q_DIM(controlHorariQSto),
-                       controlHorariStk, sizeof(controlHorariStk));
-    monitor.start     (2U, monitorQSto,          Q_DIM(monitorQSto),
-                       monitorStk,          sizeof(monitorStk));
-    actuadorSortides.start(1U, actuadorSortidesQSto, Q_DIM(actuadorSortidesQSto),
-                       actuadorSortidesStk, sizeof(actuadorSortidesStk));
+    rellotge.start        (7U, rellotgeQSto,         Q_DIM(rellotgeQSto),
+                           rellotgeStk,         sizeof(rellotgeStk));
+    controlEntrades.start (6U, controlEntradesQSto,  Q_DIM(controlEntradesQSto),
+                           controlEntradesStk,  sizeof(controlEntradesStk));
+    controlRemot.start    (5U, controlRemotQSto,     Q_DIM(controlRemotQSto),
+                           controlRemotStk,     sizeof(controlRemotStk));
+    controlHorari.start   (4U, controlHorariQSto,    Q_DIM(controlHorariQSto),
+                           controlHorariStk,    sizeof(controlHorariStk));
+    monitor.start         (3U, monitorQSto,          Q_DIM(monitorQSto),
+                           monitorStk,          sizeof(monitorStk));
+    actuadorSortides.start(2U, actuadorSortidesQSto, Q_DIM(actuadorSortidesQSto),
+                           actuadorSortidesStk, sizeof(actuadorSortidesStk));
+    blink.start           (1U, blinkQSto,            Q_DIM(blinkQSto),
+                           blinkStk,            sizeof(blinkStk));
 
     {
         std::lock_guard<std::mutex> lk(control_horari_state.mtx);

@@ -14,6 +14,7 @@
 #include "ControlHorari/ControlHorariState.h"
 #include "ControlHorari/json_horari.h"
 #include "Rellotge/Rellotge.h"
+#include "Blink/Blink.h"
 #include "ActuadorSortides/OutputWriter_Console.hpp"
 #include "mongoose/mongoose.h"
 #include <cstdio>
@@ -36,6 +37,7 @@ static QP::QEvtPtr controlRemotQSto[64];
 static QP::QEvtPtr controlHorariQSto[64];
 static QP::QEvtPtr rellotgeQSto[32];
 static QP::QEvtPtr actuadorSortidesQSto[32];
+static QP::QEvtPtr blinkQSto[4];
 
 // ── Callbacks del port win32-qv ───────────────────────────────────────────────
 namespace QP {
@@ -102,6 +104,7 @@ int main(int argc, char* argv[]) {
     static ControlHorari       controlHorari;
     static Rellotge            rellotge;
     static ActuadorSortides    actuadorSortides{makeConsoleWriter()};
+    static Blink               blink{1, makeConsoleWriter()};
 
     controlEntrades.configure(configs);
     controlRemot.configure(outputConfigs);
@@ -127,16 +130,17 @@ int main(int argc, char* argv[]) {
     static QF_MPOOL_EL(ReconfigureEvt) largePool[32];
     QP::QF::poolInit(largePool, sizeof(largePool), sizeof(largePool[0]));
 
-    // Prioritats (alt→baix): Rellotge > EdgeDetector > ControlRemot > ControlHorari > ActuadorEntrades > TestObserver
-    rellotge.start(    6U, rellotgeQSto,      Q_DIM(rellotgeQSto),      nullptr, 0U);
-    controlEntrades.start(5U, controlEntradesQSto,  Q_DIM(controlEntradesQSto),  nullptr, 0U);
-    controlRemot.start(4U, controlRemotQSto,  Q_DIM(controlRemotQSto),  nullptr, 0U);
-    controlHorari.start(3U,controlHorariQSto, Q_DIM(controlHorariQSto), nullptr, 0U);
-    monitor.start(     2U, monitorQSto,       Q_DIM(monitorQSto),       nullptr, 0U);
+    // Prioritats (alt→baix): Rellotge > ControlEntrades > ControlRemot > ControlHorari > ActuadorEntrades > ActuadorSortides/TestObserver > Blink
+    rellotge.start(        7U, rellotgeQSto,         Q_DIM(rellotgeQSto),         nullptr, 0U);
+    controlEntrades.start( 6U, controlEntradesQSto,  Q_DIM(controlEntradesQSto),  nullptr, 0U);
+    controlRemot.start(    5U, controlRemotQSto,     Q_DIM(controlRemotQSto),     nullptr, 0U);
+    controlHorari.start(   4U, controlHorariQSto,    Q_DIM(controlHorariQSto),    nullptr, 0U);
+    monitor.start(         3U, monitorQSto,          Q_DIM(monitorQSto),          nullptr, 0U);
     if (choice != 2) {
-        testObserver.start(   1U, testObserverQSto,      Q_DIM(testObserverQSto),      nullptr, 0U);
+        testObserver.start(2U, testObserverQSto,     Q_DIM(testObserverQSto),     nullptr, 0U);
     } else {
-        actuadorSortides.start(1U, actuadorSortidesQSto, Q_DIM(actuadorSortidesQSto), nullptr, 0U);
+        actuadorSortides.start(2U, actuadorSortidesQSto, Q_DIM(actuadorSortidesQSto), nullptr, 0U);
+        blink.start(       1U, blinkQSto,            Q_DIM(blinkQSto),            nullptr, 0U);
     }
 
     // Carrega l'horari per defecte
