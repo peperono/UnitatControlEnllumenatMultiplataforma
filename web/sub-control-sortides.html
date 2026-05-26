@@ -40,11 +40,7 @@
           border:1px solid #30363d;border-radius:6px;padding:8px;
           font-family:'Courier New',monospace;font-size:12px;resize:vertical}
 
-        .cs-log{background:#010409;border-radius:6px;padding:10px;max-height:180px;
-          overflow-y:auto;font-family:'Courier New',monospace;font-size:12px;line-height:1.6}
-        .cs-log-entry{border-bottom:1px solid #21262d;padding:2px 0;white-space:nowrap}
-        .cs-log-entry .time{color:#484f58}
-      </style>
+</style>
 
       <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
 
@@ -70,11 +66,6 @@
 
       </div>
 
-      <div class="cs-section">
-        <h2>Log</h2>
-        <div class="cs-log" id="cs-log"></div>
-      </div>
-
     </div>
     <script>
       document.getElementById('sub-control-sortides').addEventListener('click', e => {
@@ -86,7 +77,6 @@
       });
 
       const csOutputsEl = document.getElementById('cs-outputs');
-      const csLogEl     = document.getElementById('cs-log');
       let csLastRenderKey = '';
 
       // ── Horari (HTTP al mateix servidor) ──
@@ -148,19 +138,6 @@
         }).join('');
       }
 
-      // ── Log ──
-      function csAddLog(entries) {
-        const colors = {ControlRemot:'#00d4ff', ControlHorari:'#3fb950', HttpServer:'#ff9800'};
-        for (const e of entries) {
-          const color = colors[e.src] || '#8b949e';
-          csLogEl.innerHTML =
-            `<div class="cs-log-entry"><span class="time">${e.t}</span> ` +
-            `<span style="color:${color};font-weight:600">[${e.src}]</span> ` +
-            `<span style="color:#8b949e">${e.sig}</span> ${e.d}</div>` +
-            csLogEl.innerHTML;
-        }
-      }
-
       // ── Escolta CustomEvents del WS unificat ──
       window.addEventListener('ws-connected', () => loadHorari());
       window.addEventListener('ws-io-update', (e) => {
@@ -168,6 +145,5 @@
         if (d.time) document.getElementById('rellotge-time').textContent = d.time;
         if (d.day)  document.getElementById('rellotge-day').textContent  = d.day;
         if (d.cs_outputs) csRenderOutputs(d.cs_outputs);
-        if (d.log && d.log.length > 0) csAddLog(d.log);
       });
     </script>
