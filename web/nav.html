@@ -201,10 +201,8 @@
       ws.onerror = () => ws.close();
       ws.onmessage = ({ data }) => {
         const msg = JSON.parse(data);
-        if (msg.platform && !platformEl.textContent) {
+        if (msg.platform && !platformEl.textContent)
           platformEl.textContent = 'Plataforma ' + msg.platform;
-          document.body.classList.add('platform-' + msg.platform.toLowerCase());
-        }
         window.dispatchEvent(new CustomEvent('ws-io-update', { detail: msg }));
       };
     }

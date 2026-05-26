@@ -29,7 +29,6 @@
         </div>
       </div>
     </div>
-    <style>body.platform-esp32 #ctrl-section{display:none}</style>
     <script>
       // ── SVG switch icons ──
       const SVG_CLOSED = `<svg viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg">
@@ -45,6 +44,7 @@
 
       let controlsReady = false;
       let expectedInputIds = null;
+      let isEsp32 = false;
       const controlState = { inputs: {} };
 
       const gridInputs  = document.getElementById('grid-inputs');
@@ -118,7 +118,7 @@
         controlState.inputs  = {};
         Object.keys(inputs).sort((a,b) => Number(a)-Number(b))
           .forEach(id => makeToggle(ctrlInputs, 'E', Number(id), controlState.inputs));
-        ctrlSection.style.display = 'block';
+        if (!isEsp32) ctrlSection.style.display = 'block';
         sendControl();
       }
 
@@ -177,6 +177,7 @@
 
       window.addEventListener('ws-io-update', (e) => {
         const d = e.detail;
+        if (d.platform === 'ESP32') { isEsp32 = true; ctrlSection.style.display = 'none'; }
         if (d.inputs && Object.keys(d.inputs).length > 0) {
           const newIds = Object.keys(d.inputs).sort().join(',');
           const curIds = Object.keys(controlState.inputs).sort().join(',');
