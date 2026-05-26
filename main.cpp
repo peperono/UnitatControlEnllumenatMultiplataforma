@@ -14,7 +14,6 @@
 #include "ControlHorari/ControlHorariState.h"
 #include "ControlHorari/json_horari.h"
 #include "Rellotge/Rellotge.h"
-#include "Blink/Blink.h"
 #include "ActuadorSortides/OutputWriter_Console.hpp"
 #include "mongoose/mongoose.h"
 #include <cstdio>
@@ -37,7 +36,6 @@ static QP::QEvtPtr controlRemotQSto[64];
 static QP::QEvtPtr controlHorariQSto[64];
 static QP::QEvtPtr rellotgeQSto[32];
 static QP::QEvtPtr actuadorSortidesQSto[32];
-static QP::QEvtPtr blinkQSto[4];
 
 // ── Callbacks del port win32-qv ───────────────────────────────────────────────
 namespace QP {
@@ -104,7 +102,6 @@ int main(int argc, char* argv[]) {
     static ControlHorari       controlHorari;
     static Rellotge            rellotge;
     static ActuadorSortides    actuadorSortides{makeConsoleWriter()};
-    static Blink               blink{1, makeConsoleWriter()};
 
     controlEntrades.configure(configs);
     controlRemot.configure(outputConfigs);
@@ -140,7 +137,6 @@ int main(int argc, char* argv[]) {
         testObserver.start(2U, testObserverQSto,     Q_DIM(testObserverQSto),     nullptr, 0U);
     } else {
         actuadorSortides.start(2U, actuadorSortidesQSto, Q_DIM(actuadorSortidesQSto), nullptr, 0U);
-        blink.start(       1U, blinkQSto,            Q_DIM(blinkQSto),            nullptr, 0U);
     }
 
     // Carrega l'horari per defecte

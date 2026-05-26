@@ -69,7 +69,6 @@ $GPP -std=c++17 -Wall -O1 -static \
     "$ROOT/ControlRemot/ControlRemot.cpp" \
     "$ROOT/ControlHorari/ControlHorari.cpp" \
     "$ROOT/Rellotge/Rellotge.cpp" \
-    "$ROOT/Blink/Blink.cpp" \
     "$ROOT/ActuadorSortides/ActuadorSortides.cpp" \
     "$QPCPP/src/qf/qep_hsm.cpp" \
     "$QPCPP/src/qf/qep_msm.cpp" \
