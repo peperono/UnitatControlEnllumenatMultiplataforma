@@ -1,5 +1,5 @@
 #pragma once
-#include "ActuadorSortides.hpp"
+#include "ActuadorSortides/ActuadorSortides.hpp"
 #include "driver/gpio.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"

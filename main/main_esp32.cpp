@@ -7,7 +7,7 @@
 #include "ControlEntrades/ControlEntradesState.h"
 #include "RemoteIO/RemoteIOState.h"
 #include "RemoteIO/InputReader_WS.hpp"
-#include "HWReader/InputReader_HW.hpp"
+#include "HW/InputReader_HW.hpp"
 #include "ControlRemot/ControlRemot.h"
 #include "ControlRemot/OutputConfig.h"
 #include "ControlHorari/ControlHorari.h"
@@ -15,7 +15,7 @@
 #include "ControlHorari/json_horari.h"
 #include "Rellotge/Rellotge.h"
 #include "Blink/Blink.h"
-#include "ActuadorSortides/OutputWriter_HW.hpp"
+#include "HW/OutputWriter_HW.hpp"
 #include "mongoose/mongoose.h"
 
 #include "esp_log.h"
