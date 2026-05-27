@@ -2,7 +2,7 @@
 #include "qpcpp/include/qpcpp.hpp"
 #include "signals.h"
 #include "ControlEntrades/ControlEntrades.h"
-#include "ActuadorEntrades/ActuadorEntrades.h"
+#include "MonitorEntrades/MonitorEntrades.h"
 #include "HttpServer/HttpServer.h"
 #include "ControlEntrades/ControlEntradesState.h"
 #include "RemoteIO/RemoteIOState.h"
@@ -95,7 +95,7 @@ int main(int argc, char* argv[]) {
 
     // ── Active Object instances ───────────────────────────────────────────────
     static ControlEntrades controlEntrades{ std::move(reader), 1U };
-    static ActuadorEntrades   monitor;
+    static MonitorEntrades    monitor;
     static TestObserver        testObserver;
     static ControlRemot        controlRemot;
     static ControlHorari       controlHorari;
@@ -126,7 +126,7 @@ int main(int argc, char* argv[]) {
     static QF_MPOOL_EL(ReconfigureEvt) largePool[32];
     QP::QF::poolInit(largePool, sizeof(largePool), sizeof(largePool[0]));
 
-    // Prioritats (alt→baix): Rellotge > ControlEntrades > ControlRemot > ControlHorari > ActuadorEntrades > ActuadorSortides/TestObserver > Blink
+    // Prioritats (alt→baix): Rellotge > ControlEntrades > ControlRemot > ControlHorari > MonitorEntrades > ActuadorSortides/TestObserver > Blink
     rellotge.start(        7U, rellotgeQSto,         Q_DIM(rellotgeQSto),         nullptr, 0U);
     controlEntrades.start( 6U, controlEntradesQSto,  Q_DIM(controlEntradesQSto),  nullptr, 0U);
     controlRemot.start(    5U, controlRemotQSto,     Q_DIM(controlRemotQSto),     nullptr, 0U);

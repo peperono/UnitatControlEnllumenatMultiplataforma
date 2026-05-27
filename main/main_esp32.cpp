@@ -2,7 +2,7 @@
 #include "qpcpp/include/qpcpp.hpp"
 #include "signals.h"
 #include "ControlEntrades/ControlEntrades.h"
-#include "ActuadorEntrades/ActuadorEntrades.h"
+#include "MonitorEntrades/MonitorEntrades.h"
 #include "HttpServer/HttpServer.h"
 #include "ControlEntrades/ControlEntradesState.h"
 #include "RemoteIO/RemoteIOState.h"
@@ -185,7 +185,7 @@ extern "C" void app_main() {
     // polling i subscriptors lleugers, el risc pràctic és baix, però s'ha de
     // refactoritzar si es requereix garantia estricta.
     static ControlEntrades controlEntrades{makeHWInputReader(), 1U};
-    static ActuadorEntrades   monitor;
+    static MonitorEntrades    monitor;
     static ControlRemot        controlRemot;
     static ControlHorari       controlHorari;
     static Rellotge            rellotge;
