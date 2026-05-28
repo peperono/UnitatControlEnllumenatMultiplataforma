@@ -244,7 +244,7 @@ inline IOReader makeTestReader() {
     };
 
     static int step = 0;
-    static std::unordered_map<int, bool> prevInputs;
+    static std::unordered_map<int, bool> prevInputs = steps[0].inputs;
 
     return [](std::unordered_map<int, bool>& inputs,
               std::unordered_map<int, bool>& outputs)
