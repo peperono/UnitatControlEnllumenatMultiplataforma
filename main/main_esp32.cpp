@@ -2,7 +2,6 @@
 #include "qpcpp/include/qpcpp.hpp"
 #include "signals.h"
 #include "ControlEntrades/ControlEntrades.h"
-#include "MonitorEntrades/MonitorEntrades.h"
 #include "HttpServer/HttpServer.h"
 #include "ControlEntrades/ControlEntradesState.h"
 #include "RemoteIO/RemoteIOState.h"
@@ -50,7 +49,6 @@ static QP::QEvtPtr rellotgeQSto      [16];
 static QP::QEvtPtr controlEntradesQSto  [16];
 static QP::QEvtPtr controlRemotQSto  [64];
 static QP::QEvtPtr controlHorariQSto [32];
-static QP::QEvtPtr monitorQSto          [16];
 static QP::QEvtPtr actuadorSortidesQSto [16];
 static QP::QEvtPtr blinkQSto            [ 4];
 
@@ -61,7 +59,6 @@ static StackType_t rellotgeStk      [ 4 * 1024];  //  4 KB
 static StackType_t controlEntradesStk  [ 8 * 1024];  //  8 KB
 static StackType_t controlRemotStk  [ 8 * 1024];  //  8 KB
 static StackType_t controlHorariStk [16 * 1024];  // 16 KB (JSON parsing)
-static StackType_t monitorStk            [ 4 * 1024];  //  4 KB
 static StackType_t actuadorSortidesStk   [ 4 * 1024];  //  4 KB
 static StackType_t blinkStk              [ 4 * 1024];  //  4 KB
 
@@ -185,7 +182,6 @@ extern "C" void app_main() {
     // polling i subscriptors lleugers, el risc pràctic és baix, però s'ha de
     // refactoritzar si es requereix garantia estricta.
     static ControlEntrades controlEntrades{makeHWInputReader(), 1U};
-    static MonitorEntrades    monitor;
     static ControlRemot        controlRemot;
     static ControlHorari       controlHorari;
     static Rellotge            rellotge;
@@ -204,7 +200,8 @@ extern "C" void app_main() {
     static QF_MPOOL_EL(ReconfigureEvt) largePool[16];
     QP::QF::poolInit(largePool, sizeof(largePool), sizeof(largePool[0]));
 
-    // Prioritats i stacks (FreeRTOS requereix stack explícit per static allocation)
+    // Prioritats (alt→baix): Rellotge > ControlEntrades > ControlRemot > ControlHorari > ActuadorSortides > Blink
+    // (FreeRTOS requereix stack explícit per static allocation)
     rellotge.start        (7U, rellotgeQSto,         Q_DIM(rellotgeQSto),
                            rellotgeStk,         sizeof(rellotgeStk));
     controlEntrades.start (6U, controlEntradesQSto,  Q_DIM(controlEntradesQSto),
@@ -213,9 +210,7 @@ extern "C" void app_main() {
                            controlRemotStk,     sizeof(controlRemotStk));
     controlHorari.start   (4U, controlHorariQSto,    Q_DIM(controlHorariQSto),
                            controlHorariStk,    sizeof(controlHorariStk));
-    monitor.start         (3U, monitorQSto,          Q_DIM(monitorQSto),
-                           monitorStk,          sizeof(monitorStk));
-    actuadorSortides.start(2U, actuadorSortidesQSto, Q_DIM(actuadorSortidesQSto),
+    actuadorSortides.start(3U, actuadorSortidesQSto, Q_DIM(actuadorSortidesQSto),
                            actuadorSortidesStk, sizeof(actuadorSortidesStk));
     blink.start           (1U, blinkQSto,            Q_DIM(blinkQSto),
                            blinkStk,            sizeof(blinkStk));

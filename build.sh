@@ -64,7 +64,6 @@ $GPP -std=c++17 -Wall -O1 -static \
     -I"$QPCPP/ports/win32-qv" \
     "$ROOT/main.cpp" \
     "$ROOT/ControlEntrades/ControlEntrades.cpp" \
-    "$ROOT/MonitorEntrades/MonitorEntrades.cpp" \
     "$ROOT/HttpServer/HttpServer.cpp" \
     "$ROOT/ControlRemot/ControlRemot.cpp" \
     "$ROOT/ControlHorari/ControlHorari.cpp" \

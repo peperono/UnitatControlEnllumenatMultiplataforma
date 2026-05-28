@@ -13,7 +13,6 @@ idf_component_register(
     SRCS
         "main_esp32.cpp"
         "${ROOT}/ControlEntrades/ControlEntrades.cpp"
-        "${ROOT}/MonitorEntrades/MonitorEntrades.cpp"
         "${ROOT}/ActuadorSortides/ActuadorSortides.cpp"
         "${ROOT}/HttpServer/HttpServer.cpp"
         "${ROOT}/ControlRemot/ControlRemot.cpp"
