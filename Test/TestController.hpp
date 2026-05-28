@@ -104,24 +104,24 @@ static void verifyStep(int stepIdx, const TestStep& s,
 
     bool ok = io_ok && edge_ok;
 
-    std::printf("[Test paso %d] %s  =>  %s\n",
+    std::fprintf(stderr, "[Test pas %d] %s  =>  %s\n",
                 stepIdx, s.description, ok ? "OK" : "FALLO");
 
     if (!io_ok) {
-        std::printf("  INPUT_CHANGED: esperat=%s  rebut=%s\n",
+        std::fprintf(stderr, "  INPUT_CHANGED: esperat=%s  rebut=%s\n",
                     expected_io  ? "SI" : "NO",
                     g_ioReceived ? "SI" : "NO");
     }
     if (!edge_ok) {
         if (s.expected_edges.empty()) {
-            std::printf("  EDGE: esperado: sin flanco  /  recibido: [");
+            std::fprintf(stderr, "  EDGE: esperat: sense flanc  /  rebut: [");
         } else {
-            std::printf("  EDGE: esperado: [");
-            for (int id : s.expected_edges) std::printf("%d ", id);
-            std::printf("]  /  recibido: [");
+            std::fprintf(stderr, "  EDGE: esperat: [");
+            for (int id : s.expected_edges) std::fprintf(stderr, "%d ", id);
+            std::fprintf(stderr, "]  /  rebut: [");
         }
-        for (int id : g_detectedEdges) std::printf("%d ", id);
-        std::printf("]\n");
+        for (int id : g_detectedEdges) std::fprintf(stderr, "%d ", id);
+        std::fprintf(stderr, "]\n");
     }
 
     // Escriure resultat al fitxer de log
@@ -269,7 +269,7 @@ inline IOReader makeTestReader() {
         // ── Anunciar el pas abans d'esperar ──────────────────────────────────
         if (!announced) {
             if (step < static_cast<int>(steps.size()))
-                std::printf("[Test] Pas %d: %s\n", step + 1, steps[step].description);
+                std::fprintf(stderr, "[Test] Pas %d: %s\n", step + 1, steps[step].description);
             announced = true;
             stepTime  = now;
             elapsed   = std::chrono::seconds(0);
@@ -290,7 +290,7 @@ inline IOReader makeTestReader() {
         }
 
         if (step >= static_cast<int>(steps.size())) {
-            std::printf("\n=== Test completat ===\n");
+            std::fprintf(stderr, "\n=== Test completat ===\n");
             QP::QF::stop();
             return;
         }
