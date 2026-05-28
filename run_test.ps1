@@ -8,8 +8,7 @@ Start-Process `
     -RedirectStandardError  $testLog `
     -NoNewWindow -Wait
 
-Get-Content $appLog  | ForEach-Object { Write-Host $_ }
-Get-Content $testLog | ForEach-Object { Write-Host $_ -ForegroundColor Cyan }
+Get-Content $appLog | ForEach-Object { Write-Host $_ }
 
 Write-Host ""
 Write-Host "app.log  → $appLog"
