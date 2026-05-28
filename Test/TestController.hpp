@@ -244,7 +244,6 @@ inline IOReader makeTestReader() {
     };
 
     static int step = 0;
-    // Estado previo: mapa vacío antes del primer poll (igual que ControlEntrades)
     static std::unordered_map<int, bool> prevInputs;
 
     return [](std::unordered_map<int, bool>& inputs,
@@ -252,47 +251,36 @@ inline IOReader makeTestReader() {
     {
         static auto stepTime = std::chrono::steady_clock::now();
         static const std::chrono::milliseconds STEP_DELAY{10};
-        static const std::chrono::milliseconds INIT_DELAY{10};
         static std::unordered_map<int, bool> lastInputs;
         static std::unordered_map<int, bool> lastOutputs;
-        static bool announced = false;
+        static bool waiting = false;
 
-        auto now     = std::chrono::steady_clock::now();
-        auto elapsed = now - stepTime;
-
-        // ── Anunciar el pas abans d'esperar ──────────────────────────────────
-        if (!announced) {
-            if (step < static_cast<int>(steps.size()))
-                std::fprintf(stderr, "[Test] Pas %d: %s\n", step + 1, steps[step].description);
-            announced = true;
-            stepTime  = now;
-            elapsed   = std::chrono::seconds(0);
-        }
-
-        // ── Esperar el delay ─────────────────────────────────────────────────
-        auto delay = (step == 0) ? INIT_DELAY : STEP_DELAY;
         inputs  = lastInputs;
         outputs = lastOutputs;
-        if (elapsed < delay) return;
 
-        // ── Executar el pas ──────────────────────────────────────────────────
-        announced = false;
-
-        if (step > 0) {
-            verifyStep(step - 1, steps[step - 1], prevInputs);
-            prevInputs = steps[step - 1].inputs;
-        }
-
-        if (step >= static_cast<int>(steps.size())) {
-            std::fprintf(stderr, "\n=== Test completat ===\n");
-            QP::QF::stop();
+        // ── Aplica el pas actual ──────────────────────────────────────────────
+        if (!waiting) {
+            if (step >= static_cast<int>(steps.size())) {
+                std::fprintf(stderr, "\n=== Test completat ===\n");
+                QP::QF::stop();
+                return;
+            }
+            inputs      = steps[step].inputs;
+            outputs     = steps[step].outputs;
+            lastInputs  = steps[step].inputs;
+            lastOutputs = steps[step].outputs;
+            waiting     = true;
+            stepTime    = std::chrono::steady_clock::now();
             return;
         }
 
-        inputs      = steps[step].inputs;
-        outputs     = steps[step].outputs;
-        lastInputs  = steps[step].inputs;
-        lastOutputs = steps[step].outputs;
+        // ── Espera que ControlEntrades processi les entrades ──────────────────
+        if (std::chrono::steady_clock::now() - stepTime < STEP_DELAY) return;
+
+        // ── Verifica el pas i avança ──────────────────────────────────────────
+        verifyStep(step, steps[step], prevInputs);
+        prevInputs = steps[step].inputs;
         ++step;
+        waiting = false;
     };
 }
