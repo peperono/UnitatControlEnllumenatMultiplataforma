@@ -138,21 +138,33 @@ static void verifyStep(int stepIdx, const TestStep& s,
 }
 
 // ── makeTestReader ────────────────────────────────────────────────────────────
-// Configuración: entrada 1 (always=true), entrada 2 (always=false, linked=salida 10)
+// Configuració: E1 (falling, always=true), E2 (falling, always=false, linked=S2),
+//               E3 (rising, always=true)
 //
-//  Paso 0 — estado inicial: entrada 1 OFF
-//           IO_STATE_CHANGED_SIG, sin flanco
-//  Paso 1 — sin cambio → sin eventos
-//  Paso 2 — TANCAMENT entrada 1 → IO_STATE_CHANGED_SIG + EDGE_DETECTED_SIG(1)
-//  Paso 3 — sin cambio → sin eventos
-//  Paso 4 — OBERTURA entrada 1 → IO_STATE_CHANGED_SIG, sin flanco
-//  Paso 5 — segon TANCAMENT entrada 1 → IO_STATE_CHANGED_SIG + EDGE_DETECTED_SIG(1)
-//  Paso 6 — entrada 2 tanca + entrada 1 obre → IO_STATE_CHANGED_SIG, sin flanco
-//  Paso 7 — reset entrada 2 → IO_STATE_CHANGED_SIG, sin flanco
-//  Paso 8 — TANCAMENT entrada 2, sortida 10=OFF → IO_STATE_CHANGED_SIG, sin flanco
-//  Paso 9 — sortida 10 s'activa → IO_STATE_CHANGED_SIG, sin flanco
-//  Paso 10 — OBERTURA entrada 2, sortida 10=ON → IO_STATE_CHANGED_SIG, sin flanco
-//  Paso 11 — TANCAMENT entrada 2, sortida 10=ON → IO_STATE_CHANGED_SIG + EDGE_DETECTED_SIG(2)
+// E1: flanc en OBERT→TANCAT (0→1)
+// E2: flanc en OBERT→TANCAT (0→1) només si S2 és activa
+// E3: flanc en TANCAT→OBERT (1→0)
+//
+//  Pas  1 — estat inicial: E1=O, E2=O, S2=O          → IO canviat, sense flanc
+//  Pas  2 — sense canvis                               → sense events
+//  Pas  3 — E1=TANCAT                                 → IO + flanc E1
+//  Pas  4 — sense canvis                               → sense events
+//  Pas  5 — E1=OBERT                                  → IO, sense flanc
+//  Pas  6 — E1=TANCAT                                 → IO + flanc E1
+//  Pas  7 — E1=OBERT, E2=TANCAT, S2=OBERT            → IO, sense flanc (S2 inactiva)
+//  Pas  8 — E2=OBERT                                  → IO, sense flanc
+//  Pas  9 — E2=TANCAT, S2=TANCAT                      → IO + flanc E2 (S2 activa)
+//  Pas 10 — E2=OBERT                                  → IO, sense flanc
+//  Pas 11 — S2=OBERT (sols outputs canvien)           → sense events
+//  Pas 12 — E2=TANCAT, S2=OBERT                       → IO, sense flanc (S2 inactiva)
+//  Pas 13 — E2=OBERT, E3=TANCAT                       → IO, sense flanc (E3: 0→1, no és rising)
+//  Pas 14 — E3=OBERT                                  → IO + flanc E3 (1→0)
+//  Pas 15 — E3=TANCAT                                 → IO, sense flanc
+//  Pas 16 — E3=OBERT                                  → IO + flanc E3
+//  Pas 17 — E1=T, E2=T, E3=T, S2=T                   → IO + flanc E1 + flanc E2
+//  Pas 18 — E1=O, E2=O, E3=O, S2=O                   → IO + flanc E3
+//  Pas 19 — E1=T, E2=T, E3=T, S2=T                   → IO + flanc E1 + flanc E2
+//  Pas 20 — E1=O, E2=O, E3=O, S2=O                   → IO + flanc E3
 
 inline IOReader makeTestReader() {
     {
@@ -166,87 +178,69 @@ inline IOReader makeTestReader() {
     }
 
     static const std::vector<TestStep> steps = {
-        { {{1,false},{2,false}}, {{10,false}},
-          "Estat inicial: E1=OBERT, E2=OBERT, S10=OBERT",                            {} },
+        // ── E1: falling, always=true ──────────────────────────────────────────
+        { {{1,false},{2,false}}, {{2,false}},
+          "Estat inicial: E1=O, E2=O, S2=O",                          {} },
 
-        { {{1,false},{2,false}}, {{10,false}},
-          "(Sense canvis) => (sense events)",                                       {} },
+        { {{1,false},{2,false}}, {{2,false}},
+          "(Sense canvis) => (sense events)",                          {} },
 
-        { {{1,true}, {2,false}}, {{10,false}},
-          " (E1=TANCAT) => (flanc E1)",                              {1} },
+        { {{1,true}, {2,false}}, {{2,false}},
+          "(E1=TANCAT) => (flanc E1)",                                 {1} },
 
-        { {{1,true}, {2,false}}, {{10,false}},
-          "(Sense canvis) => (sense events)",                                       {} },
+        { {{1,true}, {2,false}}, {{2,false}},
+          "(Sense canvis) => (sense events)",                          {} },
 
-        { {{1,false},{2,false}}, {{10,false}},
-          "(E1 = OBERT) => (sense events)", {} },
+        { {{1,false},{2,false}}, {{2,false}},
+          "(E1=OBERT) => (sense flanc)",                               {} },
 
-        { {{1,true}, {2,false}}, {{10,false}},
-          "(E1 = TANCAT) => (flanc E1)",                        {1} },
+        { {{1,true}, {2,false}}, {{2,false}},
+          "(E1=TANCAT) => (flanc E1)",                                 {1} },
 
-        { {{1,false},{2,true}},  {{10,false}},
-          "(E1 = OBERT, E2 = TANCAT) ==> (sense events) ",                 {} },
+        // ── E2: falling, always=false, linked=S2 ─────────────────────────────
+        { {{1,false},{2,true}},  {{2,false}},
+          "(E1=O, E2=TANCAT) amb S2=O => (sense flanc)",              {} },
 
-        // ── Casos detection_always=false (entrada 2 vinculada a salida 10) ──
+        { {{1,false},{2,false}}, {{2,false}},
+          "(E2=OBERT) => (sense flanc)",                               {} },
 
-        { {{1,false},{2,false}}, {{10,false}},
-          "(E2 = OBERT) => (sense events)",                                  {} },
+        { {{1,false},{2,true}},  {{2,true}},
+          "(E2=TANCAT, S2=TANCAT) => (flanc E2)",                      {2} },
 
-        { {{1,false},{2,true}},  {{10,true}},
-          "(E2=TANCAT, S10=TANCAT) => (flanc E2)", {2} },
+        { {{1,false},{2,false}}, {{2,true}},
+          "(E2=OBERT) => (sense flanc)",                               {} },
 
-        { {{1,false},{2,false}}, {{10,true}},
-          "(E2 = OBERT) => (sense events)", {} },
+        { {{1,false},{2,false}}, {{2,false}},
+          "(S2=OBERT, sols outputs) => (sense events)",                {} },
 
-        { {{1,false},{2,false}}, {{10,false}},
-          "(S10 = OBERT) => (sense events)", {} },
+        { {{1,false},{2,true}},  {{2,false}},
+          "(E2=TANCAT) amb S2=O => (sense flanc)",                    {} },
 
-        { {{1,false},{2,true}},  {{10,false}},
-          "(E2 = TANCAT) => (sense events)", {} },
+        // ── E3: rising, always=true ───────────────────────────────────────────
+        { {{1,false},{2,false},{3,true}},  {{2,false}},
+          "(E2=O, E3=TANCAT) => (sense flanc, E3: 0→1 no és rising)", {} },
 
-        { {{1,false},{2,true},{3,false}}, {{10,false}},
-          "(E3 = OBERT) => (sense events)", {} },
+        { {{1,false},{2,false},{3,false}}, {{2,false}},
+          "(E3=OBERT) => (flanc E3)",                                  {3} },
 
-        { {{1,false},{2,true},{3,true}},  {{10,false}},
-          "(E3 = TANCAT) => (sense events)", {} },
+        { {{1,false},{2,false},{3,true}},  {{2,false}},
+          "(E3=TANCAT) => (sense flanc)",                              {} },
 
-        { {{1,false},{2,false},{3,true}}, {{10,true}},
-          "(E1 = OBERT, E2 = OBERT, S10 = TANCAT) => (sense events)", {} },
+        { {{1,false},{2,false},{3,false}}, {{2,false}},
+          "(E3=OBERT) => (flanc E3)",                                  {3} },
 
-        { {{1,true},{2,true},{3,true}},   {{10,true}},
-          "(E1 = TANCAT, E2 = TANCAT) => (flanc E1, flanc E2)", {1,2} },
+        // ── Combinat: E1+E2+E3 i S2 ──────────────────────────────────────────
+        { {{1,true},{2,true},{3,true}},    {{2,true}},
+          "(E1=T, E2=T, E3=T, S2=T) => (flanc E1, flanc E2)",         {1,2} },
 
-        { {{1,false},{2,false},{3,true}}, {{10,true}},
-          "(E1 = OBERT, E2 = OBERT) => (sense events)", {} },
+        { {{1,false},{2,false},{3,false}}, {{2,false}},
+          "(E1=O, E2=O, E3=O, S2=O) => (flanc E3)",                   {3} },
 
-        { {{1,true},{2,true},{3,true}},   {{10,true}},
-          "(E1 = TANCAT, E2 = TANCAT) => (flanc E1, flanc E2)", {1,2} },
+        { {{1,true},{2,true},{3,true}},    {{2,true}},
+          "(E1=T, E2=T, E3=T, S2=T) => (flanc E1, flanc E2)",         {1,2} },
 
-        { {{1,false},{2,false},{3,true}}, {{10,true}},
-          "(E1 = OBERT, E2 = OBERT) => (sense events)", {} },
-
-        { {{1,true},{2,true},{3,true}},   {{10,true}},
-          "(E1 = TANCAT, E2 = TANCAT) => (flanc E1, flanc E2)", {1,2} },
-
-        { {{1,false},{2,false},{3,true}}, {{10,true}},
-          "(E1 = OBERT, E2 = OBERT) => (sense events)", {} },
-
-        { {{1,true},{2,true},{3,true}},   {{10,true}},
-          "(E1 = TANCAT, E2 = TANCAT) => (flanc E1, flanc E2)", {1,2} },
-
-        // ── Casos detect_edge=rising, always=true (entrada 4 detecta obertura) ─
-
-        { {{1,true},{2,true},{3,true},{4,true}},  {{10,true}},
-          "(E4 = TANCAT) => (sense events)", {} },
-
-        { {{1,true},{2,true},{3,true},{4,false}}, {{10,true}},
-          "(E4 = OBERT) => (flanc E4)", {4} },
-
-        { {{1,true},{2,true},{3,true},{4,true}},  {{10,true}},
-          "(E4 = TANCAT) => (sense events)", {} },
-
-        { {{1,true},{2,true},{3,true},{4,false}}, {{10,true}},
-          "(E4 = OBERT) => (flanc E4)", {4} },
+        { {{1,false},{2,false},{3,false}}, {{2,false}},
+          "(E1=O, E2=O, E3=O, S2=O) => (flanc E3)",                   {3} },
     };
 
     static int step = 0;
