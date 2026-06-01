@@ -246,11 +246,12 @@ inline IOReader makeTestReader(const std::vector<InputConfig>& configs) {
               std::unordered_map<int, bool>& outputs)
     {
         static auto stepTime = std::chrono::steady_clock::now();
-        static const std::chrono::milliseconds STEP_DELAY{50};
+        static const std::chrono::milliseconds STEP_DELAY{100};
         static std::unordered_map<int, bool> lastInputs;
         static std::unordered_map<int, bool> lastOutputs;
-        static bool waiting = false;
-        static int  warmup  = 5; // ticks per estabilitzar m_prevInputs de ControlEntrades
+        static bool waiting  = false;
+        static int  warmup   = 5;    // ticks per estabilitzar m_prevInputs de ControlEntrades
+        static bool draining = false; // espera post-warmup per despatchejar events pendents
 
         inputs  = lastInputs;
         outputs = lastOutputs;
@@ -262,11 +263,22 @@ inline IOReader makeTestReader(const std::vector<InputConfig>& configs) {
             lastInputs  = steps[0].inputs;
             lastOutputs = steps[0].outputs;
             if (--warmup == 0) {
-                g_detectedEdges.clear();
-                g_edgeReceived  = false;
-                g_receivedInputs.clear();
-                g_ioReceived    = false;
+                draining = true;
+                stepTime = std::chrono::steady_clock::now();
             }
+            return;
+        }
+
+        // ── Drain: espera que QV despatchegi els events del warm-up ──────────
+        // (TestObserver té prioritat 3 < ControlEntrades 6: en ràfegues de ticks
+        //  a l'inici de Windows, els events poden arribar tard al TestObserver)
+        if (draining) {
+            if (std::chrono::steady_clock::now() - stepTime < STEP_DELAY) return;
+            g_detectedEdges.clear();
+            g_edgeReceived  = false;
+            g_receivedInputs.clear();
+            g_ioReceived    = false;
+            draining = false;
             return;
         }
 
