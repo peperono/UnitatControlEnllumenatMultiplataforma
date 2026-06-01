@@ -141,10 +141,10 @@ static void verifyStep(int stepIdx, const TestStep& s,
 //  Pas 14 — E3=OBERT                                  → IO + flanc E3 (1→0)
 //  Pas 15 — E3=TANCAT                                 → IO, sense flanc
 //  Pas 16 — E3=OBERT                                  → IO + flanc E3
-//  Pas 17 — E1=T, E2=T, E3=T, S2=T                   → IO + flanc E1 + flanc E2
-//  Pas 18 — E1=O, E2=O, E3=O, S2=O                   → IO + flanc E3
-//  Pas 19 — E1=T, E2=T, E3=T, S2=T                   → IO + flanc E1 + flanc E2
-//  Pas 20 — E1=O, E2=O, E3=O, S2=O                   → IO + flanc E3
+//  Pas 17 — E1=TANCAT, E2=TANCAT, E3=TANCAT, S2=TANCAT → IO + flanc E1 + flanc E2
+//  Pas 18 — E1=OBERT, E2=OBERT, E3=OBERT, S2=OBERT   → IO + flanc E3
+//  Pas 19 — E1=TANCAT, E2=TANCAT, E3=TANCAT, S2=TANCAT → IO + flanc E1 + flanc E2
+//  Pas 20 — E1=OBERT, E2=OBERT, E3=OBERT, S2=OBERT   → IO + flanc E3
 
 inline IOReader makeTestReader() {
     {
@@ -160,7 +160,7 @@ inline IOReader makeTestReader() {
     static const std::vector<TestStep> steps = {
         // ── E1: falling, always=true ──────────────────────────────────────────
         { {{1,false},{2,false}}, {{2,false}},
-          "Estat inicial: E1=O, E2=O, S2=O",                          {} },
+          "Estat inicial: E1=OBERT, E2=OBERT, S2=OBERT",                          {} },
 
         { {{1,false},{2,false}}, {{2,false}},
           "(Sense canvis) => (sense events)",                          {} },
@@ -179,7 +179,7 @@ inline IOReader makeTestReader() {
 
         // ── E2: falling, always=false, linked=S2 ─────────────────────────────
         { {{1,false},{2,true}},  {{2,false}},
-          "(E1=O, E2=TANCAT) amb S2=O => (sense flanc)",              {} },
+          "(E1=OBERT, E2=TANCAT) amb S2=OBERT => (sense flanc)",              {} },
 
         { {{1,false},{2,false}}, {{2,false}},
           "(E2=OBERT) => (sense flanc)",                               {} },
@@ -194,11 +194,11 @@ inline IOReader makeTestReader() {
           "(S2=OBERT, sols outputs) => (sense events)",                {} },
 
         { {{1,false},{2,true}},  {{2,false}},
-          "(E2=TANCAT) amb S2=O => (sense flanc)",                    {} },
+          "(E2=TANCAT) amb S2=OBERT => (sense flanc)",                    {} },
 
         // ── E3: rising, always=true ───────────────────────────────────────────
         { {{1,false},{2,false},{3,true}},  {{2,false}},
-          "(E2=O, E3=TANCAT) => (sense flanc, E3: 0→1 no és rising)", {} },
+          "(E2=OBERT, E3=TANCAT) => (sense flanc, E3: 0→1 no és rising)", {} },
 
         { {{1,false},{2,false},{3,false}}, {{2,false}},
           "(E3=OBERT) => (flanc E3)",                                  {3} },
@@ -211,16 +211,16 @@ inline IOReader makeTestReader() {
 
         // ── Combinat: E1+E2+E3 i S2 ──────────────────────────────────────────
         { {{1,true},{2,true},{3,true}},    {{2,true}},
-          "(E1=T, E2=T, E3=T, S2=T) => (flanc E1, flanc E2)",         {1,2} },
+          "(E1=TANCAT, E2=TANCAT, E3=TANCAT, S2=TANCAT) => (flanc E1, flanc E2)", {1,2} },
 
         { {{1,false},{2,false},{3,false}}, {{2,false}},
-          "(E1=O, E2=O, E3=O, S2=O) => (flanc E3)",                   {3} },
+          "(E1=OBERT, E2=OBERT, E3=OBERT, S2=OBERT) => (flanc E3)",   {3} },
 
         { {{1,true},{2,true},{3,true}},    {{2,true}},
-          "(E1=T, E2=T, E3=T, S2=T) => (flanc E1, flanc E2)",         {1,2} },
+          "(E1=TANCAT, E2=TANCAT, E3=TANCAT, S2=TANCAT) => (flanc E1, flanc E2)", {1,2} },
 
         { {{1,false},{2,false},{3,false}}, {{2,false}},
-          "(E1=O, E2=O, E3=O, S2=O) => (flanc E3)",                   {3} },
+          "(E1=OBERT, E2=OBERT, E3=OBERT, S2=OBERT) => (flanc E3)",   {3} },
     };
 
     static int step = 0;
