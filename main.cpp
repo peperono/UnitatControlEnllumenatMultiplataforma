@@ -123,14 +123,16 @@ int main(int argc, char* argv[]) {
     static QF_MPOOL_EL(ReconfigureEvt) largePool[32];
     QP::QF::poolInit(largePool, sizeof(largePool), sizeof(largePool[0]));
 
-    // Prioritats (alt→baix): Rellotge > ControlEntrades > ControlRemot > ControlHorari > ActuadorSortides/TestObserver
+    // Prioritats (alt→baix): Rellotge > ControlEntrades > [ControlRemot] > ControlHorari > TestObserver/ActuadorSortides
+    // ControlRemot no s'inicia en mode test: evita que m_commandedOutputs sobreescrigui
+    // els outputs del test reader i invalidi la detecció always=false.
     rellotge.start(        7U, rellotgeQSto,         Q_DIM(rellotgeQSto),         nullptr, 0U);
     controlEntrades.start( 6U, controlEntradesQSto,  Q_DIM(controlEntradesQSto),  nullptr, 0U);
-    controlRemot.start(    5U, controlRemotQSto,     Q_DIM(controlRemotQSto),     nullptr, 0U);
     controlHorari.start(   4U, controlHorariQSto,    Q_DIM(controlHorariQSto),    nullptr, 0U);
     if (choice != 2) {
-        testObserver.start(3U, testObserverQSto,     Q_DIM(testObserverQSto),     nullptr, 0U);
+        testObserver.start(    3U, testObserverQSto,     Q_DIM(testObserverQSto),     nullptr, 0U);
     } else {
+        controlRemot.start(    5U, controlRemotQSto,     Q_DIM(controlRemotQSto),     nullptr, 0U);
         actuadorSortides.start(3U, actuadorSortidesQSto, Q_DIM(actuadorSortidesQSto), nullptr, 0U);
     }
 

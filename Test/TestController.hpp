@@ -230,13 +230,29 @@ inline IOReader makeTestReader() {
               std::unordered_map<int, bool>& outputs)
     {
         static auto stepTime = std::chrono::steady_clock::now();
-        static const std::chrono::milliseconds STEP_DELAY{10};
+        static const std::chrono::milliseconds STEP_DELAY{50};
         static std::unordered_map<int, bool> lastInputs;
         static std::unordered_map<int, bool> lastOutputs;
         static bool waiting = false;
+        static int  warmup  = 5; // ticks per estabilitzar m_prevInputs de ControlEntrades
 
         inputs  = lastInputs;
         outputs = lastOutputs;
+
+        // ── Warm-up: aplica l'estat inicial sense verificar ───────────────────
+        if (warmup > 0) {
+            inputs = steps[0].inputs;
+            outputs = steps[0].outputs;
+            lastInputs  = steps[0].inputs;
+            lastOutputs = steps[0].outputs;
+            if (--warmup == 0) {
+                g_detectedEdges.clear();
+                g_edgeReceived  = false;
+                g_receivedInputs.clear();
+                g_ioReceived    = false;
+            }
+            return;
+        }
 
         // ── Aplica el pas actual ──────────────────────────────────────────────
         if (!waiting) {
