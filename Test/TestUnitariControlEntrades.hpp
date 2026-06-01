@@ -28,6 +28,8 @@ static std::vector<int>              g_detectedEdges;
 static bool                          g_edgeReceived  = false;
 static std::unordered_map<int, bool> g_receivedInputs;
 static bool                          g_ioReceived    = false;
+static int                           g_totalSteps    = 0;
+static int                           g_passedSteps   = 0;
 
 // ── TestObserver ──────────────────────────────────────────────────────────────
 
@@ -103,6 +105,8 @@ static void verifyStep(int stepIdx, const TestStep& s,
     }
 
     bool ok = io_ok && edge_ok;
+    ++g_totalSteps;
+    if (ok) ++g_passedSteps;
 
     // Escriure resultat al fitxer de log
     if (FILE* f = std::fopen(TEST_LOG_FILE, "a")) {
@@ -285,7 +289,14 @@ inline IOReader makeTestReader(const std::vector<InputConfig>& configs) {
         // ── Aplica el pas actual ──────────────────────────────────────────────
         if (!waiting) {
             if (step >= static_cast<int>(steps.size())) {
-                std::printf("\n=== Test completat ===\n");
+                bool allOk = (g_passedSteps == g_totalSteps);
+                if (FILE* f = std::fopen(TEST_LOG_FILE, "a")) {
+                    std::fprintf(f, "# Resultat: %s (%d/%d)\n",
+                        allOk ? "OK" : "FALLO", g_passedSteps, g_totalSteps);
+                    std::fclose(f);
+                }
+                std::printf("\n=== Test completat: %s (%d/%d) ===\n",
+                    allOk ? "OK" : "FALLO", g_passedSteps, g_totalSteps);
                 QP::QF::stop();
                 return;
             }
