@@ -5,7 +5,7 @@
 #include "HttpServer/HttpServer.h"
 #include "ControlEntrades/ControlEntradesState.h"
 #include "RemoteIO/RemoteIOState.h"
-#include "Test/TestController.hpp"
+#include "Test/TestUnitariControlEntrades.hpp"
 #include "RemoteIO/InputReader_WS.hpp"
 #include "ControlRemot/ControlRemot.h"
 #include "ControlRemot/OutputConfig.h"
