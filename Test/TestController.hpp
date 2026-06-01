@@ -146,13 +146,29 @@ static void verifyStep(int stepIdx, const TestStep& s,
 //  Pas 19 — E1=TANCAT, E2=TANCAT, E3=TANCAT, S2=TANCAT → IO + flanc E1 + flanc E2
 //  Pas 20 — E1=OBERT, E2=OBERT, E3=OBERT, S2=OBERT   → IO + flanc E3
 
-inline IOReader makeTestReader() {
+inline IOReader makeTestReader(const std::vector<InputConfig>& configs) {
     {
         std::time_t t = std::time(nullptr);
         char buf[32];
         std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", std::localtime(&t));
         if (FILE* f = std::fopen(TEST_LOG_FILE, "w")) {
             std::fprintf(f, "# Test iniciat: %s\n", buf);
+            std::fprintf(f, "# Configuració d'entrades:\n");
+            for (const auto& cfg : configs) {
+                std::fprintf(f, "#   E%d: flanc=%s, always=%s",
+                    cfg.id,
+                    cfg.detect_edge == EdgePolarity::falling ? "TANCAT" : "OBERT",
+                    cfg.detection_always ? "true" : "false");
+                if (!cfg.linked_outputs.empty()) {
+                    std::fprintf(f, ", linked=[");
+                    for (int i = 0; i < (int)cfg.linked_outputs.size(); ++i) {
+                        if (i > 0) std::fprintf(f, ",");
+                        std::fprintf(f, "S%d", cfg.linked_outputs[i]);
+                    }
+                    std::fprintf(f, "]");
+                }
+                std::fprintf(f, "\n");
+            }
             std::fclose(f);
         }
     }

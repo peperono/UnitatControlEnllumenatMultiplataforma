@@ -89,7 +89,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    IOReader reader = (choice == 2) ? makeWSInputReader() : makeTestReader();
+    IOReader reader = (choice == 2) ? makeWSInputReader() : makeTestReader(configs);
 
     // ── Active Object instances ───────────────────────────────────────────────
     static ControlEntrades controlEntrades{ std::move(reader), 1U };
