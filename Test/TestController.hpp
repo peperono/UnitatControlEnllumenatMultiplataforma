@@ -104,26 +104,6 @@ static void verifyStep(int stepIdx, const TestStep& s,
 
     bool ok = io_ok && edge_ok;
 
-    std::fprintf(stderr, "[Test pas %d] %s  =>  %s\n",
-                stepIdx, s.description, ok ? "OK" : "FALLO");
-
-    if (!io_ok) {
-        std::fprintf(stderr, "  INPUT_CHANGED: esperat=%s  rebut=%s\n",
-                    expected_io  ? "SI" : "NO",
-                    g_ioReceived ? "SI" : "NO");
-    }
-    if (!edge_ok) {
-        if (s.expected_edges.empty()) {
-            std::fprintf(stderr, "  EDGE: esperat: sense flanc  /  rebut: [");
-        } else {
-            std::fprintf(stderr, "  EDGE: esperat: [");
-            for (int id : s.expected_edges) std::fprintf(stderr, "%d ", id);
-            std::fprintf(stderr, "]  /  rebut: [");
-        }
-        for (int id : g_detectedEdges) std::fprintf(stderr, "%d ", id);
-        std::fprintf(stderr, "]\n");
-    }
-
     // Escriure resultat al fitxer de log
     if (FILE* f = std::fopen(TEST_LOG_FILE, "a")) {
         std::fprintf(f, "%d,\"%s\",%s\n", stepIdx + 1, s.description, ok ? "OK" : "ERROR");
@@ -261,7 +241,7 @@ inline IOReader makeTestReader() {
         // ── Aplica el pas actual ──────────────────────────────────────────────
         if (!waiting) {
             if (step >= static_cast<int>(steps.size())) {
-                std::fprintf(stderr, "\n=== Test completat ===\n");
+                std::printf("\n=== Test completat ===\n");
                 QP::QF::stop();
                 return;
             }
