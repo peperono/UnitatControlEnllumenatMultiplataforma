@@ -1,5 +1,6 @@
 {
-    "name": "digital-inputs-detector",
+    // "name": "digital-inputs-detector",
+    "name": "Unitat Control Enllumenat",
     "build": {
         "dockerfile": "Dockerfile"
     },

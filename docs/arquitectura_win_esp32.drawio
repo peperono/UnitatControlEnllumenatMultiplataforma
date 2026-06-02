@@ -1,0 +1,70 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.2.8 Chrome/140.0.7339.240 Electron/38.4.0 Safari/537.36" version="28.2.8">
+  <diagram name="Página-1" id="iuWj1tzCN64s61lag5Kg">
+    <mxGraphModel dx="1694" dy="977" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="2336" pageHeight="1654" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="wlldt76cuTSGM-yE6obA-1" value="TCP/IP&lt;div&gt;(Api Windows)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="-238" y="231" width="347" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="wlldt76cuTSGM-yE6obA-3" value="Wifi/Ethernet" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="-238" y="306" width="348" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="wlldt76cuTSGM-yE6obA-5" value="Mongoose - HTTP, WS, etc&lt;div&gt;(Windows thread)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="-238" y="157" width="344" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="wlldt76cuTSGM-yE6obA-7" value="HttpServer" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="-238" y="82" width="344" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="wlldt76cuTSGM-yE6obA-10" value="AOs&lt;div&gt;(Cooperative framework QV)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="-238" y="-67" width="346" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="wlldt76cuTSGM-yE6obA-12" value="main" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="-238" y="-141" width="346" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="wlldt76cuTSGM-yE6obA-14" value="Shared Memory" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="-238" y="12" width="344" height="51" as="geometry" />
+        </mxCell>
+        <mxCell id="wlldt76cuTSGM-yE6obA-17" value="TCP/IP&lt;div&gt;(LwIP)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="169" y="231" width="341" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="wlldt76cuTSGM-yE6obA-19" value="Wifi/Ethernet" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="171" y="306" width="347" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="wlldt76cuTSGM-yE6obA-20" value="Mongoose - HTTP, WS, etc.&lt;div&gt;(FreeRTOS task)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="169" y="157" width="343" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="wlldt76cuTSGM-yE6obA-21" value="HttpServer" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="169" y="82" width="344" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="wlldt76cuTSGM-yE6obA-24" value="main_esp32" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="171" y="-141" width="344" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="wlldt76cuTSGM-yE6obA-25" value="Shared Memory" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="169" y="12" width="346" height="51" as="geometry" />
+        </mxCell>
+        <mxCell id="wlldt76cuTSGM-yE6obA-27" value="FreeRTOS" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="170" y="380" width="344" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="wlldt76cuTSGM-yE6obA-22" value="AOs&lt;div&gt;(FreeRTOS port / FreeRTOS tasks)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="169" y="-67" width="346" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="BnJ5BnqUndi74dd3diWF-1" value="Windows" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="-234" y="380" width="344" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="BnJ5BnqUndi74dd3diWF-2" value="comú ambdu&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;es plataformes&lt;/span&gt;" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="-291" y="-67" width="20" height="207" as="geometry" />
+        </mxCell>
+        <mxCell id="BnJ5BnqUndi74dd3diWF-5" value="Plataforma Windows" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="-130" y="471" width="130" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="BnJ5BnqUndi74dd3diWF-6" value="Plataforma ESP32" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="279.5" y="471" width="130" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="BnJ5BnqUndi74dd3diWF-7" value="Arquitectura per plataforma --&amp;nbsp; Windows i ESP32&lt;div&gt;Juny 2026&lt;/div&gt;" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;recursiveResize=0;container=1;collapsible=0;width=280;height=42;" vertex="1" parent="1">
+          <mxGeometry x="-437" y="-222" width="1099" height="768" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
