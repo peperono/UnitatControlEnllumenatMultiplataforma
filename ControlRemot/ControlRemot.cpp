@@ -1,6 +1,6 @@
 #include "ControlRemot.h"
 #include "ControlRemotState.h"
-#include "../LogState.h"
+#include "../Log/LogState.h"
 #include "../mongoose/mongoose.h"
 #include <algorithm>
 #include <cstdio>

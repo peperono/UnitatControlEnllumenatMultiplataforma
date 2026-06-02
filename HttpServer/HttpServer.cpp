@@ -5,7 +5,7 @@
 #include "../ControlRemot/ControlRemotState.h"
 #include "../ControlHorari/ControlHorariState.h"
 #include "../Rellotge/RellotgeState.h"
-#include "../LogState.h"
+#include "../Log/LogState.h"
 #include "../signals.h"
 #include <thread>
 #include <atomic>

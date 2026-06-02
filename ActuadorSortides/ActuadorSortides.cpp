@@ -1,5 +1,5 @@
 #include "ActuadorSortides.hpp"
-#include "../LogState.h"
+#include "../Log/LogState.h"
 #include <string>
 
 ActuadorSortides::ActuadorSortides(OutputWriter writer) noexcept
