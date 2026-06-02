@@ -5,6 +5,14 @@
 
 RellotgeState rellotge_state;
 
+static void localtime_safe(std::time_t t, std::tm& lt) {
+#ifdef _WIN32
+    localtime_s(&lt, &t);
+#else
+    localtime_r(&t, &lt);
+#endif
+}
+
 Rellotge::Rellotge() noexcept
     : QP::QActive{Q_STATE_CAST(&Rellotge::initial)},
       m_tick{this, RELLOTGE_TICK_INTERNAL_SIG, 0U}
@@ -15,11 +23,7 @@ Q_STATE_DEF(Rellotge, initial) {
 
     std::time_t now = std::time(nullptr);
     std::tm lt;
-#ifdef _WIN32
-    localtime_s(&lt, &now);
-#else
-    localtime_r(&now, &lt);
-#endif
+    localtime_safe(now, lt);
     m_wday   = (lt.tm_wday + 6) % 7;
     m_hour   = lt.tm_hour;
     m_minute = lt.tm_min;
