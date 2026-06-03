@@ -59,6 +59,7 @@ fi
 echo "Compilando app..."
 $GPP -std=c++17 -Wall -O1 -static \
     -I"$ROOT" \
+    -I"$ROOT/Integracio" \
     -I"$QPCPP/include" \
     -I"$QPCPP/src" \
     -I"$QPCPP/ports/win32-qv" \

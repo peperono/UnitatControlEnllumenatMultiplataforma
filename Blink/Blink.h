@@ -1,6 +1,6 @@
 #pragma once
 #include "../qpcpp/include/qpcpp.hpp"
-#include "../signals.h"
+#include "../Integracio/signals.h"
 #include <functional>
 
 class Blink : public QP::QActive {

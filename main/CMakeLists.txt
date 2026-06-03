@@ -37,6 +37,7 @@ idf_component_register(
     INCLUDE_DIRS
         "."
         "${ROOT}"
+        "${ROOT}/Integracio"
         "${QPCPP}/include"
         "${QPCPP}/src"
         "${QPCPP}/ports/freertos"

@@ -6,7 +6,7 @@
 #include "../ControlHorari/ControlHorariState.h"
 #include "../Rellotge/RellotgeState.h"
 #include "../Log/LogState.h"
-#include "../signals.h"
+#include "../Integracio/signals.h"
 #include <thread>
 #include <atomic>
 #include <string>
