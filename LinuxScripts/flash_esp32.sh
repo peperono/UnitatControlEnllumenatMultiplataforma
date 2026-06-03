@@ -14,8 +14,8 @@ cd "$ROOT"
 
 if [[ "$1" == "--erase" ]]; then
     echo "Esborrant i flashant a $PORT..."
-    idf.py -p "$PORT" erase-flash flash monitor
+    idf.py -p "$PORT" erase-flash flash
 else
     echo "Flashant a $PORT..."
-    idf.py -p "$PORT" flash monitor
+    idf.py -p "$PORT" flash
 fi
