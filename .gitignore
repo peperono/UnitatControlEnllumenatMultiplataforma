@@ -4,3 +4,5 @@ web/index_html.h
 sdkconfig
 sdkconfig.old
 docs/.*
+LogResults/*
+!LogResults/.gitkeep

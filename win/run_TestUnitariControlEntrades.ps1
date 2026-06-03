@@ -1,14 +1,14 @@
-$appLog = Join-Path $PSScriptRoot "build-win\app.log"
+$appLog = Join-Path $PSScriptRoot "..\LogResults\app.log"
 
 Start-Process `
-    -FilePath               "$PSScriptRoot\build-win\app.exe" `
+    -FilePath               "$PSScriptRoot\..\build-win\app.exe" `
     -ArgumentList           "1" `
-    -WorkingDirectory       "$PSScriptRoot\build-win" `
+    -WorkingDirectory       "$PSScriptRoot\.." `
     -RedirectStandardOutput $appLog `
     -NoNewWindow -Wait
 
 Get-Content $appLog | ForEach-Object { Write-Host $_ }
 
 Write-Host ""
-Write-Host "app.log        → $appLog"
-Write-Host "TestUnitariControlEntrades.log → $(Join-Path $PSScriptRoot 'build-win\TestUnitariControlEntrades.log')"
+Write-Host "app.log                        → $appLog"
+Write-Host "TestUnitariControlEntrades.log → $(Join-Path $PSScriptRoot '..\LogResults\TestUnitariControlEntrades.log')"

@@ -11,7 +11,7 @@
 #include <ctime>
 #include <string>
 
-static const char* TEST_LOG_FILE = "TestUnitariControlEntrades.log";
+static const char* TEST_LOG_FILE = "LogResults/TestUnitariControlEntrades.log";
 
 // ── TestStep ──────────────────────────────────────────────────────────────────
 
