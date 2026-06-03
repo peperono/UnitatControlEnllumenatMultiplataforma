@@ -44,7 +44,7 @@ Uses `x86_64-w64-mingw32-g++` (devcontainer cross-compiler) if available, otherw
 ### Connectar USB (des de PowerShell a Windows, com a administrador)
 
 ```powershell
-.\WinScripts\attach-usb.ps1
+.\WinScripts\attach_usb.ps1
 ```
 
 Detecta automàticament el dispositiu FTDI/CP210x, fa `bind --force` si cal i `attach` a docker-desktop. El port apareix com `/dev/ttyUSB0` i `/dev/ttyUSB1` al contenidor.
@@ -244,7 +244,7 @@ Cap endpoint ni WS. Només consumeix events QP i actua sobre hardware o consola.
 - `ActuadorSortides/OutputWriter_Console.hpp` — `makeConsoleWriter()`: printf stdout
 - `LinuxScripts/flash_esp32.sh` — compila i flasheja l'ESP32 via `/dev/ttyUSB1`
 - `LinuxScripts/monitor_esp32.sh` — monitor sèrie interactiu
-- `WinScripts/attach-usb.ps1` — connecta USB al contenidor via usbipd (PowerShell, Windows)
+- `WinScripts/attach_usb.ps1` — connecta USB al contenidor via usbipd (PowerShell, Windows)
 
 El diagrama de referència és `docs/ControlEntrades.drawio`. Les convencions visuals (colors, fletxes, etiquetes, estructura dels nodes) estan documentades a [`docs/drawio-conventions.md`](docs/drawio-conventions.md).
 
