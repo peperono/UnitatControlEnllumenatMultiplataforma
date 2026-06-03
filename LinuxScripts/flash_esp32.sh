@@ -5,9 +5,12 @@
 
 set -e
 
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PORT="/dev/ttyUSB1"
 
 source ~/esp/esp-idf/export.sh > /dev/null 2>&1
+
+cd "$ROOT"
 
 if [[ "$1" == "--erase" ]]; then
     echo "Esborrant i flashant a $PORT..."
