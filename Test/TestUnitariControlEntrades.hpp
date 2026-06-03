@@ -250,7 +250,7 @@ inline IOReader makeTestReader(const std::vector<InputConfig>& configs) {
               std::unordered_map<int, bool>& outputs)
     {
         static auto stepTime = std::chrono::steady_clock::now();
-        static const std::chrono::milliseconds STEP_DELAY{100};
+        static const std::chrono::milliseconds STEP_DELAY{200};
         static std::unordered_map<int, bool> lastInputs;
         static std::unordered_map<int, bool> lastOutputs;
         static bool waiting  = false;
