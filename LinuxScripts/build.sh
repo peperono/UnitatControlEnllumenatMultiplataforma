@@ -7,7 +7,7 @@ export TEMP=/tmp
 export TMP=/tmp
 export TMPDIR=/tmp
 
-ROOT="$(cd "$(dirname "$0")" && pwd)"
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 QPCPP="$ROOT/qpcpp"
 OUT="$ROOT/build-win"
 

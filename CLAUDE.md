@@ -18,7 +18,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Build
 
 ```bash
-bash build.sh
+bash LinuxScripts/build.sh
 ```
 
 Output: `build-win/app.exe`. Each run the script:
@@ -44,7 +44,7 @@ Uses `x86_64-w64-mingw32-g++` (devcontainer cross-compiler) if available, otherw
 ### Connectar USB (des de PowerShell a Windows, com a administrador)
 
 ```powershell
-.\attach-usb.ps1
+.\WinScripts\attach-usb.ps1
 ```
 
 Detecta automàticament el dispositiu FTDI/CP210x, fa `bind --force` si cal i `attach` a docker-desktop. El port apareix com `/dev/ttyUSB0` i `/dev/ttyUSB1` al contenidor.
@@ -52,8 +52,8 @@ Detecta automàticament el dispositiu FTDI/CP210x, fa `bind --force` si cal i `a
 ### Compilar i flashejar
 
 ```bash
-bash flash_esp32.sh           # compila i flasheja via /dev/ttyUSB1
-bash flash_esp32.sh --erase   # esborra NVS primer (útil si el WiFi no arrenca)
+bash LinuxScripts/flash_esp32.sh           # compila i flasheja via /dev/ttyUSB1
+bash LinuxScripts/flash_esp32.sh --erase   # esborra NVS primer (útil si el WiFi no arrenca)
 ```
 
 Si el port està ocupat:
@@ -69,7 +69,7 @@ idf.py -p /dev/ttyUSB1 flash
 **Usuari** (terminal interactiu amb TTY):
 
 ```bash
-bash monitor_esp32.sh
+bash LinuxScripts/monitor_esp32.sh
 ```
 
 **Claude Code** (`idf.py monitor` no funciona sense TTY — usar pyserial directament):
@@ -242,9 +242,9 @@ Cap endpoint ni WS. Només consumeix events QP i actua sobre hardware o consola.
 - `HWReader/InputReader_HW.hpp` — `makeHWInputReader()`: GPIO34 → E1
 - `ActuadorSortides/OutputWriter_HW.hpp` — `makeGPIOWriter()`: GPIO4/0/2 → S1/S2/S3
 - `ActuadorSortides/OutputWriter_Console.hpp` — `makeConsoleWriter()`: printf stdout
-- `flash_esp32.sh` — compila i flasheja l'ESP32 via `/dev/ttyUSB1`
-- `monitor_esp32.sh` — monitor sèrie interactiu
-- `attach-usb.ps1` — connecta USB al contenidor via usbipd (PowerShell, Windows)
+- `LinuxScripts/flash_esp32.sh` — compila i flasheja l'ESP32 via `/dev/ttyUSB1`
+- `LinuxScripts/monitor_esp32.sh` — monitor sèrie interactiu
+- `WinScripts/attach-usb.ps1` — connecta USB al contenidor via usbipd (PowerShell, Windows)
 
 El diagrama de referència és `docs/ControlEntrades.drawio`. Les convencions visuals (colors, fletxes, etiquetes, estructura dels nodes) estan documentades a [`docs/drawio-conventions.md`](docs/drawio-conventions.md).
 
@@ -252,7 +252,7 @@ El diagrama de referència és `docs/ControlEntrades.drawio`. Les convencions vi
 
 Després de qualsevol modificació de codi (no documentació), sempre en aquest ordre:
 
-1. Compila Windows: `bash build.sh`
+1. Compila Windows: `bash LinuxScripts/build.sh`
 2. Compila ESP32: `source ~/esp/esp-idf/export.sh > /dev/null 2>&1 && idf.py build`
 3. Si ambdues compilen sense errors: `git commit -am "..." && git push`
 
