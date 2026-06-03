@@ -8,7 +8,3 @@ Start-Process `
     -NoNewWindow -Wait
 
 Get-Content $appLog | ForEach-Object { Write-Host $_ }
-
-Write-Host ""
-Write-Host "app.log                        → $appLog"
-Write-Host "TestUnitariControlEntrades.log → $(Join-Path $PSScriptRoot '..\LogResults\TestUnitariControlEntrades.log')"
