@@ -1,6 +1,6 @@
 #pragma once
-#include "../qpcpp/include/qpcpp.hpp"
-#include "../Integracio/signals.h"
+#include "qpcpp/include/qpcpp.hpp"
+#include "Integracio/signals.h"
 #include <functional>
 #include <unordered_map>
 

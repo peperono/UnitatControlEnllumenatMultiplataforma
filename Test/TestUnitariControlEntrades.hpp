@@ -1,6 +1,6 @@
 #pragma once
 #include "ControlEntrades/ControlEntrades.h"
-#include "../ControlEntrades/ControlEntradesState.h"
+#include "ControlEntrades/ControlEntradesState.h"
 #include "qpcpp/include/qpcpp.hpp"
 #include "Integracio/signals.h"
 #include <vector>

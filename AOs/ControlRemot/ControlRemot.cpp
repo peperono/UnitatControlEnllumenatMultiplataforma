@@ -1,7 +1,7 @@
 #include "ControlRemot.h"
 #include "ControlRemotState.h"
-#include "../Log/LogState.h"
-#include "../mongoose/mongoose.h"
+#include "Log/LogState.h"
+#include "mongoose/mongoose.h"
 #include <algorithm>
 #include <cstdio>
 #include <mutex>

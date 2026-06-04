@@ -1,7 +1,7 @@
 #include "ControlHorari.h"
 #include "ControlHorariState.h"
-#include "../Log/LogState.h"
-#include "../mongoose/mongoose.h"
+#include "Log/LogState.h"
+#include "mongoose/mongoose.h"
 #include <cstdio>
 #include <mutex>
 

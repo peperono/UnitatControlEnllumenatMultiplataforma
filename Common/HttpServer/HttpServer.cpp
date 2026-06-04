@@ -1,12 +1,12 @@
 #include "HttpServer.h"
-#include "../ControlEntrades/ControlEntradesState.h"
-#include "../RemoteIO/RemoteIOState.h"
-#include "../ControlRemot/ControlRemot.h"
-#include "../ControlRemot/ControlRemotState.h"
-#include "../ControlHorari/ControlHorariState.h"
-#include "../Rellotge/RellotgeState.h"
-#include "../Log/LogState.h"
-#include "../Integracio/signals.h"
+#include "ControlEntrades/ControlEntradesState.h"
+#include "RemoteIO/RemoteIOState.h"
+#include "ControlRemot/ControlRemot.h"
+#include "ControlRemot/ControlRemotState.h"
+#include "ControlHorari/ControlHorariState.h"
+#include "Rellotge/RellotgeState.h"
+#include "Log/LogState.h"
+#include "Integracio/signals.h"
 #include <thread>
 #include <atomic>
 #include <string>
@@ -15,10 +15,10 @@
 #include <mutex>
 
 extern "C" {
-#include "../mongoose/mongoose.h"
+#include "mongoose/mongoose.h"
 }
 
-#include "../web/index_html.h"
+#include "web/index_html.h"
 
 // ── JSON helpers ──────────────────────────────────────────────────────────────
 

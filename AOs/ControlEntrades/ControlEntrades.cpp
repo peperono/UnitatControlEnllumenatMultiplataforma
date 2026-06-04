@@ -1,6 +1,6 @@
 #include "ControlEntrades.h"
 #include "ControlEntradesState.h"
-#include "../Log/LogState.h"
+#include "Log/LogState.h"
 #include <algorithm>
 #include <mutex>
 #include <string>

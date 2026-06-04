@@ -1,5 +1,5 @@
 #pragma once
-#include "../ControlEntrades/ControlEntrades.h"
+#include "ControlEntrades/ControlEntrades.h"
 #include "RemoteIOState.h"
 #include <mutex>
 

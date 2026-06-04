@@ -1,5 +1,5 @@
 #pragma once
-#include "../qpcpp/include/qpcpp.hpp"
+#include "qpcpp/include/qpcpp.hpp"
 #include <cstdint>
 
 namespace HttpServer {

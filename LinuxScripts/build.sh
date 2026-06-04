@@ -59,17 +59,20 @@ fi
 echo "Compilando app..."
 $GPP -std=c++17 -Wall -O1 -static \
     -I"$ROOT" \
-    -I"$ROOT/Integracio" \
+    -I"$ROOT/AOs" \
+    -I"$ROOT/Common" \
+    -I"$ROOT/Common/Integracio" \
+    -I"$ROOT/Platform" \
     -I"$QPCPP/include" \
     -I"$QPCPP/src" \
     -I"$QPCPP/ports/win32-qv" \
     "$ROOT/main-win/main.cpp" \
-    "$ROOT/ControlEntrades/ControlEntrades.cpp" \
-    "$ROOT/HttpServer/HttpServer.cpp" \
-    "$ROOT/ControlRemot/ControlRemot.cpp" \
-    "$ROOT/ControlHorari/ControlHorari.cpp" \
-    "$ROOT/Rellotge/Rellotge.cpp" \
-    "$ROOT/ActuadorSortides/ActuadorSortides.cpp" \
+    "$ROOT/AOs/ControlEntrades/ControlEntrades.cpp" \
+    "$ROOT/Common/HttpServer/HttpServer.cpp" \
+    "$ROOT/AOs/ControlRemot/ControlRemot.cpp" \
+    "$ROOT/AOs/ControlHorari/ControlHorari.cpp" \
+    "$ROOT/AOs/Rellotge/Rellotge.cpp" \
+    "$ROOT/AOs/ActuadorSortides/ActuadorSortides.cpp" \
     "$QPCPP/src/qf/qep_hsm.cpp" \
     "$QPCPP/src/qf/qep_msm.cpp" \
     "$QPCPP/src/qf/qf_act.cpp" \
