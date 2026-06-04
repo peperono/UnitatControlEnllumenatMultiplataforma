@@ -29,7 +29,7 @@ Output: `build-win/app.exe`. Each run the script:
 
 Uses `x86_64-w64-mingw32-g++` (devcontainer cross-compiler) if available, otherwise `g++`.
 
-**Important:** The HTML/JS UI is embedded via `web/index_html.h` into `HttpServer/HttpServer.cpp`. Any JS/HTML change requires a full recompile, app restart, and hard browser refresh (Ctrl+Shift+R).
+**Important:** The HTML/JS UI is embedded via `web/index_html.h` into `Common/HttpServer/HttpServer.cpp`. Any JS/HTML change requires a full recompile, app restart, and hard browser refresh (Ctrl+Shift+R).
 
 ### Run
 
@@ -97,13 +97,13 @@ SSID i contrasenya es configuren via `idf.py menuconfig` → *Example Connection
 
 ### Hardware (ESP-WROVER-KIT V4.1)
 
-**Entrades** — `HWReader/InputReader_HW.hpp` → `makeHWInputReader()`:
+**Entrades** — `Platform/HW/InputReader_HW.hpp` → `makeHWInputReader()`:
 
 | ID | GPIO | Nota |
 |----|------|------|
 | E1 | GPIO34 | Input-only; requereix pull-up extern 10 kΩ a 3.3 V |
 
-**Sortides** — `ActuadorSortides/OutputWriter_HW.hpp` → `makeGPIOWriter()`:
+**Sortides** — `Platform/HW/OutputWriter_HW.hpp` → `makeGPIOWriter()`:
 
 | ID | GPIO | LED placa |
 |----|------|-----------|
@@ -115,7 +115,7 @@ GPIOs a evitar: GPIO16/17 (PSRAM), GPIO6–11 (flash SPI), GPIO21 (càmera D7 a 
 
 ### Injecció de plataforma
 
-| Abstracció | Windows (`main.cpp`) | ESP32 (`main/main_esp32.cpp`) |
+| Abstracció | Windows (`main-win/main.cpp`) | ESP32 (`main/main_esp32.cpp`) |
 |-----------|----------------------|-------------------------------|
 | `IOReader` | `makeWSInputReader()` | `makeHWInputReader()` |
 | `OutputWriter` | `makeConsoleWriter()` | `makeGPIOWriter()` |
@@ -131,13 +131,13 @@ A ESP32, la prioritat 1 correspon a `ActuadorSortides` (en lloc de `TestObserver
 - **Mongoose thread:** HttpServer, access to ControlEntradesState (via mutex)
 - **External process:** Browser (HTTP + WebSocket)
 
-**Cross-thread data:** `ControlEntradesState control_entrades_state` (defined in `ControlEntrades/ControlEntrades.cpp`, declared `extern` in `ControlEntrades/ControlEntradesState.h`) is the only shared data between the QV thread and the Mongoose thread. All access is guarded by `control_entrades_state.mtx`. `ControlEntrades` writes `control_entrades_state.inputs`, `control_entrades_state.outputs`, `control_entrades_state.last_edges`, `control_entrades_state.edge_counts` and sets `control_entrades_state.push_pending = true` directly in the poll handler. The Mongoose thread reads `control_entrades_state` and pushes WebSocket messages when `push_pending` is set.
+**Cross-thread data:** `ControlEntradesState control_entrades_state` (defined in `AOs/ControlEntrades/ControlEntrades.cpp`, declared `extern` in `AOs/ControlEntrades/ControlEntradesState.h`) is the only shared data between the QV thread and the Mongoose thread. All access is guarded by `control_entrades_state.mtx`. `ControlEntrades` writes `control_entrades_state.inputs`, `control_entrades_state.outputs`, `control_entrades_state.last_edges`, `control_entrades_state.edge_counts` and sets `control_entrades_state.push_pending = true` directly in the poll handler. The Mongoose thread reads `control_entrades_state` and pushes WebSocket messages when `push_pending` is set.
 
-**IOReader injection:** `ControlEntrades` accepts an `IOReader = std::function<void(map<int,bool>&, map<int,bool>&)>` at construction. In test mode `makeTestReader()` (`Test/TestController.hpp`) returns a lambda cycling through `TestStep` scenarios. In remote mode `makeWSInputReader()` (`RemoteIO/InputReader_WS.hpp`) returns a lambda that reads from `remote_io_state` (mutex-protected, written by the Mongoose thread via WebSocket). On ESP32 `makeHWInputReader()` (`HWReader/InputReader_HW.hpp`) reads physical GPIO inputs.
+**IOReader injection:** `ControlEntrades` accepts an `IOReader = std::function<void(map<int,bool>&, map<int,bool>&)>` at construction. In test mode `makeTestReader()` (`Test/TestController.hpp`) returns a lambda cycling through `TestStep` scenarios. In remote mode `makeWSInputReader()` (`Platform/RemoteIO/InputReader_WS.hpp`) returns a lambda that reads from `remote_io_state` (mutex-protected, written by the Mongoose thread via WebSocket). On ESP32 `makeHWInputReader()` (`Platform/HW/InputReader_HW.hpp`) reads physical GPIO inputs.
 
-**OutputWriter injection:** `ActuadorSortides` accepts an `OutputWriter = std::function<void(int id, bool actiu)>` at construction. `makeGPIOWriter()` (`ActuadorSortides/OutputWriter_HW.hpp`) initialises GPIOs and returns a lambda that calls `gpio_set_level`. `makeConsoleWriter()` (`ActuadorSortides/OutputWriter_Console.hpp`) returns a lambda that prints to stdout. This removes all `#ifdef ESP_PLATFORM` from the AO itself.
+**OutputWriter injection:** `ActuadorSortides` accepts an `OutputWriter = std::function<void(int id, bool actiu)>` at construction. `makeGPIOWriter()` (`Platform/HW/OutputWriter_HW.hpp`) initialises GPIOs and returns a lambda that calls `gpio_set_level`. `makeConsoleWriter()` (`AOs/ActuadorSortides/OutputWriter_Console.hpp`) returns a lambda that prints to stdout. This removes all `#ifdef ESP_PLATFORM` from the AO itself.
 
-**Event memory:** `InputChangedEvt` and `EdgeDetectedEvt` use static (zero-pool) semantics because they hold `std::vector`/`std::unordered_map` which are incompatible with QP memory pools. This is safe under the QV cooperative scheduler. `ReconfigureEvt` uses a QP memory pool (initialized in `main.cpp`). Max 16 configs per `ReconfigureEvt`. Remote IO input is not a QP event: the Mongoose thread writes directly to `remote_io_state` (mutex-protected), and `ControlEntrades` reads it via the injected `IOReader` lambda on each poll tick.
+**Event memory:** `InputChangedEvt` and `EdgeDetectedEvt` use static (zero-pool) semantics because they hold `std::vector`/`std::unordered_map` which are incompatible with QP memory pools. This is safe under the QV cooperative scheduler. `ReconfigureEvt` uses a QP memory pool (initialized in `main-win/main.cpp`). Max 16 configs per `ReconfigureEvt`. Remote IO input is not a QP event: the Mongoose thread writes directly to `remote_io_state` (mutex-protected), and `ControlEntrades` reads it via the injected `IOReader` lambda on each poll tick.
 
 **Race condition to be aware of:** After a `PUT /config_inputs` HTTP response is sent, the QV poll timer may fire before `RECONFIGURE_SIG` is processed, emitting a WS push with stale IDs. The JS UI guards against this with `expectedInputIds`.
 
@@ -230,18 +230,18 @@ Cap endpoint ni WS. Només consumeix events QP i actua sobre hardware o consola.
 
 ## Key files
 
-- `signals.h` — all QP signal enums and event struct definitions
-- `ControlEntrades/ControlEntradesState.h` — the shared struct between QV and Mongoose threads
-- `InputConfig.h` — `InputConfig` struct: `id`, `logic_positive`, `detection_always`, `linked_outputs`
+- `Common/Integracio/signals.h` — all QP signal enums and event struct definitions
+- `AOs/ControlEntrades/ControlEntradesState.h` — the shared struct between QV and Mongoose threads
+- `AOs/ControlEntrades/InputConfig.h` — `InputConfig` struct: `id`, `logic_positive`, `detection_always`, `linked_outputs`
 - `Test/TestController.hpp` — TestObserver AO + verifyStep() + makeTestReader() + g_* globals
 - `docs/ControlEntrades.drawio` — entrades architecture diagram
 - `docs/ControlSortides.drawio` — sortides architecture diagram (ControlHorari, ControlRemot, ActuadorSortides)
-- `qp_config.hpp` — QP tunables (`QF_MAX_ACTIVE=32`, `QF_MAX_EPOOL=3`)
-- `main.cpp` — entry point Windows
+- `Common/Integracio/qp_config.hpp` — QP tunables (`QF_MAX_ACTIVE=32`, `QF_MAX_EPOOL=3`)
+- `main-win/main.cpp` — entry point Windows
 - `main/main_esp32.cpp` — entry point ESP32 (WiFi, FreeRTOS stacks, makeHWInputReader, makeGPIOWriter)
-- `HWReader/InputReader_HW.hpp` — `makeHWInputReader()`: GPIO34 → E1
-- `ActuadorSortides/OutputWriter_HW.hpp` — `makeGPIOWriter()`: GPIO4/0/2 → S1/S2/S3
-- `ActuadorSortides/OutputWriter_Console.hpp` — `makeConsoleWriter()`: printf stdout
+- `Platform/HW/InputReader_HW.hpp` — `makeHWInputReader()`: GPIO34 → E1
+- `Platform/HW/OutputWriter_HW.hpp` — `makeGPIOWriter()`: GPIO4/0/2 → S1/S2/S3
+- `AOs/ActuadorSortides/OutputWriter_Console.hpp` — `makeConsoleWriter()`: printf stdout
 - `LinuxScripts/flash_esp32.sh` — compila i flasheja l'ESP32 via `/dev/ttyUSB1`
 - `LinuxScripts/monitor_esp32.sh` — monitor sèrie interactiu
 - `WinScripts/attach_usb.ps1` — connecta USB al contenidor via usbipd (PowerShell, Windows)
