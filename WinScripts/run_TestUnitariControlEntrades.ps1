@@ -2,7 +2,7 @@ $appLog = Join-Path $PSScriptRoot "..\LogResults\app.log"
 
 Start-Process `
     -FilePath               "$PSScriptRoot\..\build-win\app.exe" `
-    -ArgumentList           "1" `
+    -ArgumentList           "TEST_UNITARI" `
     -WorkingDirectory       "$PSScriptRoot\.." `
     -RedirectStandardOutput $appLog `
     -NoNewWindow -Wait

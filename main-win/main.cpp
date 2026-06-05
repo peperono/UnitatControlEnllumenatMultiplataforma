@@ -56,15 +56,19 @@ void onClockTick() {
 int main(int argc, char* argv[]) {
     std::setvbuf(stdout, nullptr, _IONBF, 0);
     std::printf("=== UnitatControlEnllumenat ===\n");
-    int choice = 1;
-    if (argc >= 2) {
-        choice = std::atoi(argv[1]);
+    if (argc < 2) {
+        std::fprintf(stderr, "Ús: app.exe TEST_UNITARI|TEST_INTEGRACIO\n");
+        return 1;
+    }
+    std::string mode = argv[1];
+    int choice;
+    if (mode == "TEST_UNITARI") {
+        choice = 1;
+    } else if (mode == "TEST_INTEGRACIO") {
+        choice = 2;
     } else {
-        std::printf("Selecciona reader (Control Entrades):\n");
-        std::printf("  1) Test (sequencia automatica)\n");
-        std::printf("  2) Control remot (navegador web)\n");
-        std::printf("> ");
-        std::scanf("%d", &choice);
+        std::fprintf(stderr, "Mode desconegut: %s (valors vàlids: TEST_UNITARI, TEST_INTEGRACIO)\n", argv[1]);
+        return 1;
     }
 
     mg_log_set(MG_LL_NONE);

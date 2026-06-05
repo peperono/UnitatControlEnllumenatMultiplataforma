@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bash LinuxScripts/*)",
+      "Bash(git *)",
+      "Bash(idf.py *)",
+      "Bash(source ~/esp/esp-idf/export.sh*)",
+      "Bash(find *)",
+      "Bash(ls *)",
+      "Bash(grep *)",
+      "Bash(fuser *)",
+      "Bash(kill *)",
+      "Bash(cat *)",
+      "Bash(sleep *)",
+      "Bash(mkdir *)",
+      "Bash(jq *)",
+      "Read",
+      "Edit",
+      "Write"
+    ]
+  }
+}
