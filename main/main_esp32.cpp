@@ -185,8 +185,9 @@ extern "C" void app_main() {
     static ControlRemot        controlRemot;
     static ControlHorari       controlHorari;
     static Rellotge            rellotge;
-    static ActuadorSortides    actuadorSortides{makeGPIOWriter()};
-    static Blink               blink{1, makeGPIOWriter()};
+    auto gpioWriter = makeGPIOWriter();
+    static ActuadorSortides    actuadorSortides{gpioWriter};
+    static Blink               blink{1, gpioWriter};
 
     controlEntrades.configure(configs);
     controlRemot.configure(outputConfigs);
