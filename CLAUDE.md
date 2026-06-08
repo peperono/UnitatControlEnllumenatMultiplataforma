@@ -120,14 +120,14 @@ GPIOs a evitar: GPIO16/17 (PSRAM), GPIO6–11 (flash SPI), GPIO21 (càmera D7 a 
 | `IOReader` | `makeWSInputReader()` | `makeHWInputReader()` |
 | `OutputWriter` | `makeConsoleWriter()` | `makeGPIOWriter()` |
 
-A ESP32, la prioritat 1 correspon a `ActuadorSortides` (en lloc de `TestObserver`).
+`ActuadorSortides` corre a prioritat 3 (a Windows mode integració i a ESP32); a Windows mode test unitari, aquesta prioritat l'ocupa `TestObserver`. A ESP32 hi ha a més `Blink` a prioritat 1.
 
 ## Architecture
 
 **Framework:** QP/C++ with the QV cooperative scheduler (single thread). A separate Mongoose thread handles HTTP/WebSocket I/O.
 
 **Threads:**
-- **QV thread (cooperative):** IOReader, ControlEntrades, Monitor, ActuadorSortides; TestObserver (Windows mode test)
+- **QV thread (cooperative):** IOReader, ControlEntrades, ActuadorSortides; TestObserver (Windows mode test)
 - **Mongoose thread:** HttpServer, access to ControlEntradesState (via mutex)
 - **External process:** Browser (HTTP + WebSocket)
 
@@ -145,13 +145,13 @@ A ESP32, la prioritat 1 correspon a `ActuadorSortides` (en lloc de `TestObserver
 
 | Priority | AO | Plataforma | Publishes | Subscribes |
 |----------|----|------------|-----------|------------|
-| 6 | `Rellotge` | ambdues | `RELLOTGE_TICK_SIG` | — |
-| 5 | `ControlEntrades` | ambdues | `INPUT_CHANGED_SIG`, `EDGE_DETECTED_SIG` | `RECONFIGURE_SIG`, `OUTPUT_RESULT_SIG` |
-| 4 | `ControlRemot` | ambdues | `OUTPUT_RESULT_SIG` | `OUTPUT_STATE_SIG`, `CTRL_OUTPUT_CMD_SIG`, `CTRL_OUTPUT_MODE_SIG`, `CTRL_OUTPUT_RETURN_AUTO_SIG`, `CTRL_OUTPUT_DELETE_SIG` |
-| 3 | `ControlHorari` | ambdues | `OUTPUT_STATE_SIG` | `RELLOTGE_TICK_SIG` |
-| 2 | `Monitor` | ambdues | — | `INPUT_CHANGED_SIG`, `EDGE_DETECTED_SIG` |
-| 1 | `ActuadorSortides` | ambdues | — | `OUTPUT_RESULT_SIG` |
-| 1 | `TestObserver` | Windows (mode test) | — | `INPUT_CHANGED_SIG`, `EDGE_DETECTED_SIG` |
+| 7 | `Rellotge` | ambdues | `RELLOTGE_TICK_SIG` | — |
+| 6 | `ControlEntrades` | ambdues | `INPUT_CHANGED_SIG`, `EDGE_DETECTED_SIG` | `RECONFIGURE_SIG`, `OUTPUT_RESULT_SIG` |
+| 5 | `ControlRemot` | ambdues | `OUTPUT_RESULT_SIG` | `OUTPUT_STATE_SIG`, `CTRL_OUTPUT_CMD_SIG`, `CTRL_OUTPUT_MODE_SIG`, `CTRL_OUTPUT_RETURN_AUTO_SIG`, `CTRL_OUTPUT_DELETE_SIG` |
+| 4 | `ControlHorari` | ambdues | `OUTPUT_STATE_SIG` | `RELLOTGE_TICK_SIG` |
+| 3 | `ActuadorSortides` | ambdues | — | `OUTPUT_RESULT_SIG` |
+| 3 | `TestObserver` | Windows (mode test) | — | `INPUT_CHANGED_SIG`, `EDGE_DETECTED_SIG` |
+| 1 | `Blink` | ESP32 | — | — |
 
 ### Events QP
 
@@ -164,8 +164,8 @@ A ESP32, la prioritat 1 correspon a `ActuadorSortides` (en lloc de `TestObserver
 | `OUTPUT_RESULT_SIG` (`OutputResultEvt`) | `ControlEntrades` | subscrit — actualitza `m_commandedOutputs` per a `detection_enabled()` |
 | `INPUT_CHANGED_SIG` (`InputChangedEvt`) | `ControlEntrades` | publica — inputs/outputs actuals |
 | `EDGE_DETECTED_SIG` (`EdgeDetectedEvt`) | `ControlEntrades` | publica — IDs d'entrades amb flanc detectat |
-| `INPUT_CHANGED_SIG` (`InputChangedEvt`) | `Monitor` | subscrit |
-| `EDGE_DETECTED_SIG` (`EdgeDetectedEvt`) | `Monitor` | subscrit |
+| `INPUT_CHANGED_SIG` (`InputChangedEvt`) | `TestObserver` | subscrit — només mode test (Windows) |
+| `EDGE_DETECTED_SIG` (`EdgeDetectedEvt`) | `TestObserver` | subscrit — només mode test (Windows) |
 | `OUTPUT_STATE_SIG` (`OutputStateEvt`) | `ControlRemot` | subscrit — rep l'estat real de sortides (des de `ControlHorari`) |
 | `CTRL_OUTPUT_CMD_SIG` (`OutputCmdEvt`) | `ControlRemot` | subscrit — ordre activate/deactivate |
 | `CTRL_OUTPUT_MODE_SIG` (`OutputModeEvt`) | `ControlRemot` | subscrit — canvi mode AUTO/REMOTE |
@@ -177,7 +177,7 @@ A ESP32, la prioritat 1 correspon a `ActuadorSortides` (en lloc de `TestObserver
 
 ## Active Objects — endpoints, WebSocket
 
-### `ControlEntrades` (prioritat 5)
+### `ControlEntrades` (prioritat 6)
 
 | Direcció | Endpoint / WS | Format | Efecte |
 |----------|--------------|--------|--------|
@@ -188,7 +188,7 @@ A ESP32, la prioritat 1 correspon a `ActuadorSortides` (en lloc de `TestObserver
 
 ---
 
-### `ControlRemot` (prioritat 4)
+### `ControlRemot` (prioritat 5)
 
 | Direcció | Endpoint / WS | Format | Efecte |
 |----------|--------------|--------|--------|
@@ -199,7 +199,7 @@ Valors vàlids de `action`: `activate`, `deactivate`, `set_remote`, `set_auto`, 
 
 ---
 
-### `ControlHorari` (prioritat 3)
+### `ControlHorari` (prioritat 4)
 
 | Direcció | Endpoint / WS | Format | Efecte |
 |----------|--------------|--------|--------|
@@ -208,7 +208,7 @@ Valors vàlids de `action`: `activate`, `deactivate`, `set_remote`, `set_auto`, 
 
 ---
 
-### `Rellotge` (prioritat 6)
+### `Rellotge` (prioritat 7)
 
 | Direcció | Endpoint / WS | Format | Efecte |
 |----------|--------------|--------|--------|
@@ -218,13 +218,7 @@ Cap endpoint HTTP envia dades al Rellotge.
 
 ---
 
-### `Monitor` (prioritat 2)
-
-Cap endpoint ni WS interactua directament amb aquest AO. Només consumeix events QP.
-
----
-
-### `ActuadorSortides` (prioritat 1)
+### `ActuadorSortides` (prioritat 3)
 
 Cap endpoint ni WS. Només consumeix events QP i actua sobre hardware o consola.
 
