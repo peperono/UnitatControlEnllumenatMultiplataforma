@@ -136,7 +136,7 @@ GPIOs a evitar: GPIO16/17 (PSRAM), GPIO6–11 (flash SPI), GPIO21 (càmera D7 a 
 
 **IOReader injection:** `ControlEntrades` accepts an `IOReader = std::function<void(map<int,bool>&, map<int,bool>&)>` at construction. In test mode `makeTestReader()` (`Test/TestController.hpp`) returns a lambda cycling through `TestStep` scenarios. In remote mode `makeWSInputReader()` (`Platform/RemoteIO/InputReader_WS.hpp`) returns a lambda that reads from `remote_io_state` (mutex-protected, written by the Mongoose thread via WebSocket). On ESP32 `makeHWInputReader()` (`Platform/HW/InputReader_HW.hpp`) reads physical GPIO inputs.
 
-**OutputWriter injection:** `ActuadorSortides` accepts an `OutputWriter = std::function<void(int id, bool actiu)>` at construction. `makeGPIOWriter()` (`Platform/HW/OutputWriter_HW.hpp`) initialises GPIOs and returns a lambda that calls `gpio_set_level`. `makeConsoleWriter()` (`AOs/ActuadorSortides/OutputWriter_Console.hpp`) returns a lambda that prints to stdout. This removes all `#ifdef ESP_PLATFORM` from the AO itself.
+**OutputWriter injection:** `ActuadorSortides` accepts an `OutputWriter = std::function<void(int id, bool actiu)>` at construction. `makeGPIOWriter()` (`Platform/HW/OutputWriter_HW.hpp`) initialises GPIOs and returns a lambda that calls `gpio_set_level`. `makeConsoleWriter()` (`AOs/ControlSortides/ActuadorSortides/OutputWriter_Console.hpp`) returns a lambda that prints to stdout. This removes all `#ifdef ESP_PLATFORM` from the AO itself.
 
 **Event memory:** `InputChangedEvt` and `EdgeDetectedEvt` use static (zero-pool) semantics because they hold `std::vector`/`std::unordered_map` which are incompatible with QP memory pools. This is safe under the QV cooperative scheduler. `ReconfigureEvt` uses a QP memory pool (initialized in `main-win/main.cpp`). Max 16 configs per `ReconfigureEvt`. Remote IO input is not a QP event: the Mongoose thread writes directly to `remote_io_state` (mutex-protected), and `ControlEntrades` reads it via the injected `IOReader` lambda on each poll tick.
 
@@ -253,7 +253,7 @@ Cap endpoint ni WS. Només consumeix events QP i actua sobre hardware o consola.
 - `main/main_esp32.cpp` — entry point ESP32 (WiFi, FreeRTOS stacks, makeHWInputReader, makeGPIOWriter)
 - `Platform/HW/InputReader_HW.hpp` — `makeHWInputReader()`: GPIO34 → E1
 - `Platform/HW/OutputWriter_HW.hpp` — `makeGPIOWriter()`: GPIO4/0/2 → S1/S2/S3
-- `AOs/ActuadorSortides/OutputWriter_Console.hpp` — `makeConsoleWriter()`: printf stdout
+- `AOs/ControlSortides/ActuadorSortides/OutputWriter_Console.hpp` — `makeConsoleWriter()`: printf stdout
 - `LinuxScripts/flash_esp32.sh` — compila i flasheja l'ESP32 via `/dev/ttyUSB1`
 - `LinuxScripts/monitor_esp32.sh` — monitor sèrie interactiu
 - `WinScripts/attach_usb.ps1` — connecta USB al contenidor via usbipd (PowerShell, Windows)

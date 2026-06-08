@@ -60,6 +60,8 @@ echo "Compilando app..."
 $GPP -std=c++17 -Wall -O1 -static \
     -I"$ROOT" \
     -I"$ROOT/AOs" \
+    -I"$ROOT/AOs/ControlSortides" \
+    -I"$ROOT/AOs/Diagnostic" \
     -I"$ROOT/Common" \
     -I"$ROOT/Common/QP" \
     -I"$ROOT/Platform" \
@@ -69,10 +71,10 @@ $GPP -std=c++17 -Wall -O1 -static \
     "$ROOT/main-win/main.cpp" \
     "$ROOT/AOs/ControlEntrades/ControlEntrades.cpp" \
     "$ROOT/Common/HttpServer/HttpServer.cpp" \
-    "$ROOT/AOs/ControlRemot/ControlRemot.cpp" \
-    "$ROOT/AOs/ControlHorari/ControlHorari.cpp" \
+    "$ROOT/AOs/ControlSortides/ControlRemot/ControlRemot.cpp" \
+    "$ROOT/AOs/ControlSortides/ControlHorari/ControlHorari.cpp" \
     "$ROOT/AOs/Rellotge/Rellotge.cpp" \
-    "$ROOT/AOs/ActuadorSortides/ActuadorSortides.cpp" \
+    "$ROOT/AOs/ControlSortides/ActuadorSortides/ActuadorSortides.cpp" \
     "$QPCPP/src/qf/qep_hsm.cpp" \
     "$QPCPP/src/qf/qep_msm.cpp" \
     "$QPCPP/src/qf/qf_act.cpp" \
