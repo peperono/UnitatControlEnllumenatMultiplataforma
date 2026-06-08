@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - [Windows](#windows)
 - [ESP32](#esp32)
 - [Architecture](#architecture)
+- [Subsistemes](#subsistemes)
 - [Active Objects — events](#active-objects--events)
 - [Active Objects — endpoints, WebSocket](#active-objects--endpoints-websocket)
 - [Key files](#key-files)
@@ -140,6 +141,23 @@ GPIOs a evitar: GPIO16/17 (PSRAM), GPIO6–11 (flash SPI), GPIO21 (càmera D7 a 
 **Event memory:** `InputChangedEvt` and `EdgeDetectedEvt` use static (zero-pool) semantics because they hold `std::vector`/`std::unordered_map` which are incompatible with QP memory pools. This is safe under the QV cooperative scheduler. `ReconfigureEvt` uses a QP memory pool (initialized in `main-win/main.cpp`). Max 16 configs per `ReconfigureEvt`. Remote IO input is not a QP event: the Mongoose thread writes directly to `remote_io_state` (mutex-protected), and `ControlEntrades` reads it via the injected `IOReader` lambda on each poll tick.
 
 **Race condition to be aware of:** After a `PUT /config_inputs` HTTP response is sent, the QV poll timer may fire before `RECONFIGURE_SIG` is processed, emitting a WS push with stale IDs. The JS UI guards against this with `expectedInputIds`.
+
+## Subsistemes
+
+Els AOs s'organitzen en 4 subsistemes:
+
+| Subsistema | AOs | Rol |
+|-----------|-----|-----|
+| **ControlEntrades** | `ControlEntrades` (+ `TestObserver`, només test Windows) | Lectura d'IO i detecció de flancs |
+| **ControlSortides** | `ControlHorari` → `ControlRemot` → `ActuadorSortides` | Cadena de decisió i actuació de sortides |
+| **Rellotge** | `Rellotge` | Font de temps compartida (alimenta `ControlHorari`) |
+| **Diagnòstic** | `Blink` (ESP32) | Indicador de vida (*heartbeat*), no és lògica de domini |
+
+**Flux de sortides:** `Rellotge` —`RELLOTGE_TICK`→ `ControlHorari` —`OUTPUT_STATE`→ `ControlRemot` —`OUTPUT_RESULT`→ `ActuadorSortides`.
+
+**Frontera Entrades↔Sortides:** `ControlEntrades` subscriu `OUTPUT_RESULT_SIG` (per a `detection_enabled()`). És l'única dependència que travessa la frontera entre subsistemes; és informativa, no de control.
+
+**`Blink` (Diagnòstic):** parpelleja S1 com a *heartbeat*. Comparteix el `gpioWriter` amb `ActuadorSortides` però sobre IDs disjunts (Blink → S1/GPIO4; ActuadorSortides → S2/S3). Si `ActuadorSortides` controlés S1 hi hauria conflicte.
 
 ## Active Objects — events
 
