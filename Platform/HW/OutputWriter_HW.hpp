@@ -1,8 +1,6 @@
 #pragma once
 #include "ActuadorSortides/ActuadorSortides.hpp"
 #include "driver/gpio.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
 #include <cstdio>
 
 static const struct { int id; gpio_num_t gpio; } k_mapa[] = {
@@ -24,13 +22,6 @@ inline OutputWriter makeGPIOWriter() {
         gpio_set_direction(k_mapa[i].gpio, GPIO_MODE_OUTPUT);
         gpio_set_level(k_mapa[i].gpio, 0);
         std::printf("[ActuadorSortides] GPIO %d configurat com a sortida\n", (int)k_mapa[i].gpio);
-    }
-    for (int i = 0; i < k_n; ++i) {
-        std::printf("[ActuadorSortides] test GPIO %d ON\n", (int)k_mapa[i].gpio);
-        gpio_set_level(k_mapa[i].gpio, 1);
-        vTaskDelay(pdMS_TO_TICKS(200));
-        gpio_set_level(k_mapa[i].gpio, 0);
-        vTaskDelay(pdMS_TO_TICKS(200));
     }
     return [](int id, bool actiu) {
         gpio_num_t pin = gpio_per_id(id);
