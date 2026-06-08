@@ -2,7 +2,7 @@
 #include "ControlEntrades/ControlEntrades.h"
 #include "ControlEntrades/ControlEntradesState.h"
 #include "qpcpp/include/qpcpp.hpp"
-#include "Integracio/signals.h"
+#include "QP/signals.h"
 #include <vector>
 #include <algorithm>
 #include <chrono>

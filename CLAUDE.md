@@ -224,13 +224,13 @@ Cap endpoint ni WS. Només consumeix events QP i actua sobre hardware o consola.
 
 ## Key files
 
-- `Common/Integracio/signals.h` — all QP signal enums and event struct definitions
+- `Common/QP/signals.h` — all QP signal enums and event struct definitions
 - `AOs/ControlEntrades/ControlEntradesState.h` — the shared struct between QV and Mongoose threads
 - `AOs/ControlEntrades/InputConfig.h` — `InputConfig` struct: `id`, `logic_positive`, `detection_always`, `linked_outputs`
 - `Test/TestController.hpp` — TestObserver AO + verifyStep() + makeTestReader() + g_* globals
 - `docs/ControlEntrades.drawio` — entrades architecture diagram
 - `docs/ControlSortides.drawio` — sortides architecture diagram (ControlHorari, ControlRemot, ActuadorSortides)
-- `Common/Integracio/qp_config.hpp` — QP tunables (`QF_MAX_ACTIVE=32`, `QF_MAX_EPOOL=3`)
+- `Common/QP/qp_config.hpp` — QP tunables (`QF_MAX_ACTIVE=32`, `QF_MAX_EPOOL=3`)
 - `main-win/main.cpp` — entry point Windows
 - `main/main_esp32.cpp` — entry point ESP32 (WiFi, FreeRTOS stacks, makeHWInputReader, makeGPIOWriter)
 - `Platform/HW/InputReader_HW.hpp` — `makeHWInputReader()`: GPIO34 → E1

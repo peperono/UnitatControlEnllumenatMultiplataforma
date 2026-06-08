@@ -1,6 +1,6 @@
-#include "Integracio/qp_config.hpp"
+#include "QP/qp_config.hpp"
 #include "qpcpp/include/qpcpp.hpp"
-#include "Integracio/signals.h"
+#include "QP/signals.h"
 #include "ControlEntrades/ControlEntrades.h"
 #include "HttpServer/HttpServer.h"
 #include "ControlEntrades/ControlEntradesState.h"

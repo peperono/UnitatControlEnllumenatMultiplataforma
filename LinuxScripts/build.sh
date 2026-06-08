@@ -61,7 +61,7 @@ $GPP -std=c++17 -Wall -O1 -static \
     -I"$ROOT" \
     -I"$ROOT/AOs" \
     -I"$ROOT/Common" \
-    -I"$ROOT/Common/Integracio" \
+    -I"$ROOT/Common/QP" \
     -I"$ROOT/Platform" \
     -I"$QPCPP/include" \
     -I"$QPCPP/src" \

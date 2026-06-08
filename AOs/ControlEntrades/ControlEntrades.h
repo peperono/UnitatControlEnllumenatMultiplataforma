@@ -1,6 +1,6 @@
 #pragma once
 #include "qpcpp/include/qpcpp.hpp"
-#include "Integracio/signals.h"
+#include "QP/signals.h"
 #include "InputConfig.h"
 #include <functional>
 #include <vector>

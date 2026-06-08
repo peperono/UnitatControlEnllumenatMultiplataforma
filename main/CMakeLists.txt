@@ -39,7 +39,7 @@ idf_component_register(
         "${ROOT}"
         "${ROOT}/AOs"
         "${ROOT}/Common"
-        "${ROOT}/Common/Integracio"
+        "${ROOT}/Common/QP"
         "${ROOT}/Platform"
         "${QPCPP}/include"
         "${QPCPP}/src"
