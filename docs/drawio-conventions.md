@@ -23,11 +23,15 @@
 
 ## Etiquetes de fletxa
 
-L'etiqueta reflecteix la **dada** que es transfereix d'un component a l'altre (el payload), no el mecanisme. La part dada anomena el contingut transferit: l'event (`RellotgeTickEvt`), els camps (`{time, day}`) o el recurs (`/config_inputs`).
+L'etiqueta reflecteix la **dada** que es transfereix d'un component a l'altre (el payload), no el mecanisme. La part dada anomena el contingut transferit: els camps (`{time, day}`, `inputs`), el recurs (`/config_inputs`) o el conjunt llegit d'un struct.
 
-Quan cal etiqueta explícita, es prefixa amb el mecanisme que la mou: `<mecanisme> <dada>` (p. ex. `WS {time, day}`).
+Quan cal etiqueta explícita, es prefixa amb el mecanisme que la mou: `<mecanisme> <dada>` (p. ex. `WS {time, day}`, `publish last_edges`, `POST config_inputs`).
 
-**L'etiqueta s'omet quan l'ancoratge de la fletxa ja identifica la dada** — p. ex. una fletxa que surt d'una fila concreta d'un objecte de memòria estructurada (la dada és el camp) o d'una caixa d'event. L'etiqueta explícita es reserva per quan la dada no és evident pels extrems (p. ex. un push `WS` que agrega diversos camps).
+**L'etiqueta només s'omet quan l'ancoratge identifica EXACTAMENT la dada**: una fletxa ancorada a una **fila concreta** d'un objecte de memòria estructurada (la fila *és* el camp).
+
+**Una caixa d'event NO és prou per ometre l'etiqueta.** Identifica el *tipus* d'event, no el camp de dades concret (p. ex. `EdgeDetectedEvt` no diu `last_edges`). Per tant, les fletxes des de/cap a caixes d'event SÍ porten etiqueta amb mecanisme (`publish last_edges`, `POST config_inputs`, `publish outputs`).
+
+Si la fletxa s'ancora a **tot un struct** (no a una fila), també cal etiqueta explícita amb el conjunt llegit (p. ex. `read {inputs, last_edges, edge_counts}`).
 
 | Mecanisme (prefix) | Què mou la dada |
 |---|---|
