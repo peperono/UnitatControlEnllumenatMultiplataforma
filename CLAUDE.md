@@ -173,25 +173,19 @@ Els AOs s'organitzen en 4 subsistemes:
 
 ### Events QP
 
-| Event | AO | Rol |
-|-------|----|-----|
-| `RELLOTGE_TICK_INTERNAL_SIG` | `Rellotge` | intern — time event armat en `initial`, cada 50 ms (= 1 minut simulat) |
-| `RELLOTGE_TICK_SIG` (`RellotgeTickEvt`) | `Rellotge` | publica — hora/minut/dia actuals |
-| `RELLOTGE_TICK_SIG` (`RellotgeTickEvt`) | `ControlHorari` | subscrit — cada minut: comprova `load_pending` i executa maniobres |
-| `RECONFIGURE_SIG` (`ReconfigureEvt`) | `ControlEntrades` | subscrit — recarrega configuració d'entrades |
-| `OUTPUT_RESULT_SIG` (`OutputResultEvt`) | `ControlEntrades` | subscrit — actualitza `m_commandedOutputs` per a `detection_enabled()` |
-| `INPUT_CHANGED_SIG` (`InputChangedEvt`) | `ControlEntrades` | publica — inputs/outputs actuals |
-| `EDGE_DETECTED_SIG` (`EdgeDetectedEvt`) | `ControlEntrades` | publica — IDs d'entrades amb flanc detectat |
-| `INPUT_CHANGED_SIG` (`InputChangedEvt`) | `TestObserver` | subscrit — només mode test (Windows) |
-| `EDGE_DETECTED_SIG` (`EdgeDetectedEvt`) | `TestObserver` | subscrit — només mode test (Windows) |
-| `OUTPUT_STATE_SIG` (`OutputStateEvt`) | `ControlRemot` | subscrit — rep l'estat real de sortides (des de `ControlHorari`) |
-| `CTRL_OUTPUT_CMD_SIG` (`OutputCmdEvt`) | `ControlRemot` | subscrit — ordre activate/deactivate |
-| `CTRL_OUTPUT_MODE_SIG` (`OutputModeEvt`) | `ControlRemot` | subscrit — canvi mode AUTO/REMOTE |
-| `CTRL_OUTPUT_RETURN_AUTO_SIG` (`OutputReturnAutoEvt`) | `ControlRemot` | subscrit — torna a AUTO (una o totes) |
-| `CTRL_OUTPUT_DELETE_SIG` (`OutputDeleteEvt`) | `ControlRemot` | subscrit — elimina una sortida |
-| `OUTPUT_RESULT_SIG` (`OutputResultEvt`) | `ControlRemot` | publica — resultat consolidat de totes les sortides |
-| `OUTPUT_STATE_SIG` (`OutputStateEvt`) | `ControlHorari` | publica — quan hi ha maniobres que coincideixen amb l'hora actual |
-| `OUTPUT_RESULT_SIG` (`OutputResultEvt`) | `ActuadorSortides` | subscrit — activa GPIOs (ESP32) o printf (Windows) |
+| Event | Dades |
+|-------|-------|
+| `RELLOTGE_TICK_INTERNAL_SIG` | — (time event intern, `QTimeEvt`, sense payload) |
+| `RELLOTGE_TICK_SIG` (`RellotgeTickEvt`) | `hour`, `minute`, `wday` (0=dilluns..6=diumenge) |
+| `INPUT_CHANGED_SIG` (`InputChangedEvt`) | `inputs` (`map<int,bool>` id→estat) |
+| `EDGE_DETECTED_SIG` (`EdgeDetectedEvt`) | `input_ids` (`vector<int>`, IDs amb flanc detectat) |
+| `RECONFIGURE_SIG` (`ReconfigureEvt`) | `entries[]` {`id`, `detect_edge`, `detection_always`, `linked_outputs[]`, `n_linked`}, `n_configs` (màx 16) |
+| `OUTPUT_STATE_SIG` (`OutputStateEvt`) | `outputs[]` {`id`, `state`}, `n_outputs` (màx 32) |
+| `CTRL_OUTPUT_CMD_SIG` (`OutputCmdEvt`) | `output_id`, `activate` |
+| `CTRL_OUTPUT_MODE_SIG` (`OutputModeEvt`) | `output_id`, `remote` |
+| `CTRL_OUTPUT_RETURN_AUTO_SIG` (`OutputReturnAutoEvt`) | `output_id` (-1 = totes les sortides) |
+| `CTRL_OUTPUT_DELETE_SIG` (`OutputDeleteEvt`) | `output_id` |
+| `OUTPUT_RESULT_SIG` (`OutputResultEvt`) | `outputs` (`map<int,bool>` id→estat consolidat) |
 
 ## Active Objects — endpoints, WebSocket
 
