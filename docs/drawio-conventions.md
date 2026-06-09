@@ -23,6 +23,8 @@
 
 ## Etiquetes de fletxa
 
+Totes les etiquetes d'aresta usen **Helvetica 11px** (`fontFamily=Helvetica;fontSize=11`), sense `font-size`/`font-family` inline al text que ho sobreescrigui.
+
 L'etiqueta reflecteix la **dada** que es transfereix d'un component a l'altre (el payload), no el mecanisme. La part dada anomena el contingut transferit: els camps (`{time, day}`, `inputs`), el recurs (`/config_inputs`) o el conjunt llegit d'un struct.
 
 Quan cal etiqueta explícita, es prefixa amb el mecanisme que la mou: `<mecanisme> <dada>` (p. ex. `WS {time, day}`, `publish last_edges`, `POST config_inputs`).
