@@ -134,7 +134,7 @@ GPIOs a evitar: GPIO16/17 (PSRAM), GPIO6–11 (flash SPI), GPIO21 (càmera D7 a 
 
 **Cross-thread data:** `ControlEntradesState control_entrades_state` (defined in `AOs/ControlEntrades/ControlEntrades.cpp`, declared `extern` in `AOs/ControlEntrades/ControlEntradesState.h`) is the only shared data between the QV thread and the Mongoose thread. All access is guarded by `control_entrades_state.mtx`. `ControlEntrades` writes `control_entrades_state.inputs`, `control_entrades_state.outputs`, `control_entrades_state.last_edges`, `control_entrades_state.edge_counts` and sets `control_entrades_state.push_pending = true` directly in the poll handler. The Mongoose thread reads `control_entrades_state` and pushes WebSocket messages when `push_pending` is set.
 
-**IOReader injection:** `ControlEntrades` accepts an `IOReader = std::function<void(map<int,bool>&, map<int,bool>&)>` at construction. In test mode `makeTestReader()` (`Test/TestController.hpp`) returns a lambda cycling through `TestStep` scenarios. In remote mode `makeWSInputReader()` (`Platform/RemoteIO/InputReader_WS.hpp`) returns a lambda that reads from `remote_io_state` (mutex-protected, written by the Mongoose thread via WebSocket). On ESP32 `makeHWInputReader()` (`Platform/HW/InputReader_HW.hpp`) reads physical GPIO inputs.
+**IOReader injection:** `ControlEntrades` accepts an `IOReader = std::function<void(map<int,bool>&, map<int,bool>&)>` at construction. In test mode `makeTestReader()` (`Test/TestUnitariControlEntrades.hpp`) returns a lambda cycling through `TestStep` scenarios. In remote mode `makeWSInputReader()` (`Platform/RemoteIO/InputReader_WS.hpp`) returns a lambda that reads from `remote_io_state` (mutex-protected, written by the Mongoose thread via WebSocket). On ESP32 `makeHWInputReader()` (`Platform/HW/InputReader_HW.hpp`) reads physical GPIO inputs.
 
 **OutputWriter injection:** `ActuadorSortides` accepts an `OutputWriter = std::function<void(int id, bool actiu)>` at construction. `makeGPIOWriter()` (`Platform/HW/OutputWriter_HW.hpp`) initialises GPIOs and returns a lambda that calls `gpio_set_level`. `makeConsoleWriter()` (`AOs/ControlSortides/ActuadorSortides/OutputWriter_Console.hpp`) returns a lambda that prints to stdout. This removes all `#ifdef ESP_PLATFORM` from the AO itself.
 
@@ -236,23 +236,16 @@ Cap endpoint ni WS. Només consumeix events QP i actua sobre hardware o consola.
 
 ## Key files
 
-- `Common/QP/signals.h` — all QP signal enums and event struct definitions
-- `AOs/ControlEntrades/ControlEntradesState.h` — the shared struct between QV and Mongoose threads
-- `AOs/ControlEntrades/InputConfig.h` — `InputConfig` struct: `id`, `logic_positive`, `detection_always`, `linked_outputs`
-- `Test/TestController.hpp` — TestObserver AO + verifyStep() + makeTestReader() + g_* globals
-- `docs/ControlEntrades.drawio` — entrades architecture diagram
-- `docs/ControlSortides.drawio` — sortides architecture diagram (ControlHorari, ControlRemot, ActuadorSortides)
-- `Common/QP/qp_config.hpp` — QP tunables (`QF_MAX_ACTIVE=32`, `QF_MAX_EPOOL=3`)
-- `main-win/main.cpp` — entry point Windows
-- `main/main_esp32.cpp` — entry point ESP32 (WiFi, FreeRTOS stacks, makeHWInputReader, makeGPIOWriter)
-- `Platform/HW/InputReader_HW.hpp` — `makeHWInputReader()`: GPIO34 → E1
-- `Platform/HW/OutputWriter_HW.hpp` — `makeGPIOWriter()`: GPIO4/0/2 → S1/S2/S3
-- `AOs/ControlSortides/ActuadorSortides/OutputWriter_Console.hpp` — `makeConsoleWriter()`: printf stdout
-- `LinuxScripts/flash_esp32.sh` — compila i flasheja l'ESP32 via `/dev/ttyUSB1`
-- `LinuxScripts/monitor_esp32.sh` — monitor sèrie interactiu
-- `WinScripts/attach_usb.ps1` — connecta USB al contenidor via usbipd (PowerShell, Windows)
+Només les entrades amb un *perquè* no obvi (els paths que s'expliquen sols no hi són):
 
-El diagrama de referència és `docs/ControlEntrades.drawio`. Les convencions visuals (colors, fletxes, etiquetes, estructura dels nodes) estan documentades a [`docs/drawio-conventions.md`](docs/drawio-conventions.md).
+- `Common/QP/signals.h` — tots els enums de senyals QP i les definicions dels structs d'event
+- `Common/QP/qp_config.hpp` — tunables de QP (`QF_MAX_ACTIVE=32`, `QF_MAX_EPOOL=3`)
+- `AOs/ControlEntrades/ControlEntradesState.h` — l'únic struct compartit entre els fils QV i Mongoose
+- `Test/TestUnitariControlEntrades.hpp` — `TestObserver` + `verifyStep()` + `makeTestReader()` + globals `g_*` (mode test Windows)
+- `main-win/main.cpp` / `main/main_esp32.cpp` — entry points (ESP32: WiFi, stacks FreeRTOS, injecció de plataforma)
+- `Platform/HW/InputReader_HW.hpp` / `OutputWriter_HW.hpp` — injecció ESP32: `makeHWInputReader()` (GPIO34→E1), `makeGPIOWriter()` (GPIO4/0/2→S1/S2/S3)
+
+Els diagrames d'arquitectura (un per subsistema) són a `docs/*.drawio`; les convencions visuals, a [`docs/drawio-conventions.md`](docs/drawio-conventions.md).
 
 ## Flux de treball
 
