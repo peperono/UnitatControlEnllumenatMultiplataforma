@@ -132,7 +132,7 @@ GPIOs a evitar: GPIO16/17 (PSRAM), GPIO6–11 (flash SPI), GPIO21 (càmera D7 a 
 - **Mongoose thread:** HttpServer, access to ControlEntradesState (via mutex)
 - **External process:** Browser (HTTP + WebSocket)
 
-**Cross-thread data:** `ControlEntradesState control_entrades_state` (defined in `AOs/ControlEntrades/ControlEntrades.cpp`, declared `extern` in `AOs/ControlEntrades/ControlEntradesState.h`) is the only shared data between the QV thread and the Mongoose thread. All access is guarded by `control_entrades_state.mtx`. `ControlEntrades` writes `control_entrades_state.inputs`, `control_entrades_state.outputs`, `control_entrades_state.last_edges`, `control_entrades_state.edge_counts` and sets `control_entrades_state.push_pending = true` directly in the poll handler. The Mongoose thread reads `control_entrades_state` and pushes WebSocket messages when `push_pending` is set.
+**Cross-thread data:** Several mutex-protected structs are shared between the QV thread and the Mongoose thread — one per subsystem: `control_entrades_state`, `control_horari_state`, `control_remot_state`, `rellotge_state`, plus `remote_io_state` (remote IO input). `ControlEntradesState control_entrades_state` (defined in `AOs/ControlEntrades/ControlEntrades.cpp`, declared `extern` in `AOs/ControlEntrades/ControlEntradesState.h`) is the representative example. All access is guarded by `control_entrades_state.mtx`. `ControlEntrades` writes `control_entrades_state.inputs`, `control_entrades_state.outputs`, `control_entrades_state.last_edges`, `control_entrades_state.edge_counts` and sets `control_entrades_state.push_pending = true` directly in the poll handler. The Mongoose thread reads `control_entrades_state` and pushes WebSocket messages when `push_pending` is set.
 
 **IOReader injection:** `ControlEntrades` accepts an `IOReader = std::function<void(map<int,bool>&, map<int,bool>&)>` at construction. In test mode `makeTestReader()` (`Test/TestUnitariControlEntrades.hpp`) returns a lambda cycling through `TestStep` scenarios. In remote mode `makeWSInputReader()` (`Platform/RemoteIO/InputReader_WS.hpp`) returns a lambda that reads from `remote_io_state` (mutex-protected, written by the Mongoose thread via WebSocket). On ESP32 `makeHWInputReader()` (`Platform/HW/InputReader_HW.hpp`) reads physical GPIO inputs.
 
@@ -240,7 +240,7 @@ Només les entrades amb un *perquè* no obvi (els paths que s'expliquen sols no 
 
 - `Common/QP/signals.h` — tots els enums de senyals QP i les definicions dels structs d'event
 - `Common/QP/qp_config.hpp` — tunables de QP (`QF_MAX_ACTIVE=32`, `QF_MAX_EPOOL=3`)
-- `AOs/ControlEntrades/ControlEntradesState.h` — l'únic struct compartit entre els fils QV i Mongoose
+- `*State.h` (ControlEntrades, ControlHorari, ControlRemot, Rellotge, RemoteIO) — structs compartits amb mutex entre el fil QP i el fil Mongoose (un per subsistema)
 - `Test/TestUnitariControlEntrades.hpp` — `TestObserver` + `verifyStep()` + `makeTestReader()` + globals `g_*` (mode test Windows)
 - `main-win/main.cpp` / `main/main_esp32.cpp` — entry points (ESP32: WiFi, stacks FreeRTOS, injecció de plataforma)
 - `Platform/HW/InputReader_HW.hpp` / `OutputWriter_HW.hpp` — injecció ESP32: `makeHWInputReader()` (GPIO34→E1), `makeGPIOWriter()` (GPIO4/0/2→S1/S2/S3)
