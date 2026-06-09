@@ -52,11 +52,11 @@ Quan cal etiqueta explícita, es prefixa amb el mecanisme que la mou: `<mecanism
 
 ## Memòria compartida
 
-- Es representa com un objecte estructurat (swimlane `childLayout=stackLayout`):
-  - Capçalera amb el nom de l'struct en color groc (`#fff2cc` / `#d6b656`)
-  - Cada camp en una fila blanca separada (`#FFFFFF` / `#DFDFDF`, `fontColor=#333333`)
-  - Formes `mxgraph.bootstrap.topButton` (capçalera) i `bottomButton` (última fila) per arrodonir els extrems
-- Les fletxes poden ancorar-se a un **camp concret** per indicar accés a nivell de camp (no a tot l'struct)
+- Es representa com un **únic** objecte estructurat: un `swimlane` amb `childLayout=stackLayout`
+  - El **títol del swimlane** és el nom de l'struct i fa de capçalera (`startSize=26`, color groc `#fff2cc` / `#d6b656`)
+  - Cada camp és una **fila filla transparent** (`text` amb `strokeColor=none`, `fillColor=none`), `parent` = id del swimlane
+  - No s'usa cap `group` ni cel·les `topButton`/`bottomButton`: el conjunt és un sol element que es mou i selecciona com una unitat
+- Les fletxes poden ancorar-se a un **camp concret** (fila filla) per indicar accés a nivell de camp; si s'ancoren a tot l'struct, l'etiqueta ha d'explicitar la dada (vegeu *Etiquetes de fletxa*)
 - Apareix sempre que hi hagi accés des de més d'un fil o component
 - Inclou mutex explícit si és cross-thread; g_* globals si és same-thread (QV cooperatiu)
 
