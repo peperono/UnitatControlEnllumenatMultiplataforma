@@ -61,7 +61,7 @@
         <mxCell id="BnJ5BnqUndi74dd3diWF-6" value="Plataforma ESP32" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontStyle=1" vertex="1" parent="1">
           <mxGeometry x="279.5" y="471" width="130" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="BnJ5BnqUndi74dd3diWF-7" value="Arquitectura per plataforma --&amp;nbsp; Windows i ESP32&lt;div&gt;Juny 2026&lt;/div&gt;" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;recursiveResize=0;container=1;collapsible=0;width=280;height=42;" vertex="1" parent="1">
+        <mxCell id="BnJ5BnqUndi74dd3diWF-7" value="Capes per plataforma — Windows vs ESP32&lt;div&gt;Juny 2026&lt;/div&gt;" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;recursiveResize=0;container=1;collapsible=0;width=280;height=42;" vertex="1" parent="1">
           <mxGeometry x="-437" y="-222" width="1099" height="768" as="geometry" />
         </mxCell>
       </root>
