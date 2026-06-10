@@ -200,7 +200,7 @@ Els AOs s'organitzen en 4 subsistemes:
 
 | Endpoint / WS | Direcció | Format | Efecte |
 |--------------|----------|--------|--------|
-| `GET /config_inputs` | AO → | `[{"id":2,"detect_edge":"falling","detection_always":false,"linked_outputs":[10]}]` | Lectura de `se.configs[]` |
+| `GET /config_inputs` | AO → | `[{"id":2,"detect_edge":"falling","detection_always":false,"linked_outputs":[10]}]` | Lectura de `se.config_inputs[]` |
 | `PUT /config_inputs` | → AO | `[{"id":2,"detect_edge":"falling","detection_always":false,"linked_outputs":[10]}]` | Publica `RECONFIGURE_SIG` |
 | `WS /ws` (client→servidor) | → AO | `{"inputs":{"1":true}}` | Escriu a `remoteIO.inputs`; llegit per l'IOReader en cada poll tick |
 | `WS /ws` push (`se.push_pending`) | AO → | `"inputs":{"1":true},"last_edges":[2],"edge_counts":{"2":3}` | Escriu `se.inputs`, `se.last_edges`, `se.edge_counts` |
