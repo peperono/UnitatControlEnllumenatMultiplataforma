@@ -130,7 +130,7 @@ GPIOs a evitar: GPIO16/17 (PSRAM), GPIO6–11 (flash SPI), GPIO21 (càmera D7 a 
 **Framework:** QP/C++ with the QV cooperative scheduler (single thread). A separate Mongoose thread handles HTTP/WebSocket I/O.
 
 **Threads:**
-- **QV thread (cooperative):** IOReader, ControlEntrades, ActuadorSortides; TestObserver (Windows mode test)
+- **QV thread (cooperative):** tots els AOs en un sol fil — Rellotge, ControlEntrades, ControlHorari, ControlRemot, ActuadorSortides; en mode test (Windows) TestObserver substitueix ControlRemot + ActuadorSortides
 - **Mongoose thread:** HttpServer, access to the per-subsystem shared `*_state` structs (via mutex)
 - **External process:** Browser (HTTP + WebSocket)
 
