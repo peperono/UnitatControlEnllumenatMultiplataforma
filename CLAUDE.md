@@ -155,7 +155,7 @@ Els AOs s'organitzen en 4 subsistemes:
 
 | Subsistema | AOs | Rol |
 |-----------|-----|-----|
-| **ControlEntrades** | `ControlEntrades` (+ `TestObserver`, només test Windows) | Lectura d'IO i detecció de flancs |
+| **ControlEntrades** | `ControlEntrades` (+ `TestObserver`, només test Windows) | Publica canvis d'entrada i flancs |
 | **ControlSortides** | `ControlHorari` → `ControlRemot` → `ActuadorSortides` | Decideix l'estat de cada sortida combinant programació horària (auto) i control manual (remot), i l'actua sobre hardware/consola |
 | **Rellotge** | `Rellotge` | Font de temps compartida (alimenta `ControlHorari`) |
 | **Diagnòstic** | `Blink` (ESP32) | Indicador de vida (*heartbeat*), no és lògica de domini |
