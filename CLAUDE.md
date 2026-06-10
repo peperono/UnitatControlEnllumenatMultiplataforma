@@ -95,7 +95,7 @@ while time.time() < end:
 
 ### Configuració WiFi
 
-SSID i contrasenya es configuren via `idf.py menuconfig` → *Example Connection Configuration*, o editant directament `sdkconfig`.
+SSID i contrasenya es configuren via `idf.py menuconfig` → *UnitatControlEnllumenat* (`WIFI_SSID` / `WIFI_PASSWORD`, definits a `main/Kconfig.projbuild`), o editant directament `sdkconfig`.
 
 ### Hardware (ESP-WROVER-KIT V4.1)
 
@@ -119,7 +119,7 @@ GPIOs a evitar: GPIO16/17 (PSRAM), GPIO6–11 (flash SPI), GPIO21 (càmera D7 a 
 
 | Abstracció | Windows (`main-win/main.cpp`) | ESP32 (`main/main_esp32.cpp`) |
 |-----------|----------------------|-------------------------------|
-| `IOReader` | `makeWSInputReader()` | `makeHWInputReader()` |
+| `IOReader` | `makeWSInputReader()` (integració) · `makeTestReader()` (test unitari) | `makeHWInputReader()` |
 | `OutputWriter` | `makeConsoleWriter()` | `makeGPIOWriter()` |
 
 `ActuadorSortides` corre a prioritat 3 (a Windows mode integració i a ESP32); a Windows mode test unitari, aquesta prioritat l'ocupa `TestObserver`. A ESP32 hi ha a més `Blink` a prioritat 1.
