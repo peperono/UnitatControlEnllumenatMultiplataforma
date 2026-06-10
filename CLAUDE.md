@@ -104,6 +104,7 @@ SSID i contrasenya es configuren via `idf.py menuconfig` → *UnitatControlEnllu
 | ID | GPIO | Nota |
 |----|------|------|
 | E1 | GPIO34 | Input-only; requereix pull-up extern 10 kΩ a 3.3 V |
+| E2 | GPIO35 | Input-only; requereix pull-up extern 10 kΩ a 3.3 V |
 
 **Sortides** — `Platform/HW/OutputWriter_HW.hpp` → `makeGPIOWriter()`:
 
