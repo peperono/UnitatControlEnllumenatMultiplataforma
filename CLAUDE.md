@@ -235,12 +235,6 @@ Valors vàlids de `action`: `activate`, `deactivate`, `set_remote`, `set_auto`, 
 
 Cap endpoint HTTP envia dades al Rellotge.
 
----
-
-### `ActuadorSortides` (prioritat 3)
-
-Cap endpoint ni WS. Només consumeix events QP i actua sobre hardware o consola.
-
 ## Limitacions i paranys coneguts
 
 Vores tallants conegudes de l'estat actual del codi (no un *backlog* de millores; això va a `docs/TODO.md` o issues):
