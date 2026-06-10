@@ -202,7 +202,7 @@ Els AOs s'organitzen en 4 subsistemes:
 |--------------|----------|--------|--------|
 | `GET /config_inputs` | AO → | `[{"id":2,"detect_edge":"falling","detection_always":false,"linked_outputs":[10]}]` | Lectura de `control_entrades_state.config_inputs[]` |
 | `PUT /config_inputs` | → AO | `[{"id":2,"detect_edge":"falling","detection_always":false,"linked_outputs":[10]}]` | Publica `RECONFIGURE_SIG` |
-| `WS /ws` (client→servidor) | → AO | `{"inputs":{"1":true}}` | Escriu a `remoteIO.inputs`; llegit per l'IOReader en cada poll tick |
+| `WS /ws` (client→servidor) | → AO | `{"inputs":{"1":true}}` | Escriu a `remote_io_state.inputs`; llegit per l'IOReader en cada poll tick |
 | `WS /ws` push (`control_entrades_state.push_pending`) | AO → | `"inputs":{"1":true},"last_edges":[2],"edge_counts":{"2":3}` | Escriu `control_entrades_state.inputs`, `control_entrades_state.last_edges`, `control_entrades_state.edge_counts` |
 
 ---
@@ -212,7 +212,7 @@ Els AOs s'organitzen en 4 subsistemes:
 | Endpoint / WS | Direcció | Format | Efecte |
 |--------------|----------|--------|--------|
 | `POST /control_outputs` | → AO | `[{"id":1,"action":"activate"}]` | `handleJson` posta `CTRL_OUTPUT_CMD_SIG`, `CTRL_OUTPUT_MODE_SIG`, `CTRL_OUTPUT_RETURN_AUTO_SIG` o `CTRL_OUTPUT_DELETE_SIG` |
-| `WS /ws` push (`cr_state.push_pending`) | AO → | `"cs_outputs":{"1":{"state":false,"commanded":true,"result":true,"mode":"REMOTE"}}` | Escriu `cr_state.outputsResult` |
+| `WS /ws` push (`control_remot_state.push_pending`) | AO → | `"cs_outputs":{"1":{"state":false,"commanded":true,"result":true,"mode":"REMOTE"}}` | Escriu `control_remot_state.outputsResult` |
 
 Valors vàlids de `action`: `activate`, `deactivate`, `set_remote`, `set_auto`, `return_auto` (`id:-1` = totes les sortides), `delete`.
 
@@ -222,8 +222,8 @@ Valors vàlids de `action`: `activate`, `deactivate`, `set_remote`, `set_auto`, 
 
 | Endpoint / WS | Direcció | Format | Efecte |
 |--------------|----------|--------|--------|
-| `GET /programacio_horaria` | AO → | `{"dilluns":[{"id":1,"act":"on","time":"08:00"}],...}` | Lectura de `ch_state.programacioHoraria` (no involucra l'AO directament) |
-| `POST /programacio_horaria` | → AO | `{"dilluns":[{"id":1,"act":"on","time":"08:00"}],...}` | Escriu `ch_state.programacioHoraria` + `load_pending=true`; l'AO recarrega al pròxim `RELLOTGE_TICK_SIG` |
+| `GET /programacio_horaria` | AO → | `{"dilluns":[{"id":1,"act":"on","time":"08:00"}],...}` | Lectura de `control_horari_state.programacioHoraria` (no involucra l'AO directament) |
+| `POST /programacio_horaria` | → AO | `{"dilluns":[{"id":1,"act":"on","time":"08:00"}],...}` | Escriu `control_horari_state.programacioHoraria` + `load_pending=true`; l'AO recarrega al pròxim `RELLOTGE_TICK_SIG` |
 
 ---
 
