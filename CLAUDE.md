@@ -55,7 +55,7 @@ Detecta automàticament el dispositiu FTDI/CP210x, fa `bind --force` si cal i `a
 
 ```bash
 bash LinuxScripts/flash_esp32.sh           # compila i flasheja via /dev/ttyUSB1
-bash LinuxScripts/flash_esp32.sh --erase   # esborra NVS primer (útil si el WiFi no arrenca)
+bash LinuxScripts/flash_esp32.sh --erase   # esborra TOTA la flash primer (útil si NVS corrupte / el WiFi no arrenca)
 ```
 
 Si el port està ocupat:
