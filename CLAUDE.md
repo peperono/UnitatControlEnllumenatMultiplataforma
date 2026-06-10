@@ -35,10 +35,11 @@ Uses `x86_64-w64-mingw32-g++` (devcontainer cross-compiler) if available, otherw
 ### Run
 
 ```bash
-./build/app.exe
-# 1 → Test mode (automated IO sequence, prints OK/FALLO per step)
-# 2 → Remote mode (web UI at http://localhost:8080)
+build-win/app.exe TEST_UNITARI      # Test unitari: seqüència IO automatitzada, OK/FALLO per pas
+build-win/app.exe TEST_INTEGRACIO   # Integració: UI web a http://localhost:8080
 ```
+
+L'argument és obligatori (`TEST_UNITARI` | `TEST_INTEGRACIO`); sense ell l'app surt amb error.
 
 ## ESP32
 
