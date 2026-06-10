@@ -4,9 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Índex
 
-- [Windows](#windows)
-- [ESP32](#esp32)
-- [Architecture](#architecture)
+- [Plataforma Windows](#windows)
+- [Plataforma ESP32](#esp32)
+- [Arquitectura d'execució](#arquitectura-dexecució)
 - [Subsistemes](#subsistemes)
 - [Active Objects — events](#active-objects--events)
 - [Active Objects — endpoints, WebSocket](#active-objects--endpoints-websocket)
@@ -126,7 +126,7 @@ GPIOs a evitar: GPIO16/17 (PSRAM), GPIO6–11 (flash SPI), GPIO21 (càmera D7 a 
 
 `ActuadorSortides` corre a prioritat 3 (a Windows mode integració i a ESP32); a Windows mode test unitari, aquesta prioritat l'ocupa `TestObserver`. A ESP32 hi ha a més `Blink` a prioritat 1.
 
-## Architecture
+## Arquitectura d'execució
 
 **Framework:** QP/C++ with the QV cooperative scheduler (single thread). A separate Mongoose thread handles HTTP/WebSocket I/O.
 
@@ -245,7 +245,7 @@ Cap endpoint ni WS. Només consumeix events QP i actua sobre hardware o consola.
 
 Vores tallants conegudes de l'estat actual del codi (no un *backlog* de millores; això va a `docs/TODO.md` o issues):
 
-- **Cursa zero-pool sota preempció (ESP32).** `InputChangedEvt`/`EdgeDetectedEvt` es publiquen com a objecte membre compartit (sense còpia). És segur sota el QV cooperatiu (Windows), però seria una **cursa de dades** sota FreeRTOS preemptiu si s'hi afegís un subscriptor (vegeu *Architecture → Implicació de la preempció*). Avui és **latent**: a l'ESP32 cap AO els subscriu. Fix net: convertir-los a events de mida fixa, pool-compatibles, com `OutputStateEvt`/`ReconfigureEvt`.
+- **Cursa zero-pool sota preempció (ESP32).** `InputChangedEvt`/`EdgeDetectedEvt` es publiquen com a objecte membre compartit (sense còpia). És segur sota el QV cooperatiu (Windows), però seria una **cursa de dades** sota FreeRTOS preemptiu si s'hi afegís un subscriptor (vegeu *Arquitectura d'execució → Implicació de la preempció*). Avui és **latent**: a l'ESP32 cap AO els subscriu. Fix net: convertir-los a events de mida fixa, pool-compatibles, com `OutputStateEvt`/`ReconfigureEvt`.
 - **`return_auto` amb `id:-1` no és accessible.** `OutputReturnAutoEvt` suporta `output_id = -1` (= totes les sortides), però `ControlRemot::handleJson` descarta tota ordre amb `id < 0` abans de parsejar l'acció (`if (id < 0) continue`, [ControlRemot.cpp:228](AOs/ControlSortides/ControlRemot/ControlRemot.cpp#L228)). Per tant "torna totes les sortides a AUTO" via `POST /control_outputs` **no es pot disparar** tal com està. Bug latent.
 
 ## Key files
