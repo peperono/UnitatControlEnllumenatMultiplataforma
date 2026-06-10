@@ -198,21 +198,21 @@ Els AOs s'organitzen en 4 subsistemes:
 
 ### `ControlEntrades` (prioritat 6)
 
-| Direcció | Endpoint / WS | Format | Efecte |
-|----------|--------------|--------|--------|
-| → AO | `PUT /config_inputs` | `[{"id":2,"detect_edge":"falling","detection_always":false,"linked_outputs":[10]}]` | Publica `RECONFIGURE_SIG` |
-| → AO | `WS /ws` (client→servidor) | `{"inputs":{"1":true}}` | Escriu a `remoteIO.inputs`; llegit per l'IOReader en cada poll tick |
-| AO → | `WS /ws` push (`se.push_pending`) | `"inputs":{"1":true},"last_edges":[2],"edge_counts":{"2":3}` | Escriu `se.inputs`, `se.last_edges`, `se.edge_counts` |
-| AO → | `GET /config_inputs` | `[{"id":2,"detect_edge":"falling","detection_always":false,"linked_outputs":[10]}]` | Lectura de `se.configs[]` |
+| Endpoint / WS | Direcció | Format | Efecte |
+|--------------|----------|--------|--------|
+| `GET /config_inputs` | AO → | `[{"id":2,"detect_edge":"falling","detection_always":false,"linked_outputs":[10]}]` | Lectura de `se.configs[]` |
+| `PUT /config_inputs` | → AO | `[{"id":2,"detect_edge":"falling","detection_always":false,"linked_outputs":[10]}]` | Publica `RECONFIGURE_SIG` |
+| `WS /ws` (client→servidor) | → AO | `{"inputs":{"1":true}}` | Escriu a `remoteIO.inputs`; llegit per l'IOReader en cada poll tick |
+| `WS /ws` push (`se.push_pending`) | AO → | `"inputs":{"1":true},"last_edges":[2],"edge_counts":{"2":3}` | Escriu `se.inputs`, `se.last_edges`, `se.edge_counts` |
 
 ---
 
 ### `ControlRemot` (prioritat 5)
 
-| Direcció | Endpoint / WS | Format | Efecte |
-|----------|--------------|--------|--------|
-| → AO | `POST /control_outputs` | `[{"id":1,"action":"activate"}]` | `handleJson` posta `CTRL_OUTPUT_CMD_SIG`, `CTRL_OUTPUT_MODE_SIG`, `CTRL_OUTPUT_RETURN_AUTO_SIG` o `CTRL_OUTPUT_DELETE_SIG` |
-| AO → | `WS /ws` push (`cr_state.push_pending`) | `"cs_outputs":{"1":{"state":false,"commanded":true,"result":true,"mode":"REMOTE"}}` | Escriu `cr_state.outputsResult` |
+| Endpoint / WS | Direcció | Format | Efecte |
+|--------------|----------|--------|--------|
+| `POST /control_outputs` | → AO | `[{"id":1,"action":"activate"}]` | `handleJson` posta `CTRL_OUTPUT_CMD_SIG`, `CTRL_OUTPUT_MODE_SIG`, `CTRL_OUTPUT_RETURN_AUTO_SIG` o `CTRL_OUTPUT_DELETE_SIG` |
+| `WS /ws` push (`cr_state.push_pending`) | AO → | `"cs_outputs":{"1":{"state":false,"commanded":true,"result":true,"mode":"REMOTE"}}` | Escriu `cr_state.outputsResult` |
 
 Valors vàlids de `action`: `activate`, `deactivate`, `set_remote`, `set_auto`, `return_auto` (`id:-1` = totes les sortides), `delete`.
 
@@ -220,18 +220,18 @@ Valors vàlids de `action`: `activate`, `deactivate`, `set_remote`, `set_auto`, 
 
 ### `ControlHorari` (prioritat 4)
 
-| Direcció | Endpoint / WS | Format | Efecte |
-|----------|--------------|--------|--------|
-| → AO | `POST /programacio_horaria` | `{"dilluns":[{"id":1,"act":"on","time":"08:00"}],...}` | Escriu `ch_state.programacioHoraria` + `load_pending=true`; l'AO recarrega al pròxim `RELLOTGE_TICK_SIG` |
-| AO → | `GET /programacio_horaria` | `{"dilluns":[{"id":1,"act":"on","time":"08:00"}],...}` | Lectura de `ch_state.programacioHoraria` (no involucra l'AO directament) |
+| Endpoint / WS | Direcció | Format | Efecte |
+|--------------|----------|--------|--------|
+| `GET /programacio_horaria` | AO → | `{"dilluns":[{"id":1,"act":"on","time":"08:00"}],...}` | Lectura de `ch_state.programacioHoraria` (no involucra l'AO directament) |
+| `POST /programacio_horaria` | → AO | `{"dilluns":[{"id":1,"act":"on","time":"08:00"}],...}` | Escriu `ch_state.programacioHoraria` + `load_pending=true`; l'AO recarrega al pròxim `RELLOTGE_TICK_SIG` |
 
 ---
 
 ### `Rellotge` (prioritat 7)
 
-| Direcció | Endpoint / WS | Format | Efecte |
-|----------|--------------|--------|--------|
-| AO → | `WS /ws` push (`rellotge_state.push_pending`) | `"time":"14:32","day":"dimarts"` | Escriu `rellotge_state.hour`, `.minute`, `.wday` |
+| Endpoint / WS | Direcció | Format | Efecte |
+|--------------|----------|--------|--------|
+| `WS /ws` push (`rellotge_state.push_pending`) | AO → | `"time":"14:32","day":"dimarts"` | Escriu `rellotge_state.hour`, `.minute`, `.wday` |
 
 Cap endpoint HTTP envia dades al Rellotge.
 
