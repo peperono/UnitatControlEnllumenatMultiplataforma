@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Ejecutar desde la terminal MSYS2 MINGW64:
 #   cd /c/Users/USER/digital_inputs_detector
-#   bash build.sh
+#   bash build_win.sh
 
 export TEMP=/tmp
 export TMP=/tmp

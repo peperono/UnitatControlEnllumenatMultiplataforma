@@ -19,7 +19,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Build
 
 ```bash
-bash LinuxScripts/build.sh
+bash LinuxScripts/build_win.sh
 ```
 
 Output: `build-win/app.exe`. Each run the script:
@@ -252,7 +252,7 @@ Els diagrames d'arquitectura (un per subsistema) són a `docs/*.drawio`; les con
 
 Després de qualsevol modificació de codi (no documentació), sempre en aquest ordre:
 
-1. Compila Windows: `bash LinuxScripts/build.sh`
+1. Compila Windows: `bash LinuxScripts/build_win.sh`
 2. Compila ESP32: `source ~/esp/esp-idf/export.sh > /dev/null 2>&1 && idf.py build`
 3. Si ambdues compilen sense errors: `git commit -am "..." && git push`
 

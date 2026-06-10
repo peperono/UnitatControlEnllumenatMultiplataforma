@@ -1,7 +1,7 @@
 set(QPCPP "${CMAKE_CURRENT_SOURCE_DIR}/../qpcpp")
 set(ROOT   "${CMAKE_CURRENT_SOURCE_DIR}/..")
 
-# Genera web/index_html.h si no existeix (la primera vegada cal haver executat build.sh
+# Genera web/index_html.h si no existeix (la primera vegada cal haver executat build_win.sh
 # o executar manualment: bash web/assemble.sh && bash web/gen_html_header.sh)
 if(NOT EXISTS "${ROOT}/web/index_html.h")
     message(STATUS "Generant web/index_html.h...")

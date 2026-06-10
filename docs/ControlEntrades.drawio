@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.2.8 Chrome/140.0.7339.240 Electron/38.4.0 Safari/537.36" version="28.2.8">
   <diagram name="DigitalInputsDetector" id="digitalinputsdetector">
-    <mxGraphModel dx="2056" dy="1326" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1028" dy="663" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -92,7 +92,7 @@
         <mxCell id="bhttp" value="&lt;b&gt;Browser&lt;/b&gt;&lt;div&gt;&lt;b&gt;(HTTP Endpoints)&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontColor=#333333;fontSize=11;" parent="1" vertex="1">
           <mxGeometry x="38" y="195" width="110" height="55" as="geometry" />
         </mxCell>
-        <mxCell id="k19ayqWkpwsrz_kTSfV8-2" value="&lt;span style=&quot;font-size: 8px;&quot;&gt;GET /&lt;br&gt;GET /config_inputs&lt;br&gt;PUT /config_inputs&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.25;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;startArrow=classic;startFill=1;" parent="1" source="bhttp" target="http" edge="1">
+        <mxCell id="k19ayqWkpwsrz_kTSfV8-2" value="&lt;span style=&quot;font-size: 8px;&quot;&gt;GET /config_inputs&lt;br&gt;PUT /config_inputs&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.25;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;startArrow=classic;startFill=1;" parent="1" source="bhttp" target="http" edge="1">
           <mxGeometry x="-0.2449" relative="1" as="geometry">
             <mxPoint as="offset" />
             <Array as="points">

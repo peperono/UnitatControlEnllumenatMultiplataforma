@@ -36,4 +36,4 @@ UDEVADM
     sudo chmod +x /usr/local/bin/udevadm
 fi
 
-echo "Dev container llest. Usa: bash build.sh  o  idf.py build"
+echo "Dev container llest. Usa: bash build_win.sh  o  idf.py build"
