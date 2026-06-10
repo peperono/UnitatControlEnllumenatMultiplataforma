@@ -129,7 +129,7 @@ GPIOs a evitar: GPIO16/17 (PSRAM), GPIO6–11 (flash SPI), GPIO21 (càmera D7 a 
 
 **Threads:**
 - **QV thread (cooperative):** IOReader, ControlEntrades, ActuadorSortides; TestObserver (Windows mode test)
-- **Mongoose thread:** HttpServer, access to ControlEntradesState (via mutex)
+- **Mongoose thread:** HttpServer, access to the per-subsystem shared `*_state` structs (via mutex)
 - **External process:** Browser (HTTP + WebSocket)
 
 **Cross-thread data:** Several mutex-protected structs are shared between the QV thread and the Mongoose thread — one per subsystem: `control_entrades_state`, `control_horari_state`, `control_remot_state`, `rellotge_state`, plus `remote_io_state` (remote IO input). `ControlEntradesState control_entrades_state` (defined in `AOs/ControlEntrades/ControlEntrades.cpp`, declared `extern` in `AOs/ControlEntrades/ControlEntradesState.h`) is the representative example. All access is guarded by `control_entrades_state.mtx`. `ControlEntrades` writes `control_entrades_state.inputs`, `control_entrades_state.outputs`, `control_entrades_state.last_edges`, `control_entrades_state.edge_counts` and sets `control_entrades_state.push_pending = true` directly in the poll handler. The Mongoose thread reads `control_entrades_state` and pushes WebSocket messages when `push_pending` is set.
@@ -193,10 +193,10 @@ Els AOs s'organitzen en 4 subsistemes:
 
 | Direcció | Endpoint / WS | Format | Efecte |
 |----------|--------------|--------|--------|
-| → AO | `PUT /config_inputs` | `[{"id":2,"logic_positive":true,"detection_always":false,"linked_outputs":[10]}]` | Publica `RECONFIGURE_SIG` |
+| → AO | `PUT /config_inputs` | `[{"id":2,"detect_edge":"falling","detection_always":false,"linked_outputs":[10]}]` | Publica `RECONFIGURE_SIG` |
 | → AO | `WS /ws` (client→servidor) | `{"inputs":{"1":true}}` | Escriu a `remoteIO.inputs`; llegit per l'IOReader en cada poll tick |
 | AO → | `WS /ws` push (`se.push_pending`) | `"inputs":{"1":true},"last_edges":[2],"edge_counts":{"2":3}` | Escriu `se.inputs`, `se.last_edges`, `se.edge_counts` |
-| AO → | `GET /config_inputs` | `[{"id":2,"logic_positive":true,"detection_always":false,"linked_outputs":[10]}]` | Lectura de `se.configs[]` |
+| AO → | `GET /config_inputs` | `[{"id":2,"detect_edge":"falling","detection_always":false,"linked_outputs":[10]}]` | Lectura de `se.configs[]` |
 
 ---
 
