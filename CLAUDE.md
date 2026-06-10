@@ -4,8 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Índex
 
-- [Plataforma Windows](#windows)
-- [Plataforma ESP32](#esp32)
+- [Plataforma Windows](#plataforma-windows)
+- [Plataforma ESP32](#plataforma-esp32)
 - [Arquitectura d'execució](#arquitectura-dexecució)
 - [Subsistemes](#subsistemes)
 - [Active Objects — events](#active-objects--events)
@@ -15,7 +15,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - [Flux de treball](#flux-de-treball)
 - [Convencions](#convencions)
 
-## Windows
+## Plataforma Windows
 
 ### Build
 
@@ -42,7 +42,7 @@ build-win/app.exe TEST_INTEGRACIO   # Integració: UI web a http://localhost:808
 
 L'argument és obligatori (`TEST_UNITARI` | `TEST_INTEGRACIO`); sense ell l'app surt amb error.
 
-## ESP32
+## Plataforma ESP32
 
 ### Connectar USB (des de PowerShell a Windows, com a administrador)
 
