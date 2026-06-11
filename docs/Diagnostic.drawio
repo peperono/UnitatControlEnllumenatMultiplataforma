@@ -10,7 +10,7 @@
         <mxCell id="blink" value="Blink (QP::QActive)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;verticalAlign=top;spacingTop=8" parent="1" vertex="1">
           <mxGeometry x="320" y="110" width="300" height="180" as="geometry" />
         </mxCell>
-        <mxCell id="blink_tick" value="BLINK_TICK_SIG&#xa;(QTimeEvt intern · cada 500 ms = 1 Hz)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
+        <mxCell id="blink_tick" value="QTimeEvt&#xa;(BLINK_TICK_SIG, intern · cada 500 ms = 1 Hz)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
           <mxGeometry x="342" y="162" width="256" height="50" as="geometry" />
         </mxCell>
         <mxCell id="blink_logic" value="A cada tick:&#xa;m_state = !m_state;&#xa;m_writer(m_outputId = S1, m_state)" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=8;spacingLeft=6;" parent="1" vertex="1">
