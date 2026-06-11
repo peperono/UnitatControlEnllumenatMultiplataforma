@@ -171,11 +171,11 @@ Els AOs s'organitzen en 4 subsistemes:
 | Priority | AO | Plataforma | Publishes | Subscribes/Post |
 |----------|----|------------|-----------|-----------------|
 | 7 | `Rellotge` | ambdues | `RELLOTGE_TICK_SIG` | — |
-| 6 | `ControlEntrades` | ambdues | `INPUT_CHANGED_SIG`, `EDGE_DETECTED_SIG` | SUBS: `OUTPUT_RESULT_SIG` · POST: `RECONFIGURE_SIG` |
-| 5 | `ControlRemot` | ambdues | `OUTPUT_RESULT_SIG` | SUBS: `OUTPUT_STATE_SIG` · POST: `CTRL_OUTPUT_CMD_SIG`, `CTRL_OUTPUT_MODE_SIG`, `CTRL_OUTPUT_RETURN_AUTO_SIG`, `CTRL_OUTPUT_DELETE_SIG` |
+| 6 | `ControlEntrades` | ambdues | `INPUT_CHANGED_SIG`, `EDGE_DETECTED_SIG` | SUBS: `OUTPUT_RESULT_SIG`<br>POST: `RECONFIGURE_SIG` |
+| 5 | `ControlRemot` | ambdues | `OUTPUT_RESULT_SIG` | SUBS: `OUTPUT_STATE_SIG`<br>POST: `CTRL_OUTPUT_CMD_SIG`<br>POST: `CTRL_OUTPUT_MODE_SIG`<br>POST: `CTRL_OUTPUT_RETURN_AUTO_SIG`<br>POST: `CTRL_OUTPUT_DELETE_SIG` |
 | 4 | `ControlHorari` | ambdues | `OUTPUT_STATE_SIG` | SUBS: `RELLOTGE_TICK_SIG` |
 | 3 | `ActuadorSortides` | ambdues | — | SUBS: `OUTPUT_RESULT_SIG` |
-| 3 | `TestObserver` | Windows (mode test) | — | SUBS: `INPUT_CHANGED_SIG`, `EDGE_DETECTED_SIG` |
+| 3 | `TestObserver` | Windows (mode test) | — | SUBS: `INPUT_CHANGED_SIG`<br>SUBS: `EDGE_DETECTED_SIG` |
 | 1 | `Blink` | ESP32 | — | — |
 
 `SUBS:` = subscripció pub/sub (`subscribe()`, el rep qualsevol AO subscrit). `POST:` = rebut per `QActive::POST` directe (point-to-point des de HttpServer/`handleJson`).
