@@ -16,7 +16,7 @@
 
 | Estil | Significat |
 |---|---|
-| Línia contínua | Transferència de dades: `read`, `write`, `publish`, `WS`, `GET`, `PUT`, `POST` |
+| Línia contínua | Transferència de dades: `read`, `write`, `publish`, `/ws`, `GET`, `PUT`, `POST` |
 | Línia discontínua | Injecció de dependència (callback/estratègia) |
 | `endArrow=block;endFill=0` | Herència / implementació |
 | Fletxa invertida (`startArrow=classic`, `endArrow=none`) | Dades flueixen cap a l'origen |
@@ -27,7 +27,7 @@ Totes les etiquetes d'aresta usen **Helvetica 11px** (`fontFamily=Helvetica;font
 
 L'etiqueta reflecteix la **dada** que es transfereix d'un component a l'altre (el payload), no el mecanisme. La part dada anomena el contingut transferit: els camps (`{time, day}`, `inputs`), el recurs (`/config_inputs`) o el conjunt llegit d'un struct.
 
-Quan cal etiqueta explícita, es prefixa amb el mecanisme que la mou: `<mecanisme> <dada>` (p. ex. `WS {time, day}`, `publish last_edges`, `POST config_inputs`).
+Quan cal etiqueta explícita, es prefixa amb el mecanisme que la mou: `<mecanisme> <dada>` (p. ex. `/ws {time, day}`, `publish last_edges`, `POST config_inputs`).
 
 **L'etiqueta només s'omet quan l'ancoratge identifica EXACTAMENT la dada**: una fletxa ancorada a una **fila concreta** d'un objecte de memòria estructurada (la fila *és* el camp).
 
@@ -39,7 +39,7 @@ Si la fletxa s'ancora a **tot un struct** (no a una fila), també cal etiqueta e
 |---|---|
 | `publish` | `QF_PUBLISH` — bus QP, tots els subscrits reben l'event |
 | `POST` | `QActive::POST` — event directe a un AO, thread-safe |
-| `WS` | Missatge pel canal WebSocket `/ws`, en qualsevol sentit (la direcció la marca la fletxa): push servidor→client (HttpServer llegeix SharedState i l'envia) o enviament client→servidor (el navegador escriu, p. ex. `WS {inputs}`) |
+| `/ws` | Missatge pel canal WebSocket `/ws`, en qualsevol sentit (la direcció la marca la fletxa): push servidor→client (HttpServer llegeix SharedState i l'envia) o enviament client→servidor (el navegador escriu, p. ex. `/ws {inputs}`) |
 | `write` | Escriptura del camp/struct a memòria compartida sota mutex |
 | `read` | Lectura del camp/struct de memòria compartida sota mutex |
 

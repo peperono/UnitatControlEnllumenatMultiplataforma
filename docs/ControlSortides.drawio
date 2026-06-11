@@ -13,7 +13,7 @@
         <mxCell id="http" value="HttpServer&#xa;(thread Mongoose)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffcccc;strokeColor=#36393d;fontSize=9;fontStyle=1" parent="1" vertex="1">
           <mxGeometry x="435" y="806" width="104" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="nPEGExYc4R3wSkc33mew-6" value="WS {cs_outputs:{state, commanded, result, mode}}" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;startSize=8;endSize=8;startArrow=none;startFill=0;fontFamily=Helvetica;fontSize=11" parent="1" source="ws" target="nPEGExYc4R3wSkc33mew-5" edge="1">
+        <mxCell id="nPEGExYc4R3wSkc33mew-6" value="/ws {cs_outputs:{state, commanded, result, mode}}" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;startSize=8;endSize=8;startArrow=none;startFill=0;fontFamily=Helvetica;fontSize=11" parent="1" source="ws" target="nPEGExYc4R3wSkc33mew-5" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="ws" value="HttpServer&lt;br&gt;(thread Mongoose)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffcccc;strokeColor=#36393d;fontSize=9;fontStyle=1" parent="1" vertex="1">
