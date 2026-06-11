@@ -171,12 +171,14 @@ Els AOs s'organitzen en 4 subsistemes:
 | Priority | AO | Plataforma | Publishes | Subscribes |
 |----------|----|------------|-----------|------------|
 | 7 | `Rellotge` | ambdues | `RELLOTGE_TICK_SIG` | — |
-| 6 | `ControlEntrades` | ambdues | `INPUT_CHANGED_SIG`, `EDGE_DETECTED_SIG` | `RECONFIGURE_SIG`, `OUTPUT_RESULT_SIG` |
-| 5 | `ControlRemot` | ambdues | `OUTPUT_RESULT_SIG` | `OUTPUT_STATE_SIG`, `CTRL_OUTPUT_CMD_SIG`, `CTRL_OUTPUT_MODE_SIG`, `CTRL_OUTPUT_RETURN_AUTO_SIG`, `CTRL_OUTPUT_DELETE_SIG` |
+| 6 | `ControlEntrades` | ambdues | `INPUT_CHANGED_SIG`, `EDGE_DETECTED_SIG` | `OUTPUT_RESULT_SIG`; `RECONFIGURE_SIG` (POST) |
+| 5 | `ControlRemot` | ambdues | `OUTPUT_RESULT_SIG` | `OUTPUT_STATE_SIG`; `CTRL_OUTPUT_CMD_SIG`, `CTRL_OUTPUT_MODE_SIG`, `CTRL_OUTPUT_RETURN_AUTO_SIG`, `CTRL_OUTPUT_DELETE_SIG` (POST) |
 | 4 | `ControlHorari` | ambdues | `OUTPUT_STATE_SIG` | `RELLOTGE_TICK_SIG` |
 | 3 | `ActuadorSortides` | ambdues | — | `OUTPUT_RESULT_SIG` |
 | 3 | `TestObserver` | Windows (mode test) | — | `INPUT_CHANGED_SIG`, `EDGE_DETECTED_SIG` |
 | 1 | `Blink` | ESP32 | — | — |
+
+`(POST)` = rebut per `QActive::POST` directe (point-to-point des de HttpServer/`handleJson`), no per subscripció pub/sub. La resta de la columna *Subscribes* són subscripcions reals (`subscribe()`).
 
 ### Events QP
 
