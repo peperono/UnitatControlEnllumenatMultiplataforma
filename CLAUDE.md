@@ -211,7 +211,7 @@ Els AOs s'organitzen en 4 subsistemes:
 
 | Endpoint / WS | Direcció | Format | Efecte |
 |--------------|----------|--------|--------|
-| `POST /control_outputs` | → AO | `[{"id":1,"action":"activate"}]` | `handleJson` posta `CTRL_OUTPUT_CMD_SIG`, `CTRL_OUTPUT_MODE_SIG`, `CTRL_OUTPUT_RETURN_AUTO_SIG` o `CTRL_OUTPUT_DELETE_SIG` |
+| `POST /control_outputs` | → AO | `[{"id":1,"action":"activate"}]` | `handleJson` posta a ControlRemot, segons l'`action`: POST `CTRL_OUTPUT_CMD_SIG` (`OutputCmdEvt`), `CTRL_OUTPUT_MODE_SIG` (`OutputModeEvt`), `CTRL_OUTPUT_RETURN_AUTO_SIG` (`OutputReturnAutoEvt`) o `CTRL_OUTPUT_DELETE_SIG` (`OutputDeleteEvt`); descarta ordres amb `id<0` |
 | `/ws` push (`control_remot_state.push_pending`) | AO → | `"cs_outputs":{"1":{"state":false,"commanded":true,"result":true,"mode":"REMOTE"}}` | Escriu `control_remot_state.outputsResult` |
 
 Valors vàlids de `action`: `activate`, `deactivate`, `set_remote`, `set_auto`, `return_auto` (`id:-1` = totes les sortides), `delete`.
