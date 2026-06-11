@@ -39,7 +39,7 @@ Si la fletxa s'ancora a **tot un struct** (no a una fila), també cal etiqueta e
 |---|---|
 | `publish` | `QF_PUBLISH` — bus QP, tots els subscrits reben l'event |
 | `POST` | `QActive::POST` — event directe a un AO, thread-safe |
-| `WS` | HttpServer llegeix SharedState i envia el payload per WebSocket |
+| `WS` | Missatge pel canal WebSocket `/ws`, en qualsevol sentit (la direcció la marca la fletxa): push servidor→client (HttpServer llegeix SharedState i l'envia) o enviament client→servidor (el navegador escriu, p. ex. `WS {inputs}`) |
 | `write` | Escriptura del camp/struct a memòria compartida sota mutex |
 | `read` | Lectura del camp/struct de memòria compartida sota mutex |
 
