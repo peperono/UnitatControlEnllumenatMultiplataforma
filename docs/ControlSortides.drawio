@@ -22,7 +22,7 @@
         <mxCell id="ch" value="ControlHorari (QP::QActive)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;verticalAlign=top;spacingTop=8" parent="1" vertex="1">
           <mxGeometry x="576" y="499" width="349" height="106" as="geometry" />
         </mxCell>
-        <mxCell id="ch_tick" value="RellotgeTickEvt&#xa;(RELLOTGE_TICK_SIG, subscribe)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
+        <mxCell id="ch_tick" value="RELLOTGE_TICK_SIG, subscribe&#xa;(RellotgeTickEvt)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
           <mxGeometry x="576" y="534" width="139" height="35" as="geometry" />
         </mxCell>
         <mxCell id="ch_reload" value="ControlHorariState" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#fff2cc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;strokeColor=#d6b656;" parent="1" vertex="1">
@@ -34,7 +34,7 @@
         <mxCell id="ch_reload_f2" value="load_pending" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="ch_reload" vertex="1">
           <mxGeometry y="52" width="180" height="26" as="geometry" />
         </mxCell>
-        <mxCell id="ch_out_io" value="OutputStateEvt&#xa;(OUTPUT_STATE_SIG, PUBLISH)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
+        <mxCell id="ch_out_io" value="OUTPUT_STATE_SIG, PUBLISH&#xa;(OutputStateEvt)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
           <mxGeometry x="793" y="569" width="132" height="35" as="geometry" />
         </mxCell>
         <mxCell id="rl" value="Rellotge (QP::QActive)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;" parent="1" vertex="1">
@@ -43,22 +43,22 @@
         <mxCell id="cr" value="ControlRemot (QP::QActive)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;verticalAlign=top;spacingTop=8" parent="1" vertex="1">
           <mxGeometry x="994" y="695" width="387" height="239" as="geometry" />
         </mxCell>
-        <mxCell id="in_io" value="OutputStateEvt&#xa;(OUTPUT_STATE_SIG)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
+        <mxCell id="in_io" value="OUTPUT_STATE_SIG&#xa;(OutputStateEvt)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
           <mxGeometry x="994" y="738" width="149" height="35" as="geometry" />
         </mxCell>
-        <mxCell id="in_cmd" value="OutputCmdEvt&#xa;(CTRL_OUTPUT_CMD_SIG)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
+        <mxCell id="in_cmd" value="CTRL_OUTPUT_CMD_SIG&#xa;(OutputCmdEvt)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
           <mxGeometry x="994" y="776" width="149" height="35" as="geometry" />
         </mxCell>
-        <mxCell id="in_mode" value="OutputModeEvt&#xa;(CTRL_OUTPUT_MODE_SIG)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
+        <mxCell id="in_mode" value="CTRL_OUTPUT_MODE_SIG&#xa;(OutputModeEvt)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
           <mxGeometry x="994" y="815" width="149" height="35" as="geometry" />
         </mxCell>
-        <mxCell id="in_ret" value="OutputReturnAutoEvt&#xa;(CTRL_OUTPUT_RETURN_AUTO_SIG)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
+        <mxCell id="in_ret" value="CTRL_OUTPUT_RETURN_AUTO_SIG&#xa;(OutputReturnAutoEvt)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
           <mxGeometry x="994" y="853" width="149" height="35" as="geometry" />
         </mxCell>
-        <mxCell id="in_del" value="OutputDeleteEvt&#xa;(CTRL_OUTPUT_DELETE_SIG)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
+        <mxCell id="in_del" value="CTRL_OUTPUT_DELETE_SIG&#xa;(OutputDeleteEvt)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
           <mxGeometry x="994" y="892" width="149" height="35" as="geometry" />
         </mxCell>
-        <mxCell id="out_pub" value="OutputResultEvt&#xa;(OUTPUT_RESULT_SIG, PUBLISH)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
+        <mxCell id="out_pub" value="OUTPUT_RESULT_SIG, PUBLISH&#xa;(OutputResultEvt)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
           <mxGeometry x="1236" y="824" width="145" height="35" as="geometry" />
         </mxCell>
         <mxCell id="hX1N1Huatbx-X40mZiJC-3" value="&lt;span style=&quot;font-size: 11px;&quot;&gt;read {outputsResult, push_pending}&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startSize=8;endSize=8;fontFamily=Helvetica;fontSize=11" parent="1" source="out_ss" target="ws" edge="1">
@@ -140,7 +140,7 @@
         <mxCell id="as" value="ActuadorSortides (QP::QActive)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;verticalAlign=top;spacingTop=8" parent="1" vertex="1">
           <mxGeometry x="1540" y="789" width="387" height="100" as="geometry" />
         </mxCell>
-        <mxCell id="as_in" value="OutputResultEvt&#xa;(OUTPUT_RESULT_SIG, subscribe)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
+        <mxCell id="as_in" value="OUTPUT_RESULT_SIG, subscribe&#xa;(OutputResultEvt)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
           <mxGeometry x="1546" y="824" width="155" height="35" as="geometry" />
         </mxCell>
         <mxCell id="as_gpio" value="OutputWriter m_writer&#xa;(injectat al constructor)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=8" parent="1" vertex="1">

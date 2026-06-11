@@ -10,10 +10,10 @@
         <mxCell id="rl" value="Rellotge (QP::QActive)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;verticalAlign=top;spacingTop=8" parent="1" vertex="1">
           <mxGeometry x="430" y="210" width="360" height="160" as="geometry" />
         </mxCell>
-        <mxCell id="rl_internal" value="QTimeEvt&#xa;(RELLOTGE_TICK_INTERNAL_SIG, auto-post cada 50 ms)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
+        <mxCell id="rl_internal" value="RELLOTGE_TICK_INTERNAL_SIG, auto-post cada 50 ms&#xa;(QTimeEvt)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
           <mxGeometry x="450" y="265" width="150" height="45" as="geometry" />
         </mxCell>
-        <mxCell id="rl_pub" value="RellotgeTickEvt&#xa;(RELLOTGE_TICK_SIG, PUBLISH)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
+        <mxCell id="rl_pub" value="RELLOTGE_TICK_SIG, PUBLISH&#xa;(RellotgeTickEvt)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
           <mxGeometry x="610" y="265" width="160" height="45" as="geometry" />
         </mxCell>
         <mxCell id="http" value="HttpServer&#xa;(thread Mongoose)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffcccc;strokeColor=#36393d;fontSize=9;fontStyle=1" parent="1" vertex="1">

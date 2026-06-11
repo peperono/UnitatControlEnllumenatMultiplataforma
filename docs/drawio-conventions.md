@@ -47,7 +47,7 @@ Si la fletxa s'ancora a **tot un struct** (no a una fila), també cal etiqueta e
 
 - Rectangle blau, `verticalAlign=top`, títol en negreta: `Nom (QP::QActive)`
 - Sub-rectangles verds a l'interior per a cada event d'entrada i sortida
-- Format de l'etiqueta d'event: `NomEvt\n(SIGNAL_NAME, mecanisme)` — dues línies, `fontSize=8`
+- Format de l'etiqueta d'event: `SIGNAL_NAME, mecanisme\n(NomEvt)` — dues línies, `fontSize=8` (senyal i mecanisme a dalt, struct d'event entre parèntesis a baix; coherent amb la taula d'events del `CLAUDE.md`, que lidera amb el senyal)
 - Events d'entrada a l'esquerra, events de sortida a la dreta
 
 ## IO Strategies (callbacks)
