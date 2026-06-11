@@ -184,7 +184,7 @@ Els AOs s'organitzen en 4 subsistemes:
 
 | Event | Dades |
 |-------|-------|
-| `RELLOTGE_TICK_INTERNAL_SIG` | — (time event intern, `QTimeEvt`, sense payload) |
+| `RELLOTGE_TICK_INTERNAL_SIG` (`QTimeEvt`) | — (intern, sense payload) |
 | `RELLOTGE_TICK_SIG` (`RellotgeTickEvt`) | `hour`, `minute`, `wday` (0=dilluns..6=diumenge) |
 | `INPUT_CHANGED_SIG` (`InputChangedEvt`) | `inputs` (`map<int,bool>` id→estat) |
 | `EDGE_DETECTED_SIG` (`EdgeDetectedEvt`) | `input_ids` (`vector<int>`, IDs amb flanc detectat) |
