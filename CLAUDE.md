@@ -180,8 +180,6 @@ Els AOs s'organitzen en 4 subsistemes:
 
 `SUBS:` = subscripció pub/sub (`subscribe()`, el rep qualsevol AO subscrit). `POST:` = rebut per `QActive::POST` directe (point-to-point des de HttpServer/`handleJson`).
 
-### Events QP
-
 | Event | Dades |
 |-------|-------|
 | `RELLOTGE_TICK_INTERNAL_SIG` (`QTimeEvt`) | — (intern, sense payload) |
