@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.2.8 Chrome/140.0.7339.240 Electron/38.4.0 Safari/537.36" version="28.2.8">
   <diagram name="ControlRemot" id="controlremot">
-    <mxGraphModel dx="1028" dy="663" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2336" pageHeight="1654" math="0" shadow="0">
+    <mxGraphModel dx="343" dy="221" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2336" pageHeight="1654" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -146,8 +146,8 @@
         <mxCell id="as_gpio" value="OutputWriter m_writer&#xa;(injectat al constructor)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=8" parent="1" vertex="1">
           <mxGeometry x="1727" y="824.5" width="200" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="e_as" value="publish outputs: id→result" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=11" parent="1" source="out_pub" target="as_in" edge="1">
-          <mxGeometry x="-0.3157" relative="1" as="geometry">
+        <mxCell id="e_as" value="publish {outputs: id→result}" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=11" parent="1" source="out_pub" target="as_in" edge="1">
+          <mxGeometry x="0.0115" y="1" relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="1410" y="837" />
               <mxPoint x="1410" y="842" />
