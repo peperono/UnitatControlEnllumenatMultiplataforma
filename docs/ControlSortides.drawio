@@ -13,7 +13,7 @@
         <mxCell id="http" value="HttpServer&#xa;(thread Mongoose)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffcccc;strokeColor=#36393d;fontSize=9;fontStyle=1" parent="1" vertex="1">
           <mxGeometry x="435" y="806" width="104" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="nPEGExYc4R3wSkc33mew-6" value="/ws {cs_outputs: id→{state, commanded, result, mode}}" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;startSize=8;endSize=8;startArrow=none;startFill=0;fontFamily=Helvetica;fontSize=11" parent="1" source="ws" target="nPEGExYc4R3wSkc33mew-5" edge="1">
+        <mxCell id="nPEGExYc4R3wSkc33mew-6" value="/ws {outputs: id→{state, commanded, result, mode}}" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;startSize=8;endSize=8;startArrow=none;startFill=0;fontFamily=Helvetica;fontSize=11" parent="1" source="ws" target="nPEGExYc4R3wSkc33mew-5" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="ws" value="HttpServer&lt;br&gt;(thread Mongoose)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffcccc;strokeColor=#36393d;fontSize=9;fontStyle=1" parent="1" vertex="1">
@@ -24,15 +24,6 @@
         </mxCell>
         <mxCell id="ch_tick" value="RELLOTGE_TICK_SIG, subscribe&#xa;(RellotgeTickEvt)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
           <mxGeometry x="576" y="534" width="139" height="35" as="geometry" />
-        </mxCell>
-        <mxCell id="ch_reload" value="ControlHorariState" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#fff2cc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;strokeColor=#d6b656;" parent="1" vertex="1">
-          <mxGeometry x="390" y="650" width="220" height="78" as="geometry" />
-        </mxCell>
-        <mxCell id="ch_reload_f1" value="programacioHoraria: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="ch_reload" vertex="1">
-          <mxGeometry y="26" width="220" height="26" as="geometry" />
-        </mxCell>
-        <mxCell id="ch_reload_f2" value="load_pending: atomic&lt;bool&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="ch_reload" vertex="1">
-          <mxGeometry y="52" width="220" height="26" as="geometry" />
         </mxCell>
         <mxCell id="ch_out_io" value="OUTPUT_STATE_SIG, PUBLISH&#xa;(OutputStateEvt)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
           <mxGeometry x="793" y="569" width="132" height="35" as="geometry" />
@@ -117,10 +108,10 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="nPEGExYc4R3wSkc33mew-3" value="&lt;b&gt;Browser&amp;nbsp;&lt;/b&gt;&lt;div&gt;&lt;b&gt;HTTP Endpoints&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontColor=#333333;fontSize=11;" parent="1" vertex="1">
-          <mxGeometry x="140" y="806" width="102" height="69" as="geometry" />
+          <mxGeometry x="128" y="806" width="102" height="69" as="geometry" />
         </mxCell>
         <mxCell id="nPEGExYc4R3wSkc33mew-5" value="&lt;b&gt;Browser WebSockets&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;fontColor=#333333;fontSize=11;" parent="1" vertex="1">
-          <mxGeometry x="1596" y="532" width="110" height="60" as="geometry" />
+          <mxGeometry x="1601" y="532" width="110" height="60" as="geometry" />
         </mxCell>
         <mxCell id="jaKRlGInz0ltfFADGkvu-5" value="ControlSortides&lt;div&gt;Juny 2026&lt;/div&gt;" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;recursiveResize=0;container=1;collapsible=0;width=170;height=40;" parent="1" vertex="1">
           <mxGeometry x="80" y="270" width="2160" height="1100" as="geometry" />
@@ -136,6 +127,15 @@
         </mxCell>
         <mxCell id="out_ss_f2" value="push_pending: atomic&lt;bool&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="out_ss" vertex="1">
           <mxGeometry y="52" width="260" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="ch_reload" value="ControlHorariState" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#fff2cc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;strokeColor=#d6b656;" parent="jaKRlGInz0ltfFADGkvu-5" vertex="1">
+          <mxGeometry x="290" y="380" width="217" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="ch_reload_f1" value="programacioHoraria: string" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="ch_reload" vertex="1">
+          <mxGeometry y="26" width="217" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="ch_reload_f2" value="load_pending: atomic&lt;bool&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="ch_reload" vertex="1">
+          <mxGeometry y="52" width="217" height="26" as="geometry" />
         </mxCell>
         <mxCell id="as" value="ActuadorSortides (QP::QActive)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;verticalAlign=top;spacingTop=8" parent="1" vertex="1">
           <mxGeometry x="1540" y="789" width="387" height="100" as="geometry" />

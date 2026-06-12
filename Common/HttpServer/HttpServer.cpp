@@ -73,7 +73,7 @@ static std::string build_ws_msg(
         const std::unordered_map<int, bool>& inputs,
         const std::vector<int>&              edges,
         const std::unordered_map<int, int>&  counts,
-        const std::unordered_map<int, OutputInfo>& cs_outputs,
+        const std::unordered_map<int, OutputInfo>& outputs,
         int hour, int minute, int wday)
 {
     static const char* DAYS[7] = {
@@ -87,9 +87,9 @@ static std::string build_ws_msg(
     s += ",\"edge_counts\":" + int_map_to_json(counts);
     s += ",\"time\":\""      + std::string(tbuf) + "\"";
     s += ",\"day\":\""       + std::string((wday >= 0 && wday < 7) ? DAYS[wday] : "") + "\"";
-    s += ",\"cs_outputs\":{";
+    s += ",\"outputs\":{";
     bool first = true;
-    for (auto const& [k, v] : cs_outputs) {
+    for (auto const& [k, v] : outputs) {
         if (!first) s += ",";
         s += "\"" + std::to_string(k) + "\":"
              "{\"state\":"     + (v.state     ? "true" : "false") + ","
@@ -115,7 +115,7 @@ static void push_if_pending(struct mg_mgr* mgr) {
     std::unordered_map<int, bool>       inputs;
     std::unordered_map<int, int>        counts;
     std::vector<int>                    edges;
-    std::unordered_map<int, OutputInfo> cs_outputs;
+    std::unordered_map<int, OutputInfo> outputs;
     int hh, mm, wd;
 
     {
@@ -126,7 +126,7 @@ static void push_if_pending(struct mg_mgr* mgr) {
     }
     {
         std::lock_guard<std::mutex> lk(control_remot_state.mtx);
-        cs_outputs = control_remot_state.outputsResult;
+        outputs = control_remot_state.outputsResult;
     }
     {
         std::lock_guard<std::mutex> lk(rellotge_state.mtx);
@@ -136,7 +136,7 @@ static void push_if_pending(struct mg_mgr* mgr) {
     }
 
     std::string msg = build_ws_msg(inputs, edges, counts,
-                                   cs_outputs, hh, mm, wd);
+                                   outputs, hh, mm, wd);
     for (struct mg_connection* c = mgr->conns; c != nullptr; c = c->next) {
         if (c->is_websocket)
             mg_ws_send(c, msg.c_str(), msg.size(), WEBSOCKET_OP_TEXT);
@@ -186,7 +186,7 @@ static void http_fn(struct mg_connection* c, int ev, void* ev_data) {
             mg_ws_upgrade(c, hm, NULL);
             std::unordered_map<int, bool>       inputs;
             std::unordered_map<int, int>        counts;
-            std::unordered_map<int, OutputInfo> cs_outputs;
+            std::unordered_map<int, OutputInfo> outputs;
             int hh, mm, wd;
             {
                 std::lock_guard<std::mutex> lk(control_entrades_state.mtx);
@@ -194,13 +194,13 @@ static void http_fn(struct mg_connection* c, int ev, void* ev_data) {
             }
             {
                 std::lock_guard<std::mutex> lk(control_remot_state.mtx);
-                cs_outputs = control_remot_state.outputsResult;
+                outputs = control_remot_state.outputsResult;
             }
             {
                 std::lock_guard<std::mutex> lk(rellotge_state.mtx);
                 hh = rellotge_state.hour;  mm = rellotge_state.minute;  wd = rellotge_state.wday;
             }
-            std::string msg = build_ws_msg(inputs, {}, counts, cs_outputs, hh, mm, wd);
+            std::string msg = build_ws_msg(inputs, {}, counts, outputs, hh, mm, wd);
             mg_ws_send(c, msg.c_str(), msg.size(), WEBSOCKET_OP_TEXT);
 
         // ── GET /config_inputs ────────────────────────────────────────────────
