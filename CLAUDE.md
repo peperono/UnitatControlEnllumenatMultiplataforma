@@ -203,7 +203,7 @@ Els AOs s'organitzen en 4 subsistemes:
 | `GET /config_inputs` | AO → | `[{"id":2,"detect_edge":"falling","detection_always":false,"linked_outputs":[10]}]` | Lectura de `control_entrades_state.config_inputs[]` |
 | `PUT /config_inputs` | → AO | `[{"id":2,"detect_edge":"falling","detection_always":false,"linked_outputs":[10]}]` | POST `RECONFIGURE_SIG` (`ReconfigureEvt`) a ControlEntrades amb la nova config d'entrades (màx 16) i reseteja `remote_io_state` als nous IDs; array buit/invàlid → 400 |
 | `/ws` (client→servidor) | → AO | `{"inputs":{"1":true}}` | Escriu a `remote_io_state.inputs`; llegit per l'IOReader en cada poll tick |
-| `/ws` push (`control_entrades_state.push_pending`) | AO → | `"inputs":{"1":true},"last_edges":[2],"edge_counts":{"2":3}` | Escriu `control_entrades_state.inputs`, `control_entrades_state.last_edges`, `control_entrades_state.edge_counts` |
+| `/ws` push (`control_entrades_state.push_pending`) | AO → | `"inputs":{"1":true},"last_edges":[2],"edge_counts":{"2":3}` | Llegeix `control_entrades_state.inputs`, `control_entrades_state.last_edges`, `control_entrades_state.edge_counts` |
 
 ---
 
@@ -212,7 +212,7 @@ Els AOs s'organitzen en 4 subsistemes:
 | Endpoint / WS | Direcció | Format | Efecte |
 |--------------|----------|--------|--------|
 | `POST /control_outputs` | → AO | `[{"id":1,"action":"activate"}]` | `handleJson` posta a ControlRemot, segons l'`action`: POST `CTRL_OUTPUT_CMD_SIG` (`OutputCmdEvt`), `CTRL_OUTPUT_MODE_SIG` (`OutputModeEvt`), `CTRL_OUTPUT_RETURN_AUTO_SIG` (`OutputReturnAutoEvt`) o `CTRL_OUTPUT_DELETE_SIG` (`OutputDeleteEvt`); descarta ordres amb `id<0` |
-| `/ws` push (`control_remot_state.push_pending`) | AO → | `"outputs":{"1":{"state":false,"commanded":true,"result":true,"mode":"REMOTE"}}` | Escriu `control_remot_state.outputsResult` |
+| `/ws` push (`control_remot_state.push_pending`) | AO → | `"outputs":{"1":{"state":false,"commanded":true,"result":true,"mode":"REMOTE"}}` | Llegeix `control_remot_state.outputsResult` |
 
 Valors vàlids de `action`: `activate`, `deactivate`, `set_remote`, `set_auto`, `return_auto` (`id:-1` = totes les sortides), `delete`.
 
@@ -231,7 +231,7 @@ Valors vàlids de `action`: `activate`, `deactivate`, `set_remote`, `set_auto`, 
 
 | Endpoint / WS | Direcció | Format | Efecte |
 |--------------|----------|--------|--------|
-| `/ws` push (`rellotge_state.push_pending`) | AO → | `"time":"14:32","day":"dimarts"` | Escriu `rellotge_state.hour`, `.minute`, `.wday` |
+| `/ws` push (`rellotge_state.push_pending`) | AO → | `"time":"14:32","day":"dimarts"` | Llegeix `rellotge_state.hour`, `.minute`, `.wday` |
 
 Cap endpoint HTTP envia dades al Rellotge.
 
