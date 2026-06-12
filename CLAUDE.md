@@ -196,6 +196,8 @@ Els AOs s'organitzen en 4 subsistemes:
 
 ## Active Objects — endpoints, WebSocket
 
+**Push `/ws`:** totes les files `/ws` push de sota són facetes d'**un únic missatge JSON** que el fil Mongoose envia (instantània completa, no incremental) combinant tots els camps —`inputs`, `last_edges`, `edge_counts`, `time`, `day`, `outputs`— més `platform` (`Windows`/`ESP32`). El missatge entrant (client→servidor) és només `{"inputs":{…}}`.
+
 ### `ControlEntrades` (prioritat 6)
 
 | Endpoint / WS | Direcció | Format | Efecte |
@@ -215,6 +217,8 @@ Els AOs s'organitzen en 4 subsistemes:
 | `/ws` push (`control_remot_state.push_pending`) | AO → | `"outputs":{"1":{"state":false,"commanded":true,"result":true,"mode":"REMOTE"}}` | Llegeix `control_remot_state.outputsResult` |
 
 Valors vàlids de `action`: `activate`, `deactivate`, `set_remote`, `set_auto`, `return_auto` (`id:-1` = totes les sortides), `delete`.
+
+Subcamps de cada sortida a `outputs`: `state` = estat per horari (AUTO), `commanded` = ordre manual, `result` = valor actuat (= `commanded` si REMOTE, = `state` si AUTO), `mode` = `REMOTE`/`AUTO`.
 
 ---
 
