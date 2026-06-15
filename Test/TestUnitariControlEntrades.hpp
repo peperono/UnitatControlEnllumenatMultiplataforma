@@ -67,7 +67,7 @@ Q_STATE_DEF(TestObserver, observing) {
         }
         case EDGE_DETECTED_SIG: {
             auto const* evt = Q_EVT_CAST(EdgeDetectedEvt);
-            g_detectedEdges = evt->input_ids;
+            g_detectedEdges = evt->edges;
             g_edgeReceived  = true;
             status = Q_HANDLED();
             break;

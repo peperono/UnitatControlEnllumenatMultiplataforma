@@ -48,7 +48,7 @@ struct ReconfigureEvt : public QP::QEvt {
 };
 
 struct EdgeDetectedEvt : public QP::QEvt {
-    std::vector<int> input_ids;
+    std::vector<int> edges;
     explicit EdgeDetectedEvt() noexcept : QP::QEvt{EDGE_DETECTED_SIG} {}
 };
 

@@ -73,7 +73,7 @@ Q_STATE_DEF(ControlEntrades, operating) {
                 }
                 PUBLISH(&m_ioEvt, this);
 
-                m_edgeEvt.input_ids.clear();
+                m_edgeEvt.edges.clear();
 
                 for (const auto& cfg : m_configs) {
                     auto it = inputs.find(cfg.id);
@@ -90,15 +90,15 @@ Q_STATE_DEF(ControlEntrades, operating) {
                     bool edge_detected = (cfg.detect_edge == EdgePolarity::falling) ? rising_edge : falling_edge;
 
                     if (edge_detected && detection_enabled(cfg, outputs)) {
-                        m_edgeEvt.input_ids.push_back(cfg.id);
+                        m_edgeEvt.edges.push_back(cfg.id);
                     }
 
                     m_prevStates[cfg.id] = current;
                 }
 
-                if (!m_edgeEvt.input_ids.empty()) {
+                if (!m_edgeEvt.edges.empty()) {
                     std::string detail;
-                    for (int id : m_edgeEvt.input_ids) {
+                    for (int id : m_edgeEvt.edges) {
                         if (!detail.empty()) detail += ", ";
                         detail += "E" + std::to_string(id);
                     }
@@ -110,9 +110,9 @@ Q_STATE_DEF(ControlEntrades, operating) {
                     std::lock_guard<std::mutex> lk(control_entrades_state.mtx);
                     control_entrades_state.inputs  = inputs;
                     control_entrades_state.outputs = outputs;
-                    if (!m_edgeEvt.input_ids.empty()) {
-                        control_entrades_state.last_edges = m_edgeEvt.input_ids;
-                        for (int id : m_edgeEvt.input_ids)
+                    if (!m_edgeEvt.edges.empty()) {
+                        control_entrades_state.last_edges = m_edgeEvt.edges;
+                        for (int id : m_edgeEvt.edges)
                             ++control_entrades_state.edge_counts[id];
                     } else {
                         control_entrades_state.last_edges.clear();
