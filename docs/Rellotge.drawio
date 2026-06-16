@@ -46,6 +46,9 @@
         <mxCell id="fVvCkoM4ovPekPfYtxhf-6" value="wday: int" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="fVvCkoM4ovPekPfYtxhf-1" vertex="1">
           <mxGeometry y="104" width="140" height="26" as="geometry" />
         </mxCell>
+        <mxCell id="tbl_rl" value="&lt;table border=&quot;1&quot; cellpadding=&quot;4&quot; cellspacing=&quot;0&quot; style=&quot;border-collapse:collapse;font-size:11px&quot;&gt;&lt;tr&gt;&lt;td colspan=&quot;4&quot; style=&quot;background-color:#dae8fc;font-weight:bold&quot;&gt;Rellotge — entrades / sortides&lt;/td&gt;&lt;/tr&gt;&lt;tr style=&quot;background-color:#f5f5f5;font-weight:bold&quot;&gt;&lt;td&gt;Dir&lt;/td&gt;&lt;td&gt;Senyal / Endpoint&lt;/td&gt;&lt;td&gt;Mecanisme&lt;/td&gt;&lt;td&gt;Event / Dada&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;IN&lt;/td&gt;&lt;td&gt;RELLOTGE_TICK_INTERNAL_SIG&lt;/td&gt;&lt;td&gt;intern (QTimeEvt)&lt;/td&gt;&lt;td&gt;auto-post cada 50 ms&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;OUT&lt;/td&gt;&lt;td&gt;RELLOTGE_TICK_SIG&lt;/td&gt;&lt;td&gt;publish&lt;/td&gt;&lt;td&gt;RellotgeTickEvt {hour, minute, wday}&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;OUT&lt;/td&gt;&lt;td&gt;/ws push&lt;/td&gt;&lt;td&gt;/ws&lt;/td&gt;&lt;td&gt;{time, day}&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;overflow=visible;whiteSpace=wrap;" parent="1" vertex="1">
+          <mxGeometry x="330" y="450" width="410" height="120" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
