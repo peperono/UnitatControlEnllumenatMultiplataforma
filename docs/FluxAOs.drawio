@@ -20,7 +20,7 @@
           <mxGeometry x="910" y="130" width="180" height="64" as="geometry" />
         </mxCell>
         <mxCell id="ce" value="ControlEntrades&#xa;(prio 6)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;verticalAlign=middle" parent="1" vertex="1">
-          <mxGeometry x="620" y="350" width="180" height="64" as="geometry" />
+          <mxGeometry x="620" y="350" width="160" height="64" as="geometry" />
         </mxCell>
         <mxCell id="tobs" value="TestObserver&#xa;(prio 3 · Windows mode test)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1;verticalAlign=middle;dashed=1" parent="1" vertex="1">
           <mxGeometry x="120" y="350" width="200" height="64" as="geometry" />

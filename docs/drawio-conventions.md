@@ -90,3 +90,4 @@ Línia discontinua: injecció de dependència
 - Tot dins un `shape=umlFrame` amb títol `NomProjecte / Data`
 - Llegenda canònica (vegeu secció anterior) com a node `text` a la cantonada inferior esquerra
 - Fletxes ortogonals (`edgeStyle=orthogonalEdgeStyle`) amb punts de routing explícits en creuaments
+- **Alineació de components (recomanat, no obligatori):** quan dos components s'uneixen amb una aresta recta, alinea'ls perquè es mantingui recta — mateixa `x` (i amplada) per a una aresta **vertical**, mateixa `y` (i alçada) per a una **horitzontal**. Així s'eviten els petits *jogs* quan els centres no coincideixen (p. ex. exit a 0.5 d'un i entry a 0.5 de l'altre amb amplades diferents). Si l'alineació perfecta xoca amb el *layout*, prioritza la llegibilitat global.
