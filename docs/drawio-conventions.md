@@ -37,6 +37,8 @@ L'etiqueta anomena la **dada** que es transfereix (el payload), amb els camps en
 
 El prefix es **reserva** per a les tres classes de transport (endpoint, WS, event). Una lectura/escriptura de memòria compartida **no** porta `read`/`write`: la direcció de la fletxa ja ho diu i el color groc ja indica que és memòria sota mutex.
 
+**Arestes d'injecció amb dada.** Una aresta discontínua d'injecció de dependència (estratègia → slot) pot dur **a més** l'etiqueta `{dada}` del que l'estratègia injectada **produeix** quan se la crida (p. ex. `makeTestReader → {inputs, outputs}` vs `makeHWInputReader → {inputs}`). És lícit perquè el sentit de la injecció i el del flux de dades coincideixen; la discontinuïtat segueix marcant que és una injecció, i el contrast d'etiquetes fa visible què aporta cada estratègia.
+
 L'identificador de la dada ha de ser un **nom canònic i estable**: el mateix nom representa la mateixa dada a totes les capes on apareix (endpoint, clau JSON, atribut d'struct, camp d'event). Quan dos contextos divergeixen a propòsit (p. ex. `edges` a l'event vs `last_edges` a la cache/JSON), és una **frontera deliberada**, no un descuit.
 
 **Quan ometre l'etiqueta del tot:** només si l'ancoratge identifica EXACTAMENT la dada — una fletxa ancorada a una **fila concreta** d'un objecte de memòria estructurada (la fila *és* el camp). Una **caixa d'event NO és prou** (identifica el *tipus*, no el camp): les fletxes des de/cap a caixes d'event SÍ porten etiqueta amb prefix (`publish {edges}`, `POST {config_inputs}`). Si la fletxa s'ancora a **tot un struct**, també cal etiqueta amb el conjunt (p. ex. `{inputs, last_edges, edge_counts}`).
