@@ -28,7 +28,7 @@
         <mxCell id="legend" value="&lt;div style=&quot;text-align:left&quot;&gt;Blau: Fil QP (QP::QActive)&lt;br&gt;Verd: Events QP&lt;br&gt;Groc: Memòria compartida entre fils.&lt;br&gt;Rosa: Fil Mongoose&lt;br&gt;Gris: Estratègia injectada&lt;br&gt;Línia continua: transferència de dades&lt;br&gt;Línia discontinua: injecció de dependència&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;whiteSpace=wrap;html=1;fontSize=11;" parent="1" vertex="1">
           <mxGeometry x="760" y="550" width="240" height="110" as="geometry" />
         </mxCell>
-        <mxCell id="fVvCkoM4ovPekPfYtxhf-7" value="read {hour, minute, wday}" style="edgeStyle=orthogonalEdgeStyle;curved=0;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=8;startSize=8;endSize=8;" parent="1" source="fVvCkoM4ovPekPfYtxhf-1" target="http" edge="1">
+        <mxCell id="fVvCkoM4ovPekPfYtxhf-7" value="{hour, minute, wday}" style="edgeStyle=orthogonalEdgeStyle;curved=0;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=8;startSize=8;endSize=8;" parent="1" source="fVvCkoM4ovPekPfYtxhf-1" target="http" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="fVvCkoM4ovPekPfYtxhf-1" value="RellotgeState" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#fff2cc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;strokeColor=#d6b656;" parent="1" vertex="1">

@@ -16,7 +16,7 @@
 
 | Estil | Significat |
 |---|---|
-| Línia contínua | Transferència de dades: `read`, `write`, `publish`, `/ws`, `GET`, `PUT`, `POST` |
+| Línia contínua | Transferència de dades: `{dada}` (sense prefix) o amb prefix de transport (`publish`, `POST`, `/ws`, `GET`/`PUT`/`POST`) |
 | Línia discontínua | Injecció de dependència (callback/estratègia) |
 | `endArrow=block;endFill=0` | Herència / implementació |
 | Fletxa invertida (`startArrow=classic`, `endArrow=none`) | Dades flueixen cap a l'origen |
@@ -25,23 +25,21 @@
 
 Totes les etiquetes d'aresta usen **Helvetica 11px** (`fontFamily=Helvetica;fontSize=11`), sense `font-size`/`font-family` inline al text que ho sobreescrigui.
 
-L'etiqueta reflecteix la **dada** que es transfereix d'un component a l'altre (el payload), no el mecanisme. La part dada anomena el contingut transferit: els camps (`{time, day}`, `inputs`), el recurs (`/config_inputs`) o el conjunt llegit d'un struct.
+L'etiqueta anomena la **dada** que es transfereix (el payload), amb els camps entre claus `{…}` (p. ex. `{hour, minute, wday}`). La **classe de transport** es marca amb un **prefix**; **si no hi ha prefix, és una transferència de dades plana i el sentit el marca la fletxa** (cap a l'struct = escriptura; des de l'struct = lectura).
 
-Quan cal etiqueta explícita, es prefixa amb el mecanisme que la mou: `<mecanisme> <dada>` (p. ex. `/ws {time, day}`, `publish last_edges`, `POST config_inputs`).
+| Prefix | Classe de transport | Exemple |
+|---|---|---|
+| `GET`/`PUT`/`POST /recurs` | endpoint HTTP | `GET /config_inputs` |
+| `/ws` | canal WebSocket (sentit per la fletxa: push servidor→client o enviament client→servidor) | `/ws {inputs}` |
+| `publish` | `QF_PUBLISH` — bus QP, event a tots els subscrits | `publish {edges}` |
+| `POST` | `QActive::POST` — event directe a un AO, thread-safe | `POST {config_inputs}` |
+| *(cap prefix)* | transferència de dades plana: memòria compartida sota mutex, GPIO o estratègia injectada | `{programacioHoraria}`, `{inputs}` |
 
-**L'etiqueta només s'omet quan l'ancoratge identifica EXACTAMENT la dada**: una fletxa ancorada a una **fila concreta** d'un objecte de memòria estructurada (la fila *és* el camp).
+El prefix es **reserva** per a les tres classes de transport (endpoint, WS, event). Una lectura/escriptura de memòria compartida **no** porta `read`/`write`: la direcció de la fletxa ja ho diu i el color groc ja indica que és memòria sota mutex.
 
-**Una caixa d'event NO és prou per ometre l'etiqueta.** Identifica el *tipus* d'event, no el camp de dades concret (p. ex. `EdgeDetectedEvt` no diu `last_edges`). Per tant, les fletxes des de/cap a caixes d'event SÍ porten etiqueta amb mecanisme (`publish last_edges`, `POST config_inputs`, `publish outputs`).
+L'identificador de la dada ha de ser un **nom canònic i estable**: el mateix nom representa la mateixa dada a totes les capes on apareix (endpoint, clau JSON, atribut d'struct, camp d'event). Quan dos contextos divergeixen a propòsit (p. ex. `edges` a l'event vs `last_edges` a la cache/JSON), és una **frontera deliberada**, no un descuit.
 
-Si la fletxa s'ancora a **tot un struct** (no a una fila), també cal etiqueta explícita amb el conjunt llegit (p. ex. `read {inputs, last_edges, edge_counts}`).
-
-| Mecanisme (prefix) | Què mou la dada |
-|---|---|
-| `publish` | `QF_PUBLISH` — bus QP, tots els subscrits reben l'event |
-| `POST` | `QActive::POST` — event directe a un AO, thread-safe |
-| `/ws` | Missatge pel canal WebSocket `/ws`, en qualsevol sentit (la direcció la marca la fletxa): push servidor→client (HttpServer llegeix SharedState i l'envia) o enviament client→servidor (el navegador escriu, p. ex. `/ws {inputs}`) |
-| `write` | Escriptura del camp/struct a memòria compartida sota mutex |
-| `read` | Lectura del camp/struct de memòria compartida sota mutex |
+**Quan ometre l'etiqueta del tot:** només si l'ancoratge identifica EXACTAMENT la dada — una fletxa ancorada a una **fila concreta** d'un objecte de memòria estructurada (la fila *és* el camp). Una **caixa d'event NO és prou** (identifica el *tipus*, no el camp): les fletxes des de/cap a caixes d'event SÍ porten etiqueta amb prefix (`publish {edges}`, `POST {config_inputs}`). Si la fletxa s'ancora a **tot un struct**, també cal etiqueta amb el conjunt (p. ex. `{inputs, last_edges, edge_counts}`).
 
 ## Estructura d'un Active Object
 

@@ -9,10 +9,10 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="hX1N1Huatbx-X40mZiJC-2" value="write {programacioHoraria}" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;startSize=8;endSize=8;entryX=0.75;entryY=1;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=11;" parent="1" source="http" target="ch_reload" edge="1">
+        <mxCell id="hX1N1Huatbx-X40mZiJC-2" value="{programacioHoraria}" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;startSize=8;endSize=8;entryX=0.75;entryY=1;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=11;" parent="1" source="http" target="ch_reload" edge="1">
           <mxGeometry x="-0.6" relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="ch_get_read" value="read {programacioHoraria}" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.3;entryY=0;entryDx=0;entryDy=0;startSize=8;endSize=8;fontFamily=Helvetica;fontSize=11;" parent="1" source="ch_reload" target="http" edge="1">
+        <mxCell id="ch_get_read" value="{programacioHoraria}" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.3;entryY=0;entryDx=0;entryDy=0;startSize=8;endSize=8;fontFamily=Helvetica;fontSize=11;" parent="1" source="ch_reload" target="http" edge="1">
           <mxGeometry x="-0.6" relative="1" as="geometry" />
         </mxCell>
         <mxCell id="http" value="HttpServer&#xa;(thread Mongoose)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffcccc;strokeColor=#36393d;fontSize=9;fontStyle=1" parent="1" vertex="1">
@@ -57,7 +57,7 @@
         <mxCell id="out_pub" value="OUTPUT_RESULT_SIG, PUBLISH&#xa;(OutputResultEvt)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=8" parent="1" vertex="1">
           <mxGeometry x="1286" y="714" width="145" height="35" as="geometry" />
         </mxCell>
-        <mxCell id="hX1N1Huatbx-X40mZiJC-3" value="&lt;span style=&quot;font-size: 11px;&quot;&gt;read {outputsResult, push_pending}&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startSize=8;endSize=8;fontFamily=Helvetica;fontSize=11" parent="1" source="out_ss" target="ws" edge="1">
+        <mxCell id="hX1N1Huatbx-X40mZiJC-3" value="{outputsResult, push_pending}" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startSize=8;endSize=8;fontFamily=Helvetica;fontSize=11" parent="1" source="out_ss" target="ws" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="e7" value="publish {outputs: id→state}" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=11" parent="1" source="ch_out_io" target="in_io" edge="1">
