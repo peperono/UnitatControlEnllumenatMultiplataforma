@@ -15,9 +15,7 @@ ControlEntrades::ControlEntrades(IOReader reader,
     : QP::QActive{Q_STATE_CAST(&ControlEntrades::initial)},
       m_pollTimer{this, EDGE_DETECTOR_POLL_SIG},
       m_reader{std::move(reader)},
-      m_pollTicks{poll_ticks},
-      m_ioEvt{},
-      m_edgeEvt{}
+      m_pollTicks{poll_ticks}
 {}
 
 // ── Public API ────────────────────────────────────────────────────────────────
@@ -57,7 +55,6 @@ Q_STATE_DEF(ControlEntrades, operating) {
                 auto prevInputs = m_prevInputs;
                 m_prevInputs = inputs;
 
-                m_ioEvt.inputs = inputs;
                 {
                     std::vector<int> ids;
                     for (auto const& [id, state] : inputs) ids.push_back(id);
@@ -71,9 +68,14 @@ Q_STATE_DEF(ControlEntrades, operating) {
                     }
                     log_append("ControlEntrades", ">> INPUT_CHANGED_SIG", detail);
                 }
-                PUBLISH(&m_ioEvt, this);
+                auto* ioEvt = Q_NEW(InputChangedEvt, INPUT_CHANGED_SIG);
+                ioEvt->n_inputs = 0;
+                for (auto const& [id, state] : inputs)
+                    if (ioEvt->n_inputs < InputChangedEvt::MAX_INPUTS)
+                        ioEvt->inputs[ioEvt->n_inputs++] = { id, state };
+                PUBLISH(ioEvt, this);
 
-                m_edgeEvt.edges.clear();
+                std::vector<int> edges;
 
                 for (const auto& cfg : m_configs) {
                     auto it = inputs.find(cfg.id);
@@ -90,29 +92,34 @@ Q_STATE_DEF(ControlEntrades, operating) {
                     bool edge_detected = (cfg.detect_edge == EdgePolarity::falling) ? rising_edge : falling_edge;
 
                     if (edge_detected && detection_enabled(cfg, outputs)) {
-                        m_edgeEvt.edges.push_back(cfg.id);
+                        edges.push_back(cfg.id);
                     }
 
                     m_prevStates[cfg.id] = current;
                 }
 
-                if (!m_edgeEvt.edges.empty()) {
+                if (!edges.empty()) {
                     std::string detail;
-                    for (int id : m_edgeEvt.edges) {
+                    for (int id : edges) {
                         if (!detail.empty()) detail += ", ";
                         detail += "E" + std::to_string(id);
                     }
                     log_append("ControlEntrades", ">> EDGE_DETECTED_SIG", detail);
-                    PUBLISH(&m_edgeEvt, this);
+                    auto* edgeEvt = Q_NEW(EdgeDetectedEvt, EDGE_DETECTED_SIG);
+                    edgeEvt->n_edges = 0;
+                    for (int id : edges)
+                        if (edgeEvt->n_edges < EdgeDetectedEvt::MAX_EDGES)
+                            edgeEvt->edges[edgeEvt->n_edges++] = id;
+                    PUBLISH(edgeEvt, this);
                 }
 
                 {
                     std::lock_guard<std::mutex> lk(control_entrades_state.mtx);
                     control_entrades_state.inputs  = inputs;
                     control_entrades_state.outputs = outputs;
-                    if (!m_edgeEvt.edges.empty()) {
-                        control_entrades_state.last_edges = m_edgeEvt.edges;
-                        for (int id : m_edgeEvt.edges)
+                    if (!edges.empty()) {
+                        control_entrades_state.last_edges = edges;
+                        for (int id : edges)
                             ++control_entrades_state.edge_counts[id];
                     } else {
                         control_entrades_state.last_edges.clear();
@@ -127,12 +134,15 @@ Q_STATE_DEF(ControlEntrades, operating) {
 
         case OUTPUT_RESULT_SIG: {
             auto const* ev = Q_EVT_CAST(OutputResultEvt);
-            m_commandedOutputs = ev->outputs;
+            m_commandedOutputs.clear();
+            for (int i = 0; i < ev->n_outputs; ++i)
+                m_commandedOutputs[ev->outputs[i].id] = ev->outputs[i].state;
             {
                 std::string detail;
-                for (auto const& [id, state] : ev->outputs) {
+                for (int i = 0; i < ev->n_outputs; ++i) {
                     if (!detail.empty()) detail += ", ";
-                    detail += "S" + std::to_string(id) + "=" + (state ? "ON" : "OFF");
+                    detail += "S" + std::to_string(ev->outputs[i].id) + "="
+                              + (ev->outputs[i].state ? "ON" : "OFF");
                 }
                 log_append("ControlEntrades", "<< OUTPUT_RESULT_SIG", detail);
             }

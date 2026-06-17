@@ -26,28 +26,22 @@ Q_STATE_DEF(ActuadorSortides, running) {
         case OUTPUT_RESULT_SIG: {
             auto const* evt = Q_EVT_CAST(OutputResultEvt);
             std::string all;
-            for (auto const& [id, actiu] : evt->outputs) {
+            for (int i = 0; i < evt->n_outputs; ++i) {
+                int id = evt->outputs[i].id; bool actiu = evt->outputs[i].state;
                 if (!all.empty()) all += ", ";
                 all += "S" + std::to_string(id) + "=" + (actiu ? "ON" : "OFF");
             }
             log_append("ActuadorSortides", "<< OUTPUT_RESULT_SIG", all);
-            std::string detail;
-            for (auto const& [id, actiu] : evt->outputs) {
+            for (int i = 0; i < evt->n_outputs; ++i) {
+                int id = evt->outputs[i].id; bool actiu = evt->outputs[i].state;
                 auto it = m_prevOutputs.find(id);
                 if (it != m_prevOutputs.end() && it->second == actiu)
                     continue;
-                if (!detail.empty()) detail += ", ";
-                detail += "S" + std::to_string(id) + "=" + (actiu ? "ON" : "OFF");
+                m_writer(id, actiu);
             }
-            if (!detail.empty()) {
-                for (auto const& [id, actiu] : evt->outputs) {
-                    auto it = m_prevOutputs.find(id);
-                    if (it != m_prevOutputs.end() && it->second == actiu)
-                        continue;
-                    m_writer(id, actiu);
-                }
-            }
-            m_prevOutputs = evt->outputs;
+            m_prevOutputs.clear();
+            for (int i = 0; i < evt->n_outputs; ++i)
+                m_prevOutputs[evt->outputs[i].id] = evt->outputs[i].state;
             status = Q_HANDLED();
             break;
         }

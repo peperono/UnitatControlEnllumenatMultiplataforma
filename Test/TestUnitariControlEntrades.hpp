@@ -59,15 +59,17 @@ Q_STATE_DEF(TestObserver, observing) {
             break;
         }
         case INPUT_CHANGED_SIG: {
-            auto const* evt  = Q_EVT_CAST(InputChangedEvt);
-            g_receivedInputs = evt->inputs;
-            g_ioReceived     = true;
+            auto const* evt = Q_EVT_CAST(InputChangedEvt);
+            g_receivedInputs.clear();
+            for (int i = 0; i < evt->n_inputs; ++i)
+                g_receivedInputs[evt->inputs[i].id] = evt->inputs[i].state;
+            g_ioReceived = true;
             status = Q_HANDLED();
             break;
         }
         case EDGE_DETECTED_SIG: {
             auto const* evt = Q_EVT_CAST(EdgeDetectedEvt);
-            g_detectedEdges = evt->edges;
+            g_detectedEdges.assign(evt->edges, evt->edges + evt->n_edges);
             g_edgeReceived  = true;
             status = Q_HANDLED();
             break;

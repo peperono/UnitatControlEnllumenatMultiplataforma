@@ -123,7 +123,8 @@ int main(int argc, char* argv[]) {
     static QF_MPOOL_EL(OutputCmdEvt) smallPool[16];
     QP::QF::poolInit(smallPool, sizeof(smallPool), sizeof(smallPool[0]));
 
-    // Pool 2 (gran): RellotgeTickEvt, OutputStateEvt, ReconfigureEvt
+    // Pool 2 (gran): RellotgeTickEvt, OutputStateEvt, ReconfigureEvt,
+    //                InputChangedEvt, EdgeDetectedEvt, OutputResultEvt
     static QF_MPOOL_EL(ReconfigureEvt) largePool[32];
     QP::QF::poolInit(largePool, sizeof(largePool), sizeof(largePool[0]));
 

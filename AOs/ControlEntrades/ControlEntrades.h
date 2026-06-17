@@ -30,8 +30,6 @@ private:
     std::unordered_map<int, bool> m_prevStates;
     std::unordered_map<int, bool> m_prevInputs;
     std::unordered_map<int, bool> m_commandedOutputs; // estat efectiu rebut de ControlRemot
-    InputChangedEvt               m_ioEvt;
-    EdgeDetectedEvt               m_edgeEvt;
 
     bool detection_enabled(const InputConfig& cfg,
                             const std::unordered_map<int, bool>& outputs) const;

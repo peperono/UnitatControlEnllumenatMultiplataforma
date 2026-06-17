@@ -137,7 +137,7 @@ GPIOs a evitar: GPIO16/17 (PSRAM), GPIO6–11 (flash SPI), GPIO21 (càmera D7 a 
 
 **Plataforma ESP32 (diferència d'arquitectura):** El model de fils de dalt és el de Windows (scheduler **QV cooperatiu**, un sol fil, run-to-completion). A l'ESP32 s'usa el **port FreeRTOS** de QP/C++ (`qpcpp/ports/freertos`): cada AO és una **tasca FreeRTOS pròpia** (stack estàtic propi, mateixes prioritats relatives) amb scheduling **preemptiu**; el tick de QP ve d'un `esp_timer` periòdic (100 Hz). Hi corre a més `Blink` (prioritat 1) i les tasques de Mongoose/WiFi.
 
-**Implicació de la preempció:** la semàntica zero-pool de `InputChangedEvt`/`EdgeDetectedEvt` (vegeu *Event memory*) és segura sota QV cooperatiu, però sota FreeRTOS preemptiu hi ha una **condició de cursa potencial** si `ControlEntrades` publica un nou event abans que tots els subscriptors hagin processat l'anterior. A 100 Hz i amb subscriptors lleugers el risc pràctic és baix, però cal refactoritzar per a garantia estricta (vegeu el comentari a `main/main_esp32.cpp`).
+**Implicació de la preempció:** tots els events de domini són dinàmics (pool, `Q_NEW`): cada publicació rep un bloc fresc i refcompta-t, així que la preempció és **segura** (cap objecte compartit es muta mentre un subscriptor el llegeix). Abans no ho era: `InputChangedEvt`/`EdgeDetectedEvt`/`OutputResultEvt` usaven un truc d'event estàtic reutilitzat (cursa sota FreeRTOS); es van reconvertir a events POD de mida fixa (vegeu *Event memory*).
 
 **Cross-thread data:** Several mutex-protected structs are shared between the QV thread and the Mongoose thread — one per subsystem: `control_entrades_state`, `control_horari_state`, `control_remot_state`, `rellotge_state`, plus `remote_io_state` (remote IO input). `ControlEntradesState control_entrades_state` (defined in `AOs/ControlEntrades/ControlEntrades.cpp`, declared `extern` in `AOs/ControlEntrades/ControlEntradesState.h`) is the representative example. All access is guarded by `control_entrades_state.mtx`. `ControlEntrades` writes `control_entrades_state.inputs`, `control_entrades_state.outputs`, `control_entrades_state.last_edges`, `control_entrades_state.edge_counts` and sets `control_entrades_state.push_pending = true` directly in the poll handler. The Mongoose thread reads `control_entrades_state` and pushes WebSocket messages when `push_pending` is set.
 
@@ -145,7 +145,7 @@ GPIOs a evitar: GPIO16/17 (PSRAM), GPIO6–11 (flash SPI), GPIO21 (càmera D7 a 
 
 **OutputWriter injection:** `ActuadorSortides` accepts an `OutputWriter = std::function<void(int id, bool actiu)>` at construction. `makeGPIOWriter()` (`Platform/HW/OutputWriter_HW.hpp`) initialises GPIOs and returns a lambda that calls `gpio_set_level`. `makeConsoleWriter()` (`AOs/ControlSortides/ActuadorSortides/OutputWriter_Console.hpp`) returns a lambda that prints to stdout. This removes all `#ifdef ESP_PLATFORM` from the AO itself.
 
-**Event memory:** `InputChangedEvt` and `EdgeDetectedEvt` use static (zero-pool) semantics because they hold `std::vector`/`std::unordered_map` which are incompatible with QP memory pools. This is safe under the QV cooperative scheduler. `ReconfigureEvt` uses a QP memory pool (initialized in `main-win/main.cpp`). Max 16 configs per `ReconfigureEvt`. Remote IO input is not a QP event: the Mongoose thread writes directly to `remote_io_state` (mutex-protected), and `ControlEntrades` reads it via the injected `IOReader` lambda on each poll tick.
+**Event memory:** tots els events de domini són **dinàmics (pool)**: s'allotgen amb `Q_NEW`, són refcompta-ts i el framework els recicla al pool quan l'últim subscriptor acaba. Per cabre al pool, els payloads són **POD de mida fixa** (`Entry[N]` + comptador), no contenidors `std::` — `InputChangedEvt`/`EdgeDetectedEvt`/`OutputResultEvt` es van reconvertir d'un truc d'event estàtic a aquesta forma (model: `OutputStateEvt`). Pools inicialitzats a `main-win/main.cpp` i `main/main_esp32.cpp`. Max 16 configs per `ReconfigureEvt`. Remote IO input is not a QP event: the Mongoose thread writes directly to `remote_io_state` (mutex-protected), and `ControlEntrades` reads it via the injected `IOReader` lambda on each poll tick.
 
 **Race condition to be aware of:** After a `PUT /config_inputs` HTTP response is sent, the QV poll timer may fire before `RECONFIGURE_SIG` is processed, emitting a WS push with stale IDs. The JS UI guards against this with `expectedInputIds`.
 
@@ -184,15 +184,15 @@ Els AOs s'organitzen en 4 subsistemes:
 |-------|-------|
 | `RELLOTGE_TICK_INTERNAL_SIG` (`QTimeEvt`) | — (intern, sense payload) |
 | `RELLOTGE_TICK_SIG` (`RellotgeTickEvt`) | `hour`, `minute`, `wday` (0=dilluns..6=diumenge) |
-| `INPUT_CHANGED_SIG` (`InputChangedEvt`) | `inputs` (`map<int,bool>` id→estat) |
-| `EDGE_DETECTED_SIG` (`EdgeDetectedEvt`) | `input_ids` (`vector<int>`, IDs amb flanc detectat) |
+| `INPUT_CHANGED_SIG` (`InputChangedEvt`) | `inputs[]` {`id`, `state`}, `n_inputs` (màx 16) |
+| `EDGE_DETECTED_SIG` (`EdgeDetectedEvt`) | `edges[]` (IDs amb flanc detectat), `n_edges` (màx 16) |
 | `RECONFIGURE_SIG` (`ReconfigureEvt`) | `entries[]` {`id`, `detect_edge`, `detection_always`, `linked_outputs[]`, `n_linked`}, `n_configs` (màx 16) |
 | `OUTPUT_STATE_SIG` (`OutputStateEvt`) | `outputs[]` {`id`, `state`}, `n_outputs` (màx 32) |
 | `CTRL_OUTPUT_CMD_SIG` (`OutputCmdEvt`) | `output_id`, `activate` |
 | `CTRL_OUTPUT_MODE_SIG` (`OutputModeEvt`) | `output_id`, `remote` |
 | `CTRL_OUTPUT_RETURN_AUTO_SIG` (`OutputReturnAutoEvt`) | `output_id` (-1 = totes les sortides) |
 | `CTRL_OUTPUT_DELETE_SIG` (`OutputDeleteEvt`) | `output_id` |
-| `OUTPUT_RESULT_SIG` (`OutputResultEvt`) | `outputs` (`map<int,bool>` id→estat consolidat) |
+| `OUTPUT_RESULT_SIG` (`OutputResultEvt`) | `outputs[]` {`id`, `state`}, `n_outputs` (màx 32; estat consolidat) |
 
 ## Active Objects — endpoints, WebSocket
 
@@ -243,7 +243,6 @@ Cap endpoint HTTP envia dades al Rellotge.
 
 Vores tallants conegudes de l'estat actual del codi (no un *backlog* de millores; això va a `docs/TODO.md` o issues):
 
-- **Cursa zero-pool sota preempció (ESP32).** `InputChangedEvt`/`EdgeDetectedEvt` es publiquen com a objecte membre compartit (sense còpia). És segur sota el QV cooperatiu (Windows), però seria una **cursa de dades** sota FreeRTOS preemptiu si s'hi afegís un subscriptor (vegeu *Arquitectura d'execució → Implicació de la preempció*). Avui és **latent**: a l'ESP32 cap AO els subscriu. Fix net: convertir-los a events de mida fixa, pool-compatibles, com `OutputStateEvt`/`ReconfigureEvt`.
 - **`return_auto` amb `id:-1` no és accessible.** `OutputReturnAutoEvt` suporta `output_id = -1` (= totes les sortides), però `ControlRemot::handleJson` descarta tota ordre amb `id < 0` abans de parsejar l'acció (`if (id < 0) continue`, [ControlRemot.cpp:228](AOs/ControlSortides/ControlRemot/ControlRemot.cpp#L228)). Per tant "torna totes les sortides a AUTO" via `POST /control_outputs` **no es pot disparar** tal com està. Bug latent.
 
 ## Key files

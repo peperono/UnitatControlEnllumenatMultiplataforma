@@ -29,8 +29,10 @@ enum Signals : QP::QSignal {
 // ── Events Control Entrades ───────────────────────────────────────────────────
 
 struct InputChangedEvt : public QP::QEvt {
-    std::unordered_map<int, bool> inputs;
-    explicit InputChangedEvt() noexcept : QP::QEvt{INPUT_CHANGED_SIG} {}
+    static constexpr int MAX_INPUTS = 16;
+    struct Entry { int id; bool state; };
+    Entry inputs[MAX_INPUTS];
+    int   n_inputs = 0;
 };
 
 struct ReconfigureEvt : public QP::QEvt {
@@ -48,8 +50,9 @@ struct ReconfigureEvt : public QP::QEvt {
 };
 
 struct EdgeDetectedEvt : public QP::QEvt {
-    std::vector<int> edges;
-    explicit EdgeDetectedEvt() noexcept : QP::QEvt{EDGE_DETECTED_SIG} {}
+    static constexpr int MAX_EDGES = 16;
+    int edges[MAX_EDGES];
+    int n_edges = 0;
 };
 
 // ── Events Control Sortides ───────────────────────────────────────────────────
@@ -86,6 +89,8 @@ struct OutputStateEvt : public QP::QEvt {
 };
 
 struct OutputResultEvt : public QP::QEvt {
-    std::unordered_map<int, bool> outputs;
-    explicit OutputResultEvt() noexcept : QP::QEvt{OUTPUT_RESULT_SIG} {}
+    static constexpr int MAX_OUTPUTS = 32;
+    struct Entry { int id; bool state; };
+    Entry outputs[MAX_OUTPUTS];
+    int   n_outputs = 0;
 };

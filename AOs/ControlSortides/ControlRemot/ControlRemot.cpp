@@ -11,7 +11,6 @@ ControlRemotState control_remot_state;
 
 ControlRemot::ControlRemot() noexcept
     : QP::QActive{Q_STATE_CAST(&ControlRemot::initial)},
-      m_resultEvt{},
       m_initTimer{this, CTRL_REMOT_INIT_SIG}
 {}
 
@@ -193,9 +192,11 @@ void ControlRemot::publishResult() {
 
     if (!resultChanged) return;
 
-    m_resultEvt.outputs.clear();
+    auto* resultEvt = Q_NEW(OutputResultEvt, OUTPUT_RESULT_SIG);
+    resultEvt->n_outputs = 0;
     for (auto const& [id, out] : m_outputs)
-        m_resultEvt.outputs[id] = out.result;
+        if (resultEvt->n_outputs < OutputResultEvt::MAX_OUTPUTS)
+            resultEvt->outputs[resultEvt->n_outputs++] = { id, out.result };
 
     std::vector<int> ids;
     for (auto const& [id, out] : m_outputs) ids.push_back(id);
@@ -210,7 +211,7 @@ void ControlRemot::publishResult() {
     }
     log_append("ControlRemot", ">> OUTPUT_RESULT_SIG", detail);
 
-    PUBLISH(&m_resultEvt, this);
+    PUBLISH(resultEvt, this);
 }
 
 void ControlRemot::handleJson(const char* buf, std::size_t len) {

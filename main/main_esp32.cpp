@@ -175,12 +175,9 @@ extern "C" void app_main() {
     }
 
     // ── Active Objects ────────────────────────────────────────────────────────
-    // NOTA: InputChangedEvt/EdgeDetectedEvt usen semàntiques zero-pool (sense còpia).
-    // Sota QV (cooperatiu, Windows) és segur. Sota FreeRTOS (preemptiu), si
-    // ControlEntrades publica un nou event abans que tots els subscriptors
-    // hagin processat l'anterior, hi ha una condició de cursa. A 100 Hz de
-    // polling i subscriptors lleugers, el risc pràctic és baix, però s'ha de
-    // refactoritzar si es requereix garantia estricta.
+    // Tots els events de domini són de pool (Q_NEW): refcompta-ts i frescos a cada
+    // publish, segurs sota el FreeRTOS preemptiu (sense la cursa zero-pool d'abans,
+    // quan InputChangedEvt/EdgeDetectedEvt/OutputResultEvt es reutilitzaven).
     static ControlEntrades controlEntrades{makeHWInputReader(), 1U};
     static ControlRemot        controlRemot;
     static ControlHorari       controlHorari;
@@ -198,7 +195,7 @@ extern "C" void app_main() {
     static QF_MPOOL_EL(OutputCmdEvt)   smallPool[16];
     QP::QF::poolInit(smallPool, sizeof(smallPool), sizeof(smallPool[0]));
 
-    static QF_MPOOL_EL(ReconfigureEvt) largePool[16];
+    static QF_MPOOL_EL(ReconfigureEvt) largePool[24];
     QP::QF::poolInit(largePool, sizeof(largePool), sizeof(largePool[0]));
 
     // Prioritats (alt→baix): Rellotge > ControlEntrades > ControlRemot > ControlHorari > ActuadorSortides > Blink
